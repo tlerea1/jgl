@@ -10,6 +10,8 @@
  * 
  */
 
+
+//--------------------------Setup and Globals----------------------
 var screen;
 var backCtx;
 var backCanvas;
@@ -29,6 +31,8 @@ $(document).ready( function() {
 	backCtx = backCanvas.getContext("2d");
 });
 
+//----------------------Main Screen Functions--------------------
+
 function jglOpen() {
 
 }
@@ -47,6 +51,8 @@ function jglFlush() {
 
 }
 
+
+//-------------------Drawing Different Shapes-------------------
 
 /**
  * Function for drawing 2D points.
