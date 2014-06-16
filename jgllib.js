@@ -129,4 +129,31 @@ function jglFillRect(x, y, size, color) {
 	}
 }
 
+/**
+ * Draws a fixation cross onto the screen. 
+ * If no params are given, cross defaults to center,
+ * with lineWidth = 1, width = 10, and white.
+ * @param width the width of the cross
+ * @param lineWidth the width of the lines of the cross
+ * @param color the color in hex format
+ * @param origin the center point in [x,y]
+ */
+function jglFixationCross(width, lineWidth, color, origin) {
+	if (arguments.length == 0) {
+		width = 10;
+		lineWidth = 1;
+		color = "#FFFFFF";
+		origin = [backCanvas.width / 2 , backCanvas.height / 2];
+	}
+	backCtx.lineWidth = lineWidth;
+	backCtx.strokeStyle = color;
+	backCtx.moveTo(origin[0] - width, origin[1]);
+	backCtx.lineTo(origin[0] + width, origin[1]);
+	backCtx.moveTo(origin[0], origin[1] - width);
+	backCtx.lineTo(origin[0], origin[1] + width);
+	backCtx.stroke();
+}
+
+
+
 
