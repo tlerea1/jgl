@@ -18,9 +18,14 @@ var backCanvas;
 
 function Screen() {	
 	var c = document.getElementById("canvas");
+//	var div = document.createElement("div");
+//	div.setAttribute("width", "1in");
 	this.context = c.getContext("2d");
 	this.height = $("#canvas").height();
 	this.width = $("#canvas").width();
+	this.screenWidth = (window.screen.width / window.devicePixelRatio) * (1/ 96.0);
+	this.screenHeight = (window.screen.height / window.devicePixelRatio) * (1/ 96.0);
+//	this.viewDistance = div.getAttribute("width");
 }
 
 $(document).ready( function() {
@@ -209,5 +214,31 @@ function jglWaitSecs(secs) {
 	} while (Date.now() < current + (secs * 1000));
 }
 
+//-----------------------Text Functions------------------------
 
+function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
+	var fontString = "";
+	if (fontBold == 1) {
+		fontString = fontString.concat("bold ");
+	}
+	
+	if (fontItalic == 1) {
+		fontString = fontString.concat("italic ");
+	}
+	
+//	if (fontUnderline == 1) {
+//		fontString = fontString.concat("underline ");
+//	}
+//	
+//	if (fontStrikeThrough == 1) {
+//		fontString = fontString.concat("line-through ");
+//	} 
+	fontString = fontString.concat(fontSize, "px ", fontName);
+	backCtx.font = fontString;
+	backCtx.fillStyle = fontColor;
+}
+
+function jglTextDraw(text, x, y) {
+	backCtx.fillText(text, x, y);
+}
 
