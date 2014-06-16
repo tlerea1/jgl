@@ -58,7 +58,7 @@ function jglFlush() {
 function jglPoints2(x, y, size, color) {
 	if (x.length != y.length) {
 		// Error
-		return;
+		throw "Points2: Lengths dont match";
 	}
 	for (var i=0;i<x.length;i++) {
 		backCtx.fillStyle=color;
@@ -82,7 +82,7 @@ function jglPoints2(x, y, size, color) {
 function jglLines2(x0, y0, x1, y1, size, color) {
 	if (x0.length != y0.length || x1.length != y1.length || x0.length != x1.length) {
 		//Error
-		return;
+		throw "Lines2: Lengths dont match";
 	}
 	for (var i=0;i<x0.length;i++) {
 		backCtx.lineWidth = size;
@@ -94,15 +94,39 @@ function jglLines2(x0, y0, x1, y1, size, color) {
 }
 
 function jglFillOval(x, y, size, color) {
-	if (x.length != y.length) {
+	if (x.length != y.length || size.length != 2) {
 		//Error
-		return;
+		throw "Fill Oval: Lengths dont match";
 	}
 	var radius = Math.min(size[0], size[1]);
 	backCtx.save();
 	backCtx.transform(0, size[0], size[1],0,0,0);
 	jglPoints2(x, y, radius, color);
 	backCtx.restore();
+}
+
+/**
+ * Makes Filled Rectangles
+ * @param x an array of x coordinates of the centers
+ * @param y an array of y coordinates of the centers
+ * @param size [width,height] array
+ * @param color color in hex format #000000
+ */
+function jglFillRect(x, y, size, color) {
+	if (x.length != y.length || size.length != 2) {
+		//Error
+		throw "Fill Rect: Lengths dont match"
+	}
+	var upperLeft = {
+			x:0,
+			y:0
+	};
+	for (var i=0;i<x.length;i++) {
+		backCtx.fillStyle = color;
+		upperLeft.x = x[i] - (size[0] / 2);
+		upperLeft.y = y[i] - (size[1] / 2);
+		backCtx.fillRect(upperLeft.x, upperLeft.y, size[0], size[1]);
+	}
 }
 
 
