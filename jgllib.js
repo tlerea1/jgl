@@ -91,6 +91,7 @@ function jglLines2(x0, y0, x1, y1, size, color) {
 		backCtx.lineTo(x1[i], y1[i]);
 	}
 	//screen.context.save();
+	backCtx.stroke();
 }
 
 function jglFillOval(x, y, size, color) {
@@ -154,6 +155,53 @@ function jglFixationCross(width, lineWidth, color, origin) {
 	backCtx.stroke();
 }
 
+/**
+ * Function for drawing a polygon.
+ * The x and y params lay out a set of points.
+ * @param x the x coordinates
+ * @param y the y coordinates
+ * @param color the color, in hex format #000000
+ */
+function jglPolygon(x, y, color) {
+	if (x.length != y.length || x.length < 3) {
+		// Error, need at least three points to
+		// make a polygon.
+		throw "Polygon arrays not same length";
+	}
+	backCtx.fillStyle = color;
+	backCtx.beginPath();
+	backCtx.moveTo(x[0], y[0]);
+	for (var i=1;i<x.length;i++) {
+		backCtx.lineTo(x[i], y[i]);
+	}
+	backCtx.closePath();
+	backCtx.fill();
+}
+
+
+//----------------Timing Functions
+
+/**
+ * Gets the current seconds since Jan 1st 1970.
+ * @return Returns the seconds value;
+ */
+function jglGetSecs() {
+	var d = new Date();
+	return d.getTime() / 1000;
+}
+
+/**
+ * Waits the given number of seconds.
+ * @param secs the number of seconds to wait.
+ */
+function jglWaitSecs(secs) {
+	var first, second;
+	first = new Date();
+	var current = first.getTime();
+	do {
+		second = new Date();
+	} while (Date.now() < current + (secs * 1000));
+}
 
 
 
