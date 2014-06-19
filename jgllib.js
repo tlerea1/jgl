@@ -1,5 +1,5 @@
 /**
- * JGL - A javascript psycophysics library.
+ * JGL - A javascript Graphics Library.
  * Modeled after mgl (MATLAB library)
  * 
  * Author - Tuvia Lerea
@@ -12,48 +12,52 @@
 
 
 //--------------------------Setup and Globals----------------------
+// Screen object, holds a bunch of info about the screen and state of the canvas
 var screen;
+// mouse object, tracks mouse state
 var mouse;
+// The main off-screen canvas/context. 
 var backCtx;
 var backCanvas;
+// The off-screen canvas/context that is used to combine the stencil and backCanvas
 var stencilCanvas;
 var stencilCtx;
 
 function Screen() {	
 	var c = document.getElementById("canvas");
-//	var div = document.createElement("div");
-//	div.setAttribute("width", "1in");
-	this.context = c.getContext("2d");
-	this.height = $("#canvas").height();
-	this.width = $("#canvas").width();
-	this.stencils = [];
-	this.useStencil = false;
-	this.stencilSelected = 0;
-//	this.screenWidth = (window.screen.width / window.devicePixelRatio) * (1/ 96.0);
-//	this.screenHeight = (window.screen.height / window.devicePixelRatio) * (1/ 96.0);
-//	this.viewDistance = java.awt.Toolkit.getDefaultToolkit().getScreenResolution();
-//	this.viewDistance = document.size.ppi();
+	this.context = c.getContext("2d"); // main on-screen context
+	this.height = $("#canvas").height(); // height of screen
+	this.width = $("#canvas").width(); // width of screen
+	this.stencils = []; // array of all stencil canvases
+	this.drawingStencil = false; // Are you drawing a stencil?
+	this.useStencil = false; // is a stencil in use?
+	this.stencilSelected = 0; // if so, which?
+	this.viewDistance = 24; // set to a default right now
+	this.ppi = 0; // Pixels / Inch, gets set when jglOpen is called
+	this.degPerPix = 0; // gets set in jglOpen
+	this.pixPerDeg = 0; // gets set in jglOpen
+	this.usingVisualAngles = false; // Is the drawing in visualAngles?
+	this.usingVisualAnglesStencil = false; // Is the stencil using visualAngles?
 }
 
 function Mouse() {
-	this.buttons = [];
-	this.x = 0;
-	this.y = 0;
+	this.buttons = []; // [left, middle, right]
+	this.x = 0; // x-coordinate
+	this.y = 0; // y-coordinate
 }
 
 $(document).ready( function() {
 	screen = new Screen();
 	mouse = new Mouse();
-	backCanvas = document.createElement('canvas');
+	backCanvas = document.getElementById("backcanvas");
 	backCanvas.width = screen.width;
 	backCanvas.height = screen.height;
 	backCtx = backCanvas.getContext("2d");
-	stencilCanvas = document.createElement('canvas');
+//	stencilCanvas = document.createElement('canvas');
+	stencilCanvas = document.getElementById("stencilcanvas");
 	stencilCanvas.width = screen.width;
 	stencilCanvas.height = screen.height;
 	stencilCtx = stencilCanvas.getContext("2d");
-	$("body").append("<div id=\"inchBox\" style=\"width: 1in\"></div>");
-	screen.viewDistance = $("#inchBox").width();
 	
 	// The following three events track the mouse
 	// while it is inside the window.
@@ -74,7 +78,15 @@ $(document).ready( function() {
 
 //----------------------Main Screen Functions--------------------
 
-function jglOpen() {
+/**
+ * Sets up the jgl screen.
+ * @param resolution The ppi of the screen.
+ */
+function jglOpen(resolution) {
+	screen.ppi = resolution;
+	var inPerDeg = screen.viewDistance * (Math.tan(0.0174532925));
+	screen.pixPerDeg = resolution * inPerDeg;
+	screen.degPerPix = 1 / screen.pixPerDeg;
 
 }
 
@@ -95,8 +107,17 @@ function jglFlush() {
 //	screen.context.stroke();
 	if (! screen.useStencil) {
 		screen.context.clearRect(0,0,screen.width,screen.height);
-		screen.context.drawImage(backCanvas, 0, 0);
-		backCtx.clearRect(0,0, backCanvas.width, backCanvas.height);
+//		screen.context.save();
+
+		screen.context.drawImage(backCanvas, 0, 0);//-((backCanvas.width * screen.pixPerDeg) - backCanvas.width) / 2, -((backCanvas.height * screen.pixPerDeg) - backCanvas.height) / 2);//, backCanvas.width * screen.pixPerDeg, backCanvas.height * screen.pixPerDeg);
+//		screen.context.translate(screen.width / 2, screen.height / 2);
+//		screen.context.scale(100, 100);
+//		screen.context.restore();
+		if (screen.usingVisualAngles) {
+			backCtx.clearRect(-backCanvas.width / 2, -backCanvas.height / 2, backCanvas.width, backCanvas.height);
+		} else {
+			backCtx.clearRect(0, 0, backCanvas.width, backCanvas.height);
+		}
 	} else {
 		screen.context.clearRect(0,0,screen.width,screen.height);
 		stencilCtx.drawImage(screen.stencils[screen.stencilSelected], 0, 0);
@@ -105,7 +126,13 @@ function jglFlush() {
 		stencilCtx.drawImage(backCanvas, 0, 0);
 		stencilCtx.restore();
 		screen.context.drawImage(stencilCanvas, 0, 0);
-		stencilCtx.clearRect(0,0, stencilCanvas.width, stencilCanvas.height);
+		if (screen.usingVisualAngles) {
+			backCtx.clearRect(-backCanvas.width / 2, -backCanvas.height / 2, backCanvas.width, backCanvas.height);
+			stencilCtx.clearRect(0, 0, stencilCanvas.width, stencilCanvas.height);
+		} else {
+			stencilCtx.clearRect(0,0, stencilCanvas.width, stencilCanvas.height);
+			backCtx.clearRect(0,0,backCanvas.width, backCanvas.height);
+		}
 	}
 
 }
@@ -152,11 +179,11 @@ function jglLines2(x0, y0, x1, y1, size, color) {
 	for (var i=0;i<x0.length;i++) {
 		backCtx.lineWidth = size;
 		backCtx.strokeStyle=color;
+		backCtx.beginPath();
 		backCtx.moveTo(x0[i], y0[i]);
 		backCtx.lineTo(x1[i], y1[i]);
+		backCtx.stroke();
 	}
-	//screen.context.save();
-	backCtx.stroke();
 }
 
 function jglFillOval(x, y, size, color) {
@@ -198,7 +225,7 @@ function jglFillRect(x, y, size, color) {
 /**
  * Draws a fixation cross onto the screen. 
  * If no params are given, cross defaults to center,
- * with lineWidth = 1, width = 10, and white.
+ * with lineWidth = 1, width = 10, and black.
  * @param width the width of the cross
  * @param lineWidth the width of the lines of the cross
  * @param color the color in hex format
@@ -208,7 +235,7 @@ function jglFixationCross(width, lineWidth, color, origin) {
 	if (arguments.length == 0) {
 		width = 10;
 		lineWidth = 1;
-		color = "#FFFFFF";
+		color = "#000000";
 		origin = [backCanvas.width / 2 , backCanvas.height / 2];
 	}
 	backCtx.lineWidth = lineWidth;
@@ -355,6 +382,14 @@ function jglStencilCreateBegin(stencilNumber) {
 	canvas.height = screen.height;
 	screen.stencils[stencilNumber] = canvas;
 	backCtx = canvas.getContext("2d");
+	if (screen.usingVisualAngles) {
+		backCtx.save();
+		backCtx.translate(screen.width / 2, screen.height / 2);
+		backCtx.transform(screen.pixPerDeg,0,0,screen.pixPerDeg, 0,0);
+		screen.usingVisualAnglesStencil = true;
+
+	}
+	screen.drawingStencil = true;
 }
 
 /**
@@ -362,6 +397,10 @@ function jglStencilCreateBegin(stencilNumber) {
  */
 function jglStencilCreateEnd() {
 	backCtx = backCanvas.getContext("2d");
+	screen.drawingStencil = false;
+//	if (screen.usingVisualAngles) {
+//		jglVisualAngleCoordinates();
+//	}
 }
 
 /**
@@ -388,8 +427,38 @@ function jglStencilSelect(stencilNumber) {
  * Deselects the selected stencil, this will cause flush to act as normal.
  */
 function jglStencilDeselect() {
-	screen.usStencil = false;
+	screen.useStencil = false;
 }
+
+function jglVisualAngleCoordinates() {
+//	backCtx.save();
+	if ((screen.usingVisualAngles && ! screen.drawingStencil) || (screen.usingVisualAnglesStencil && screen.drawingStencil)) {
+		//Error
+		throw "VisualCoordinates: Already using visual coordinates";
+	}
+	backCtx.save();
+	backCtx.translate(screen.width / 2, screen.height / 2);
+	backCtx.transform(screen.pixPerDeg,0,0,screen.pixPerDeg, 0,0);
+	if (! screen.drawingStencil) {
+		screen.usingVisualAngles = true;
+	} else {
+		screen.usingVisualAnglesStencil = true;
+	}
+}
+
+function jglScreenCoordinates() {
+	if ((! screen.usingVisualAngles && ! screen.drawingStencil) || (screen.drawingStencil && ! screen.usingVisualAnglesStencil)) {
+		// Error
+		throw "ScreenCoordinates: Already using screen coordinates";
+	}
+//	backCtx.scale(1,1);
+//	backCtx.translate(-backCanvas.width / 2, -backCanvas.height / 2);
+	backCtx.restore();
+	if (! screen.drawingStencil) {
+		screen.usingVisualAngles = false;
+	} else {
+		screen.usingVisualAnglesStencil = false;
+	}}
 
 
 
