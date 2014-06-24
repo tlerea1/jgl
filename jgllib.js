@@ -1,6 +1,6 @@
 /**
  * JGL - A javascript Graphics Library.
- * Modeled after mgl (MATLAB library)
+ * Modeled after mgl (MATLAB graphics library)
  * 
  * Author - Tuvia Lerea
  * 
@@ -232,18 +232,30 @@ function jglFillRect(x, y, size, color) {
  * @param origin the center point in [x,y]
  */
 function jglFixationCross(width, lineWidth, color, origin) {
+	
 	if (arguments.length == 0) {
-		width = 10;
-		lineWidth = 1;
-		color = "#000000";
-		origin = [backCanvas.width / 2 , backCanvas.height / 2];
+		if (screen.usingVisualAngles) {
+			width = 1;
+			lineWidth = 0.1;
+			color = "#000000";
+			origin = [0 , 0];
+		} else {
+			width = 20;
+			lineWidth = 1;
+			color = "#000000";
+			origin = [backCanvas.width / 2 , backCanvas.height / 2];
+		}
+		
 	}
 	backCtx.lineWidth = lineWidth;
 	backCtx.strokeStyle = color;
-	backCtx.moveTo(origin[0] - width, origin[1]);
-	backCtx.lineTo(origin[0] + width, origin[1]);
-	backCtx.moveTo(origin[0], origin[1] - width);
-	backCtx.lineTo(origin[0], origin[1] + width);
+	backCtx.beginPath();
+	backCtx.moveTo(origin[0] - width / 2, origin[1]);
+	backCtx.lineTo(origin[0] + width / 2, origin[1]);
+	backCtx.stroke();
+	backCtx.beginPath();
+	backCtx.moveTo(origin[0], origin[1] - width / 2);
+	backCtx.lineTo(origin[0], origin[1] + width / 2);
 	backCtx.stroke();
 }
 
@@ -344,6 +356,27 @@ function jglGetMouse() {
 	return mouse;
 }
 
+/**
+ * Function to gain access to the mouse event listener.
+ * @param mouseEventCallback the mouse down callback function. 
+ * This function must take an event object as a parameter.
+ */
+function jglOnMouseClick(mouseEventCallback) {
+	$(window).mouseDown(function(event) {
+		mouseEventCallback(event);
+	});
+}
+
+/**
+ * Function to gain access to the key down event listener.
+ * @param keyDownEventCallback the key down callback Function.
+ * This function must take an event object as a parameter.
+ */
+function jglOnKeyDown(keyDownEventCallback) {
+	$(window).keyDown(function(event) {
+		keyDownEventCallback(event);
+	});
+}
 
 
 //-----------------------Stencil Functions----------------------------
@@ -430,9 +463,16 @@ function jglStencilDeselect() {
 	screen.useStencil = false;
 }
 
+//----------------------Coordinate Functions---------------------------
+
+/**
+ * Function for changing to visual Angle Coordinates.
+ * If this function is called while drawing a stencil, 
+ * it does not effect the normal canvas. 
+ */
 function jglVisualAngleCoordinates() {
-//	backCtx.save();
-	if ((screen.usingVisualAngles && ! screen.drawingStencil) || (screen.usingVisualAnglesStencil && screen.drawingStencil)) {
+	if ((screen.usingVisualAngles && ! screen.drawingStencil) || 
+			(screen.usingVisualAnglesStencil && screen.drawingStencil)) {
 		//Error
 		throw "VisualCoordinates: Already using visual coordinates";
 	}
@@ -446,19 +486,175 @@ function jglVisualAngleCoordinates() {
 	}
 }
 
+/**
+ * Function for changing to screen coordinates.
+ * If this function is called while drawing a stencil,
+ * it does not effect the normal canvas.
+ */
 function jglScreenCoordinates() {
-	if ((! screen.usingVisualAngles && ! screen.drawingStencil) || (screen.drawingStencil && ! screen.usingVisualAnglesStencil)) {
+	if ((! screen.usingVisualAngles && ! screen.drawingStencil) || 
+			(screen.drawingStencil && ! screen.usingVisualAnglesStencil)) {
 		// Error
 		throw "ScreenCoordinates: Already using screen coordinates";
 	}
-//	backCtx.scale(1,1);
-//	backCtx.translate(-backCanvas.width / 2, -backCanvas.height / 2);
 	backCtx.restore();
 	if (! screen.drawingStencil) {
 		screen.usingVisualAngles = false;
 	} else {
 		screen.usingVisualAnglesStencil = false;
-	}}
+	}
+}
+
+//--------------------------Texture Functions-----------------------------------
+
+function jglMakeArray(low, step, high) {
+	if (low < high) {
+		var size = (high - low) / step;
+		var array = new Array(size);
+		array[0] = low;
+		for (var i=1;i<array.length;i++) {
+			array[i] = array[i-1] + step;
+		}
+		return array;
+	} else if (low > high) {
+		var size = (low - high) / step;
+		var array = new Array(size);
+		array[0] = low;
+		for (var i=1;i<array.length;i++) {
+			array[i] = array[i-1] - step;
+		}
+		return array;
+	}
+	return null;
+}
+
+function jglCreateTexture(array) {
+	if (! $.isArray(array)) {
+		return;
+	}
+	var image;
+	if ( ! $.isArray(array[0])) {
+		// 1D array passed in
+		image = backCtx.createImageData(array.length, array.length);
+		var counter = 0;
+		for (var i=0;i<image.data.length;i += 4) {
+			image.data[i + 0] = array[counter];
+			image.data[i + 1] = array[counter];
+			image.data[i + 2] = array[counter];
+			image.data[i + 3] = 255;
+			counter++;
+			if (counter == array.length) {
+				counter = 0;
+			}
+		}
+		return image;
+		
+	} else if (! $.isArray(array[0][0])) {
+		// 2D array passed in
+		image = backCtx.createImageData(array.length, array.length);
+		var row = 0;
+		var col = 0;
+		for (var i=0;i<image.data.length;i += 4) {
+			image.data[i + 0] = array[row][col];
+			image.data[i + 1] = array[row][col];
+			image.data[i + 2] = array[row][col];
+			image.data[i + 3] = 255;
+			col++;
+			if (col == array[row].length) {
+				col = 0;
+				row++;
+			}
+		}
+		return image;
+	
+	} else {
+		// TODO: All of the 3D stuff
+		// 3D array passed in
+		if (array[0][0].length == 3) {
+			// RGB
+			
+		} else if(array[0][0].length == 4) {
+			//RGB and Alpha
+			
+		} else {
+			//Error
+			
+		}
+	}
+}
+
+function jglBltTexture(texture, xpos, ypos, rotation) {
+	var xcenter, ycenter;
+
+	if (xpos === undefined) {
+		if (screen.usingVisualAngles) {
+			xpos = -texture.width * screen.degPerPix/2;
+			xcenter = 0;
+		} else {
+			xpos = screen.width / 2 - texture.width/2;
+			xcenter = screen.width / 2;
+		}
+	} else {
+		xcenter = xpos;
+		if (screen.usingVisualAngles) {
+			xpos = xpos - (texture.width * screen.degPerPix) / 2;
+		} else {
+			xpos = xpos - texture.width / 2;
+		}
+	}
+	if (ypos === undefined) {
+		if (screen.usingVisualAngles) {
+			ypos = texture.height * screen.degPerPix / 2;
+			ycenter = 0;
+		} else {
+			ypos = screen.height / 2 - texture.height / 2
+			ycenter = screen.height / 2;
+		}
+	} else {
+		ycenter = ypos;
+		if (screen.usingVisualAngles) {
+			ypos = ypos + (texture.height * screen.degPerPix) / 2;
+		} else {
+			ypos = ypos - texture.height / 2;
+		}
+	}
+	if (rotation === undefined) {
+		rotation = 0;
+	}
+	var xtopLeft = (backCanvas.width / 2) + (xpos * screen.pixPerDeg);
+	var ytopLeft = (backCanvas.height / 2) - (ypos * screen.pixPerDeg);
+	
+	if (rotation != 0) {
+		var texCanvas = document.createElement('canvas');
+		texCanvas.width = screen.width;
+		texCanvas.height = screen.height;
+		var texCtx = texCanvas.getContext("2d");
+		if (screen.usingVisualAngles) {
+			texCtx.putImageData(texture, xtopLeft, ytopLeft);
+			backCtx.save();
+			backCtx.translate(backCanvas.width / 2, backCanvas.height / 2);
+			backCtx.rotate(rotation * 0.0174532925);
+			backCtx.drawImage(texCanvas, -backCanvas.width / 2, -backCanvas.height / 2);
+			backCtx.restore();
+		} else {
+			texCtx.putImageData(texture, xpos, ypos);
+
+		backCtx.save();
+		backCtx.translate(xcenter, ycenter);
+		backCtx.rotate(rotation * 0.0174532925);
+		backCtx.drawImage(texCanvas, -xcenter, -ycenter);
+		backCtx.restore();
+		}
+		return;
+	} else {
+		if (screen.usingVisualAngles) {
+			backCtx.putImageData(texture, xtopLeft, ytopLeft);
+		} else {
+			backCtx.putImageData(texture, xpos, ypos);
+		}
+	}
+
+}
 
 
 
