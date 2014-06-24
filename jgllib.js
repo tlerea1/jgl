@@ -236,7 +236,7 @@ function jglFixationCross(width, lineWidth, color, origin) {
 	if (arguments.length == 0) {
 		if (screen.usingVisualAngles) {
 			width = 1;
-			lineWidth = 0.1;
+			lineWidth = 0.04;
 			color = "#000000";
 			origin = [0 , 0];
 		} else {
@@ -321,13 +321,6 @@ function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
 		fontString = fontString.concat("italic ");
 	}
 	
-//	if (fontUnderline == 1) {
-//		fontString = fontString.concat("underline ");
-//	}
-//	
-//	if (fontStrikeThrough == 1) {
-//		fontString = fontString.concat("line-through ");
-//	} 
 	fontString = fontString.concat(fontSize, "px ", fontName);
 	backCtx.font = fontString;
 	backCtx.fillStyle = fontColor;
@@ -507,6 +500,13 @@ function jglScreenCoordinates() {
 
 //--------------------------Texture Functions-----------------------------------
 
+/**
+ * Function to make array starting at low,
+ * going to high, stepping by step.
+ * @param low The low bound of the array
+ * @param step the step between two elements of the array
+ * @param high the high bound of the array
+ */
 function jglMakeArray(low, step, high) {
 	if (low < high) {
 		var size = (high - low) / step;
@@ -528,7 +528,28 @@ function jglMakeArray(low, step, high) {
 	return null;
 }
 
+/**
+ * Function for generating jgl textures.
+ * This function does different things depending on
+ * what it is given. If a 1D array is passed in, 
+ * the array is replicated down to make a square and the
+ * resulting texture is returned, the texture is using grayscale.
+ * If a 2D array is passed, a greyscale texture is created and returned.
+ * If a 3D array is passed, if it is NxMx3 an RGB texture is returned,
+ * and if it is NxMx4 and RGB and Alpha texture is returned.
+ * @param array the array to pass in.
+ * @returns the texture
+ */
 function jglCreateTexture(array) {
+	
+	/* Note on how imageData's work.
+	 * ImageDatas are returned from createImageData,
+	 * they have an array called data. The data array is
+	 * a 1D array with 4 slots per pixel, R,G,B,Alpha. A
+	 * greyscale texture is created by making all RGB values
+	 * equals and Alpha = 255. The main job of this function
+	 * is to translate the given array into this data array.
+	 */
 	if (! $.isArray(array)) {
 		return;
 	}
@@ -568,17 +589,44 @@ function jglCreateTexture(array) {
 		return image;
 	
 	} else {
-		// TODO: All of the 3D stuff
 		// 3D array passed in
 		if (array[0][0].length == 3) {
 			// RGB
-			
+			image = backCtx.createImageData(array.length, array.length);
+			var row = 0;
+			var col = 0;
+			for (var i=0;i<image.data.length;i += 4) {
+				image.data[i + 0] = array[row][col][0];
+				image.data[i + 1] = array[row][col][1];
+				image.data[i + 2] = array[row][col][2];
+				image.data[i + 3] = 255;
+				col++;
+				if (col == array[row].length) {
+					col = 0;
+					row++;
+				}
+			}
+			return image;
 		} else if(array[0][0].length == 4) {
 			//RGB and Alpha
-			
+			image = backCtx.createImageData(array.length, array.length);
+			var row = 0;
+			var col = 0;
+			for (var i=0;i<image.data.length;i += 4) {
+				image.data[i + 0] = array[row][col][0];
+				image.data[i + 1] = array[row][col][1];
+				image.data[i + 2] = array[row][col][2];
+				image.data[i + 3] = array[row][col][3];
+				col++;
+				if (col == array[row].length) {
+					col = 0;
+					row++;
+				}
+			}
+			return image;
 		} else {
 			//Error
-			
+			throw "jglCreateTexture: invalid array dimensions";
 		}
 	}
 }
@@ -631,11 +679,13 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 		var texCtx = texCanvas.getContext("2d");
 		if (screen.usingVisualAngles) {
 			texCtx.putImageData(texture, xtopLeft, ytopLeft);
+			jglScreenCoordinates();
 			backCtx.save();
 			backCtx.translate(backCanvas.width / 2, backCanvas.height / 2);
 			backCtx.rotate(rotation * 0.0174532925);
 			backCtx.drawImage(texCanvas, -backCanvas.width / 2, -backCanvas.height / 2);
 			backCtx.restore();
+			jglVisualAngleCoordinates();
 		} else {
 			texCtx.putImageData(texture, xpos, ypos);
 
