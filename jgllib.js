@@ -23,6 +23,9 @@ var mouse;
 var stencilCanvas;
 var stencilCtx;
 
+var texCanvas;
+var texCtx;
+
 
 /**
  * Screen object, contains the canvases and other information
@@ -96,6 +99,11 @@ function jglOpen(resolution) {
 	stencilCanvas.width = screen.width;
 	stencilCanvas.height = screen.height;
 	stencilCtx = stencilCanvas.getContext("2d");
+	
+	texCanvas = document.createElement('canvas');
+	texCanvas.width = screen.width;
+	texCanvas.height = screen.height;
+	texCtx = texCanvas.getContext("2d");
 
 }
 
@@ -151,6 +159,12 @@ function jglFlush() {
 
 }
 
+/**
+ * Private function to swap the two buffers. 
+ * This is done by toggling both canvases (if hidden, shows, if shown, hides),
+ * then the values of canvas and backCanvas are swapped, as well as the values
+ * of context and backCtx.
+ */
 function screenSwapPrivate() {
 	$("#canvas").toggle();
 	$("#backCanvas").toggle();
@@ -162,6 +176,10 @@ function screenSwapPrivate() {
 	screen.backCanvas = temp;
 }
 
+/**
+ * Private function for clearing a context, written to shorten code.
+ * @param context the context to clear.
+ */
 function privateClearContext(context) {
 	if (screen.usingVisualAngles) {
 		context.clearRect(-screen.width / 2, -screen.height / 2, screen.width, screen.height);
@@ -170,6 +188,11 @@ function privateClearContext(context) {
 	}
 }
 
+/**
+ * Function to clear the front buffer, as well as set the background color.
+ * @param background the color to set the background to. param can be given
+ * as a number on the grayscale, 0-255 or an array of three numbers [r,g,b].
+ */
 function jglClearScreen(background) {
 	if (arguments.length != 0) {
 		var r, g, b;
@@ -188,8 +211,14 @@ function jglClearScreen(background) {
 	privateClearContext(screen.context);
 }
 
+/**
+ * Function to convert a number between 0-255 to hex.
+ * Includes zero padding so result.length always == 2
+ * @param number the number to convert
+ * @returns {String} the hex value of the number given
+ */
 function numToHex(number) {
-	var hex = number.toString(16);
+	var hex = number.toString(16); // returns the base 16 string version of the number
 	if (hex.length == 1) {
 		hex = "0" + hex;
 	}
@@ -296,12 +325,12 @@ function jglFixationCross(width, lineWidth, color, origin) {
 		if (screen.usingVisualAngles) {
 			width = 1;
 			lineWidth = 0.04;
-			color = "#000000";
+			color = "#ff0000";
 			origin = [0 , 0];
 		} else {
 			width = 20;
 			lineWidth = 1;
-			color = "#000000";
+			color = "#ff0000";
 			origin = [screen.backCanvas.width / 2 , backCanvas.height / 2];
 		}
 		
@@ -370,7 +399,16 @@ function jglWaitSecs(secs) {
 
 //-----------------------Text Functions------------------------
 
+/**
+ * Function to set the text params. Needs to be called right before jglTextDraw
+ * @param fontName the name of the font to use
+ * @param fontSize the size of the font to use
+ * @param fontColor the color of the font to use
+ * @param fontBold 1 for bold, 0 for not
+ * @param fontItalic 1 for italic, 0 for not
+ */
 function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
+	// fontString needs to be in a specific format, this function builds it.
 	var fontString = "";
 	if (fontBold == 1) {
 		fontString = fontString.concat("bold ");
@@ -483,9 +521,6 @@ function jglStencilCreateBegin(stencilNumber) {
 function jglStencilCreateEnd() {
 	screen.backCtx = screen.backCanvas.getContext("2d");
 	screen.drawingStencil = false;
-//	if (screen.usingVisualAngles) {
-//		jglVisualAngleCoordinates();
-//	}
 }
 
 /**
@@ -697,10 +732,24 @@ function jglCreateTexture(array) {
 	}
 }
 
+/**
+ * Function for drawing the given texture to screen. All params except texture
+ * are optional, defaults to center with 0 rotation.
+ * @param texture the texture to draw, should only pass something
+ * given by jglCreateTexture.
+ * @param xpos the x-coordinate to place the center of the texture.
+ * @param ypos the y-coordinate to place the center of the texture.
+ * @param rotation the rotation of the texture in degrees.
+ */
 function jglBltTexture(texture, xpos, ypos, rotation) {
+	
+	// Variables to keep track of the center, xpos and ypos will
+	// be used to keep track of the top left corner, which is needed
+	// by the canvas API.
 	var xcenter, ycenter;
 
 	if (xpos === undefined) {
+		// default to center
 		if (screen.usingVisualAngles) {
 			xpos = -texture.width * screen.degPerPix/2;
 			xcenter = 0;
@@ -708,8 +757,9 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 			xpos = screen.width / 2 - texture.width/2;
 			xcenter = screen.width / 2;
 		}
-	} else {
-		xcenter = xpos;
+	} else { // center is given
+		xcenter = xpos; // remember given center
+		// determine top left corner given size of texture
 		if (screen.usingVisualAngles) {
 			xpos = xpos - (texture.width * screen.degPerPix) / 2;
 		} else {
@@ -717,6 +767,7 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 		}
 	}
 	if (ypos === undefined) {
+		// default to center
 		if (screen.usingVisualAngles) {
 			ypos = texture.height * screen.degPerPix / 2;
 			ycenter = 0;
@@ -724,42 +775,55 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 			ypos = screen.height / 2 - texture.height / 2
 			ycenter = screen.height / 2;
 		}
-	} else {
-		ycenter = ypos;
+	} else { // center is given
+		ycenter = ypos; // remember given center
+		// determine top left corner given size of texture
 		if (screen.usingVisualAngles) {
 			ypos = ypos + (texture.height * screen.degPerPix) / 2;
 		} else {
 			ypos = ypos - texture.height / 2;
 		}
 	}
-	if (rotation === undefined) {
+	
+	if (rotation === undefined) { // default to 0 rotation
 		rotation = 0;
 	}
+	
+	// x and y coordinates of the top left corner in pixels, will only be used, 
+	// if visualAngles are being used, meaning that xpos and ypos are in degrees
 	var xtopLeft = (backCanvas.width / 2) + (xpos * screen.pixPerDeg);
 	var ytopLeft = (backCanvas.height / 2) - (ypos * screen.pixPerDeg);
 
-	var texCanvas = document.createElement('canvas');
-	texCanvas.width = screen.width;
-	texCanvas.height = screen.height;
-	var texCtx = texCanvas.getContext("2d");
-	if (screen.usingVisualAngles) {
-		texCtx.putImageData(texture, xtopLeft, ytopLeft);
-		jglScreenCoordinates();
-		screen.backCtx.save();
-		screen.backCtx.translate(backCanvas.width / 2, backCanvas.height / 2);
-		screen.backCtx.rotate(rotation * 0.0174532925);
-		screen.backCtx.drawImage(texCanvas, -backCanvas.width / 2, -backCanvas.height / 2);
-		screen.backCtx.restore();
-		jglVisualAngleCoordinates();
-	} else {
-		texCtx.putImageData(texture, xpos, ypos);
+	// need another canvas to put the ImageData to so that stenciling and Alpha will work
+	// since drawImage will be allow for those things, but putImageData will not. So,
+	// the texture is drawn to the texCtx, and then the texCtx is drawn to the back buffer.
 
+	if (screen.usingVisualAngles) {
+		xcenter = xcenter * screen.pixPerDeg;
+		xcenter = screen.width / 2 + xcenter;
+		
+		ycenter = ycenter * screen.pixPerDeg;
+		ycenter = screen.width / 2 - ycenter;
+		
+		texCtx.putImageData(texture, xtopLeft, ytopLeft); // draws texture to texCtx
+		jglScreenCoordinates(); // switch to screenCoordinates to make image placement easier
 		screen.backCtx.save();
-		screen.backCtx.translate(xcenter, ycenter);
-		screen.backCtx.rotate(rotation * 0.0174532925);
+		screen.backCtx.translate(xcenter, ycenter); // translate to rotate about the center of the texture
+		screen.backCtx.rotate(rotation * 0.0174532925); // rotate uses radians, must convert
+		screen.backCtx.drawImage(texCanvas, -xcenter, -ycenter); // draw image, 
+		// The translate means that the top left corner is -width/2, -height/2
+		screen.backCtx.restore(); // restore back to factory settings
+		jglVisualAngleCoordinates(); // go back to visualAngleCoordinates
+	} else {
+		// put texture on texCtx
+		texCtx.putImageData(texture, xpos, ypos);
+		screen.backCtx.save();
+		screen.backCtx.translate(xcenter, ycenter); //rotate about the center of the texture 
+		screen.backCtx.rotate(rotation * 0.0174532925); // rotate in degrees
 		screen.backCtx.drawImage(texCanvas, -xcenter, -ycenter);
 		screen.backCtx.restore();
 	}
+	texCtx.clearRect(0,0,screen.width, screen.height); // clear texCtx
 
 
 }
