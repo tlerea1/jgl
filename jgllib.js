@@ -672,7 +672,7 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 	var xtopLeft = (backCanvas.width / 2) + (xpos * screen.pixPerDeg);
 	var ytopLeft = (backCanvas.height / 2) - (ypos * screen.pixPerDeg);
 	
-	if (rotation != 0) {
+//	if (rotation != 0) {
 		var texCanvas = document.createElement('canvas');
 		texCanvas.width = screen.width;
 		texCanvas.height = screen.height;
@@ -696,13 +696,13 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 		backCtx.restore();
 		}
 		return;
-	} else {
-		if (screen.usingVisualAngles) {
-			backCtx.putImageData(texture, xtopLeft, ytopLeft);
-		} else {
-			backCtx.putImageData(texture, xpos, ypos);
-		}
-	}
+//	} else {
+//		if (screen.usingVisualAngles) {
+//			backCtx.putImageData(texture, xtopLeft, ytopLeft);
+//		} else {
+//			backCtx.putImageData(texture, xpos, ypos);
+//		}
+//	}
 
 }
 
