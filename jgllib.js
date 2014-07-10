@@ -6,8 +6,8 @@
  * 
  */
 
-/** Canvas to be drawn on must have id="canvas"
- * 
+/** 
+ * HTML page must have a div element with class="jgl"
  */
 
 
@@ -31,7 +31,7 @@ var texCtx;
  * Screen object, contains the canvases and other information
  * @constructor
  */
-function Screen() {	
+function Canvas() {	
 	this.canvas = document.getElementById("canvas");
 	this.context = canvas.getContext("2d"); // main on-screen context
 	this.backCanvas = document.getElementById("backCanvas");
@@ -84,7 +84,7 @@ function jglOpen(resolution) {
 	$(".jgl").append("<div style=\"position: relative;\"><canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"600\" height=\"600\"></canvas>"
 			+ "<canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"backCanvas\" width=\"600\" height=\"600\"></canvas> </div>");
 	$("#backCanvas").hide();
-	screen = new Screen();
+	screen = new Canvas();
 	mouse = new Mouse();
 	mouseSetup(mouse);
 	screen.ppi = resolution;
@@ -442,7 +442,7 @@ function jglTextDraw(text, x, y) {
  * fields. buttons is a logical array, 1 means that button
  * is pressed.
  */
-function jglGetMouse() {
+var jglGetMouse = function jglGetMouse() {
 	return mouse;
 }
 
@@ -466,6 +466,10 @@ function jglOnKeyDown(keyDownEventCallback) {
 	$(window).keyDown(function(event) {
 		keyDownEventCallback(event);
 	});
+}
+
+var jglGetKeys = function jglGetKeys() {
+	return KeyboardJS.activeKeys();
 }
 
 
@@ -610,7 +614,7 @@ function jglScreenCoordinates() {
  */
 function jglMakeArray(low, step, high) {
 	if (low < high) {
-		var size = (high - low) / step;
+		var size = Math.floor((high - low) / step);
 		var array = new Array(size);
 		array[0] = low;
 		for (var i=1;i<array.length;i++) {
@@ -618,7 +622,7 @@ function jglMakeArray(low, step, high) {
 		}
 		return array;
 	} else if (low > high) {
-		var size = (low - high) / step;
+		var size = Math.floor((low - high) / step);
 		var array = new Array(size);
 		array[0] = low;
 		for (var i=1;i<array.length;i++) {
