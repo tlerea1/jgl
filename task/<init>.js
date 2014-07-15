@@ -128,6 +128,9 @@ function isEmpty(array) {
 	if ($.isArray(array)) {
 		return array.length == 0;
 	}
+	if (array === Infinity || array === NaN) {
+		return true;
+	}
 	console.log("isEmpty: used with non-array");
 	return false;
 }
@@ -188,4 +191,96 @@ function diff(array) {
 		tempArray[i-1] = array[i] - array[i-1];
 	}
 	return tempArray;
+}
+
+function index(master, slave, logical) {
+	var tempArray = [];
+
+	if (logical) {
+		for (var i=0;i<slave.length;i++) {
+			if (slave[i] == 1) {
+				tempArray.push(master[i]);
+			}
+		}
+	} else {
+		for (var i =0;i<slave.length;i++) {
+			tempArray.push(master[slave[i]]);
+		}
+	}
+	return tempArray;
+}
+
+function isEqual(first, second) {
+	if (first.length != second.length) {
+		return false;
+	}
+	for (var i =0;i<first.length;i++) {
+		if (first[i] != second[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+function find(array) {
+	var tempArray = [];
+	for (var i =0;i<array.length;i++) {
+		if (array[i] != 0) {
+			tempArray.push(i);
+		}
+	}
+	return tempArray;
+}
+
+function unique(A) {
+	var set = new Set();
+	var C = [];
+	var IA = [];
+	var IC = [];
+	for (var i=0;i<A.length;i++) {
+		if (! set.contains(A[i])) {
+			set.insert(A[i]);
+		}
+	}
+	C = set.toArray();
+	C = C.sort();
+	for (var i = 0;i<C.length;i++) {
+		IA.push(A.indexOf(C[i]));
+	}
+	for (var i =0;i<A.length;i++) {
+		IC.push(C.indexOf(A[i]));
+	}
+
+	return [C, IA, IC];
+}
+
+function gatherFields(array, field) {
+	var tempArray = new Array(array.length);
+	for (var i=0;i<tempArray.length;i++) {
+		tempArray[i] = eval("array[i]." + field);
+	}
+	return tempArray;
+}
+
+function equals(array, val) {
+	var temp = zeros(array.length);
+	for (var i = 0;i< array.length;i++) {
+		if (array[i] === val) {
+			temp[i] = 1;
+		}
+	}
+	return temp;
+}
+
+function nan(length) {
+	return fillArray(NaN, length);
+}
+
+function add(first, second) {
+	if (first.length != second.length) {
+		throw "array add, dimensions don't agree";
+	}
+	return jQuery.map(first, function(n, i) {
+		return n + second[i];
+	});
 }

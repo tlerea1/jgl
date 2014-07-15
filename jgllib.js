@@ -613,6 +613,10 @@ function jglScreenCoordinates() {
  * @param high the high bound of the array
  */
 function jglMakeArray(low, step, high) {
+	if (step === undefined) {
+		step = 1;
+	}
+	
 	if (low < high) {
 		var size = Math.floor((high - low) / step);
 		var array = new Array(size);
