@@ -24,7 +24,7 @@ function Phase() {
 	this.private;
 	this.randVars;
 	this.thisblock;
-	this.random;
+	this.genRandom;
 }
 
 /**
@@ -568,7 +568,8 @@ function seglenPrecompute(task) {
 	}
 	
 	console.log("init Task: Computing " + numTrials + " trials with average length " + averageLen);
-	var trialLength, seglen, newTrialLength;
+	var trialLength = [], seglen, newTrialLength;
+	task.seglenPrecompute.seglen = [];
 	for (var i = 0;i < numTrials;i++) {
 		var temp = getTaskSeglen(task);
 		seglen = temp[0];
@@ -600,7 +601,7 @@ function seglenPrecompute(task) {
 		seglen = temp[0];
 		task = temp[1];
 		
-		temp = computeTrialLen(seglen, task.synchToVol, frmaePeriod, synchWaitBeforeTime);
+		temp = computeTrialLen(seglen, task.synchToVol, framePeriod, synchWaitBeforeTime);
 		newTrialLength = temp[0];
 		seglen = temp[1];
 		var newDiffFromIdeal = numTrials*averageLen-
@@ -608,7 +609,7 @@ function seglenPrecompute(task) {
 					+ newTrialLength);
 		
 		if ((Math.abs(newDiffFromIdeal) < Math.abs(diffFromIdeal)) || (rand(task) < 0.1)) {
-			trialLength(randTrialNum) = newTrialLength;
+			trialLength[randTrialNum] = newTrialLength;
 			task.seglenPrecompute.seglen[randTrialNum] = seglen;
 			diffFromIdeal = newDiffFromIdeal;
 		}
@@ -688,28 +689,80 @@ function seglenPrecompute(task) {
 	if (! task.seglenPrecompute.hasOwnProperty("totalLength")) {
 		task.seglenPrecompute.totalLength = sum(trialLength);
 	}
+	
+	return task;
 }
 
 function computeTrialLen(seglen, synchToVol, framePeriod, synchWaitBeforeTime) {
 	var seglenSynch = seglen;
-	var find = find(synchToVol);
-	for (var i = 0;i < find.length;i++) {
-		seglenSynch[find[i]] = Math.ceil(sum(index(seglenSynch, jglMakeArray(1, undefined, find[i]), false)) / framePeriod - sum(index(seglenSynch, jglMakeArray(1, undefined, find[i]-1), false));
+	var findArray = find(synchToVol);
+	for (var i = 0;i < findArray.length;i++) {
+		seglenSynch[findArray[i]] = Math.ceil(sum(index(seglenSynch, jglMakeArray(1, undefined, findArray[i]), false)) / framePeriod)*framePeriod - sum(index(seglenSynch, jglMakeArray(1, undefined, findArray[i]-1), false));
 	}
 	var trialLen = sum(seglenSynch);
-	find = find(synchToVol);
-	for (var i = 0; i < find.length;i++) {
-		if (seglenSynch[find[i]] > synchWaitBeforeTime) {
-			seglen[find[i]] = Math.min(seglen[find[i]], seglenSynch[find[i]] - synchWaitBeforeTime);
+	findArray = find(synchToVol);
+	for (var i = 0; i < findArray.length;i++) {
+		if (seglenSynch[findArray[i]] > synchWaitBeforeTime) {
+			seglen[findArray[i]] = Math.min(seglen[findArray[i]], seglenSynch[findArray[i]] - synchWaitBeforeTime);
 		}
 	}
 	return [trialLen, seglen];
 }
 
-function computeLenProb(segmin, segmax, lenmin, lenmax) {
-	
-}
+//function computeLenProb(segmin, segmax, lenmin, lenmax) {
+//	
+//}
 
 function seglenPrecomputeValidate(task) {
+	if (task.seglenPrecompute === false) {
+		return;
+	}
 	
+	if (typeof task.seglenPrecompute != "object") {
+		console.error("init Task: seglenPrecomputeValidate task.seglenPrecompute should be an object");
+		throw "init Task";
+	}
+	
+	if (! task.seglenPrecompute.hasOwnProperty("seglen")) {
+		console.error("init Task: seglenPrecompute must have the field seglen");
+		throw "init Task";
+	}
+	
+	task.seglenPrecompute.fieldNames = fields(task.seglenPrecompute);
+	task.seglenPrecompute.nFields = task.seglenPrecompute.fieldNames.length;
+	
+	var x = {};
+	
+	for (var i = 0;i<task.seglenPrecompute.nFields;i++) {
+		x.vals = eval("task.seglenPrecompute." + task.seglenPrecompute.fieldNames[i]);
+		$.isArray(x.vals) ? x.nTrials = x.vals.length : x.nTrials = 1;
+		eval("task.seglenPrecompute." + task.seglenPrecompute.fieldNames[i] + " = x");
+	}
+	
+	task.seglenPrecompute.fieldNames.splice(task.seglenPrecompute.fieldNames.indexOf('seglen'), 1);
+	task.seglenPrecompute.nFields--;
+	
+	task.numsegs = 0;
+	
+	for (var i = 0; i<task.seglenPrecompute.seglen.nTrials;i++) {
+		task.numsegs = Math.max(task.numsegs, task.seglenPrecompute.seglen.vals[i].length);
+	}
+	
+	if (! task.hasOwnProperty('synchToVol') || task.synchToVol.length < task.numsegs) {
+		arrayPad(task.synchToVol, task.numsegs, 0);
+	}
+	
+	if (! task.hasOwnProperty('segquant') || task.segquant.length < task.numsegs) {
+		arrayPad(task.segquant, task.numsegs, 0);
+	}
+	
+	if (! task.hasOwnProperty('segdur') || task.segdur.length < task.numsegs) {
+		arrayPad(task.segdur, task.numsegs, []);
+	}
+	
+	if (! task.hasOwnProperty('segprob') || task.segprob.length < task.numsegs) {
+		arrayPad(task.segprob, task.numsegs, []);
+	}
+	
+	return task;
 }

@@ -634,7 +634,7 @@ function jglMakeArray(low, step, high) {
 		}
 		return array;
 	}
-	return null;
+	return [low];
 }
 
 /**

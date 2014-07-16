@@ -274,12 +274,192 @@ function equals(array, val) {
 
 function nan(length) {
 	return fillArray(NaN, length);
-}/**
+}
+
+function add(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array add, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n + second[i];
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n + second;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return n + first;
+		});
+	} else {
+		return [first + second];
+	}
+}
+
+function subtract(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array subtract, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n - second[i];
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n - second;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return n - first;
+		});
+	} else {
+		return [first - second];
+	}
+}
+
+function multiply(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array multiply, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n * second[i];
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n * second;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return n * first;
+		});
+	} else {
+		return [first * second];
+	}
+}
+
+function divide(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array divide, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n / second[i];
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n / second;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return n / first;
+		});
+	} else {
+		return [first / second];
+	}
+}
+
+function floor(val) {
+	if ($.isArray(val)) {
+		return jQuery.map(val, function(n, i) {
+			return Math.floor(n);
+		});
+	} else {
+		return Math.floor(val);
+	}
+}
+
+function isinf(val) {
+	if ($.isArray(val)) {
+		return jQuery.map(val, function(n,i) {
+			if (isFinite(n)) {
+				return 0;
+			}
+			return 1;
+		});
+	} else {
+		return isFinite(val) ? 0 : 1;
+	}
+}
+
+function isnan(val) {
+	if ($.isArray(val)) {
+		return jQuery.map(val, function(n,i) {
+			return isNaN(n) ? 1 : 0;
+		});
+	}
+	return isNaN(val) ? 1 : 0;
+}
+
+function or(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array or, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n | second[i];
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n | second;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return n | first;
+		});
+	} else {
+		return [first | second];
+	}
+}
+
+function greaterThan(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array or, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n > second[i] ? 1 : 0;
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n > second ? 1 : 0;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return first > n ? 1 : 0;
+		});
+	} else {
+		return first > second ? 1 : 0;
+	}
+}
+
+
+/**
  * 
  */
 
 function getTaskSeglen(task) {
 	
+	var seglen;
+	if (task.timeInTicks || task.timeInVols) {
+		seglen = add(task.segmin, floor(multiply(rand(numel(task.segmax)), (add(subtract(task.segmax, task.segmin), 1)))));
+	} else {
+		seglen = add(task.segmin, multiply(rand(task, numel(task.segmax)), subtract(task.segmax, task.segmin)));
+		var temp = find(or(isinf(task.segmin), isinf(task.segmax)));
+		jQuery.map(temp, function(n,i) {
+			seglen[n] = Infinity;
+		});
+	}
+	
+	var nansegs = find(isnan(seglen));
+	if (! isEmpty(nansegs)) {
+		for (var i=0;i<nansegs.length;i++) {
+			seglen[nansegs[i]] = task.segdur[nansegs[i]][sum(greaterThan(rand(task), task.segprob[nansegs[i]]))];
+		}
+	}
+	return [seglen, task];
+	// TODO: line 44 randstate
 }
 /**
  * @constructor
@@ -357,7 +537,7 @@ function Phase() {
 	this.private;
 	this.randVars;
 	this.thisblock;
-	this.random;
+	this.genRandom;
 }
 
 /**
@@ -901,7 +1081,8 @@ function seglenPrecompute(task) {
 	}
 	
 	console.log("init Task: Computing " + numTrials + " trials with average length " + averageLen);
-	var trialLength, seglen, newTrialLength;
+	var trialLength = [], seglen, newTrialLength;
+	task.seglenPrecompute.seglen = [];
 	for (var i = 0;i < numTrials;i++) {
 		var temp = getTaskSeglen(task);
 		seglen = temp[0];
@@ -933,7 +1114,7 @@ function seglenPrecompute(task) {
 		seglen = temp[0];
 		task = temp[1];
 		
-		temp = computeTrialLen(seglen, task.synchToVol, frmaePeriod, synchWaitBeforeTime);
+		temp = computeTrialLen(seglen, task.synchToVol, framePeriod, synchWaitBeforeTime);
 		newTrialLength = temp[0];
 		seglen = temp[1];
 		var newDiffFromIdeal = numTrials*averageLen-
@@ -941,7 +1122,7 @@ function seglenPrecompute(task) {
 					+ newTrialLength);
 		
 		if ((Math.abs(newDiffFromIdeal) < Math.abs(diffFromIdeal)) || (rand(task) < 0.1)) {
-			trialLength(randTrialNum) = newTrialLength;
+			trialLength[randTrialNum] = newTrialLength;
 			task.seglenPrecompute.seglen[randTrialNum] = seglen;
 			diffFromIdeal = newDiffFromIdeal;
 		}
@@ -1021,39 +1202,111 @@ function seglenPrecompute(task) {
 	if (! task.seglenPrecompute.hasOwnProperty("totalLength")) {
 		task.seglenPrecompute.totalLength = sum(trialLength);
 	}
+	
+	return task;
 }
 
 function computeTrialLen(seglen, synchToVol, framePeriod, synchWaitBeforeTime) {
 	var seglenSynch = seglen;
-	
-	for (var i = 0;i < find(synchToVol).length;i++) {
-		
+	var findArray = find(synchToVol);
+	for (var i = 0;i < findArray.length;i++) {
+		seglenSynch[findArray[i]] = Math.ceil(sum(index(seglenSynch, jglMakeArray(1, undefined, findArray[i]), false)) / framePeriod)*framePeriod - sum(index(seglenSynch, jglMakeArray(1, undefined, findArray[i]-1), false));
 	}
+	var trialLen = sum(seglenSynch);
+	findArray = find(synchToVol);
+	for (var i = 0; i < findArray.length;i++) {
+		if (seglenSynch[findArray[i]] > synchWaitBeforeTime) {
+			seglen[findArray[i]] = Math.min(seglen[findArray[i]], seglenSynch[findArray[i]] - synchWaitBeforeTime);
+		}
+	}
+	return [trialLen, seglen];
 }
 
-function computeLenProb(segmin, segmax, lenmin, lenmax) {
-	
-}
+//function computeLenProb(segmin, segmax, lenmin, lenmax) {
+//	
+//}
 
 function seglenPrecomputeValidate(task) {
+	if (task.seglenPrecompute === false) {
+		return;
+	}
 	
+	if (typeof task.seglenPrecompute != "object") {
+		console.error("init Task: seglenPrecomputeValidate task.seglenPrecompute should be an object");
+		throw "init Task";
+	}
+	
+	if (! task.seglenPrecompute.hasOwnProperty("seglen")) {
+		console.error("init Task: seglenPrecompute must have the field seglen");
+		throw "init Task";
+	}
+	
+	task.seglenPrecompute.fieldNames = fields(task.seglenPrecompute);
+	task.seglenPrecompute.nFields = task.seglenPrecompute.fieldNames.length;
+	
+	var x = {};
+	
+	for (var i = 0;i<task.seglenPrecompute.nFields;i++) {
+		x.vals = eval("task.seglenPrecompute." + task.seglenPrecompute.fieldNames[i]);
+		$.isArray(x.vals) ? x.nTrials = x.vals.length : x.nTrials = 1;
+		eval("task.seglenPrecompute." + task.seglenPrecompute.fieldNames[i] + " = x");
+	}
+	
+	task.seglenPrecompute.fieldNames.splice(task.seglenPrecompute.fieldNames.indexOf('seglen'), 1);
+	task.seglenPrecompute.nFields--;
+	
+	task.numsegs = 0;
+	
+	for (var i = 0; i<task.seglenPrecompute.seglen.nTrials;i++) {
+		task.numsegs = Math.max(task.numsegs, task.seglenPrecompute.seglen.vals[i].length);
+	}
+	
+	if (! task.hasOwnProperty('synchToVol') || task.synchToVol.length < task.numsegs) {
+		arrayPad(task.synchToVol, task.numsegs, 0);
+	}
+	
+	if (! task.hasOwnProperty('segquant') || task.segquant.length < task.numsegs) {
+		arrayPad(task.segquant, task.numsegs, 0);
+	}
+	
+	if (! task.hasOwnProperty('segdur') || task.segdur.length < task.numsegs) {
+		arrayPad(task.segdur, task.numsegs, []);
+	}
+	
+	if (! task.hasOwnProperty('segprob') || task.segprob.length < task.numsegs) {
+		arrayPad(task.segprob, task.numsegs, []);
+	}
+	
+	return task;
 }/**
  * 
  */
 
-function rand(task) {
-	if (! task.hasOwnProperty("random")) {
-		task.random = {};
-		task.random.current = 0;
-		task.random.nums = new Array(32);
-		for (var i =0;i<task.random.nums.length;i++) {
-			task.random.nums = Math.random();
+function rand(task, length) {
+	if (! task.hasOwnProperty("genRandom")) {
+		task.genRandom = {};
+		task.genRandom.current = 0;
+		task.genRandom.nums = new Array(32);
+		for (var i =0;i<task.genRandom.nums.length;i++) {
+			task.genRandom.nums[i] = Math.random();
 		}
 	}
-	if (task.random.current == task.random.nums.length) {
-		task.random.nums = randomResize(task.random.nums);
+	if (length === undefined) {
+		if (task.genRandom.current == task.genRandom.nums.length) {
+			task.genRandom.nums = randomResize(task.genRandom.nums);
+		}
+
+		return task.genRandom.nums[task.genRandom.current++];
+	} else {
+		while (task.genRandom.current + length >= task.genRandom.nums.length) {
+			task.genRandom.nums = randomResize(task.genRandom.nums);
+		}
+		var temp = new Array(length);
+		for (var i=0;i<length;i++) {
+			temp[i] = task.genRandom.nums[task.genRandom.current++];
+		}
+		return temp;
 	}
-	return task.random.nums[task.random.current++];
 }
 
 function randomResize(array) {

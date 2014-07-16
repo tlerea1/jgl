@@ -16,10 +16,20 @@ function Set() {
 		return -1;
 	}
 	
+	/**
+	 * Function to see if the set contains the given val.
+	 * @param val the value to check
+	 * @returns {Boolean} true if contains, false if not
+	 */
 	this.contains = function(val) {
 		return find(val) > -1;
 	}
 	
+	/**
+	 * Function to insert a value into the set.
+	 * @param val the value to insert
+	 * @returns {Boolean} true if succeeded, false if not
+	 */
 	this.insert = function(val) {
 		if (! this.contains(val)) {
 			data[count++] = val;
@@ -28,6 +38,11 @@ function Set() {
 		return false;
 	}
 	
+	/**
+	 * Function to remove a value from the set.
+	 * @param val the value to remove
+	 * @returns {Boolean} true if removed, false if not found
+	 */
 	this.remove = function(val) {
 		if (this.contains(val)) {
 			data.splice(find(val), 1);
@@ -37,6 +52,10 @@ function Set() {
 		return false;
 	}
 	
+	/**
+	 * Function to grab the contents of the set.
+	 * @returns {Array} an array with all the values contained by the set
+	 */
 	this.toArray = function() {
 		var tempArray = new Array(data.length);
 		
