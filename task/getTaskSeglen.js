@@ -1,5 +1,7 @@
 /**
- * Function to get task seglen
+ * Function to get task seglen.
+ * @param task the task object.
+ * @returns {Array} [seglen, task]
  */
 function getTaskSeglen(task) {
 	
