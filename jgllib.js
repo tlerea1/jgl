@@ -49,6 +49,8 @@ function Canvas() {
 	this.usingVisualAngles = false; // Is the drawing in visualAngles?
 	this.usingVisualAnglesStencil = false; // Is the stencil using visualAngles?
 	this.backgroundColor = "#ffffff";
+	this.lastFlushTime = 0;
+	this.frameRate = 60;
 }
 
 function Mouse() {
@@ -156,7 +158,45 @@ function jglFlush() {
 		screen.backCtx.restore();
 		screenSwapPrivate();
 	}
+	
+	screen.lastFlushTime = jglGetSecs();
 
+}
+
+function jglFlushAndWait() {
+	var lastFlushTime = screen.lastFlushTime;
+	
+	var frameRate = screen.frameRate;
+	
+	if (isEmpty(frameRate)) {
+		console.error("jglFushAndWait: No frameRate set");
+		return;
+	}
+	
+	var frameTime = 1 / frameRate;
+	
+	jglFlush();
+	
+	jglWaitSecs(frameTime - jglGetSecs(lastFlushTime));
+	
+	screen.lastFlushTime =  jglGetSecs();
+}
+
+function jglNoFlushWait() {
+	var lastFlushTime = screen.lastFlushTime;
+	
+	var frameRate = screen.frameRate;
+	
+	if (isEmpty(frameRate)) {
+		console.error("jglFlushAndWait: no framerate set");
+		return;
+	}
+	
+	var frameTime = 1 / frameRate;
+	
+	jglWaitSecs(frameTime - jglGetSecs(lastFlushTime));
+	
+	screen.lastFlushTime = jglGetSecs();
 }
 
 /**
@@ -379,9 +419,14 @@ function jglPolygon(x, y, color) {
  * Gets the current seconds since Jan 1st 1970.
  * @return Returns the seconds value;
  */
-function jglGetSecs() {
-	var d = new Date();
-	return d.getTime() / 1000;
+function jglGetSecs(t0) {
+	if (t0 === undefined) {
+		var d = new Date();
+		return d.getTime() / 1000;
+	} else {
+		var d = new Date();
+		return (d.getTime() / 1000) - t0;
+	}
 }
 
 /**
@@ -834,6 +879,15 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 	texCtx.clearRect(0,0,screen.width, screen.height); // clear texCtx
 
 
+}
+
+
+function jglGetParam(str) {
+	return eval("screen." + str);
+}
+
+function jglSetParam(param, val) {
+	eval("screen." + param + " = " + val);
 }
 
 

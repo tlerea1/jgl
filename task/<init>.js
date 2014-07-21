@@ -125,6 +125,10 @@ function isEmpty(array) {
 	if (array === undefined) {
 		return true;
 	}
+	
+	if (array === null) {
+		return true;
+	}
 	if ($.isArray(array)) {
 		return array.length == 0;
 	}
@@ -508,6 +512,33 @@ function or(first, second) {
 }
 
 /**
+ * Function to calculate an element bit wise and. works with logical inputs. Inputs can be Arrays or Numbers.
+ * @param first the first input
+ * @param second the second input
+ * @returns {Array} returns an array of element bit wise ands of the inputs. 
+ */
+function and(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array or, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n & second[i];
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n & second;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return n & first;
+		});
+	} else {
+		return [first & second];
+	}
+}
+
+/**
  * Function to generate a logical array from element wise checking greater than between first and second.
  * @param first the first item. can be a Number or Array
  * @param second the second item. can be a Number or Array
@@ -531,6 +562,52 @@ function greaterThan(first, second) {
 		});
 	} else {
 		return first > second ? [1] : [0];
+	}
+}
+
+function mean(array) {
+	if (array.length == 0) {
+		return 0;
+	}
+	var sum = 0, count = 0;
+	for (var i =0 ;i<array.length;i++) {
+		sum += array[i];
+		count++;
+	}
+	return sum / count;
+	
+}
+
+/**
+ * Function for generating a random integer.
+ * @param task the task object from which to grab random numbers
+ * @param low the low bound. inclusive
+ * @param high the high bound, exclusive
+ * @returns {Number} random integer between low and high
+ */
+function randInt(task, low, high) {
+	return Math.round(rand(task) * (high - low - 1)) + low;
+}
+
+function randPerm(task, length) {
+	var array = jglMakeArray(0, 1, length);
+	var randy;
+	for (var i = 0;i<array.length - 1;i++) {
+		randy = randInt(task, i, array.length);
+		var temp = array[randy];
+		array[randy] = array[i];
+		array[i] = temp;
+	}
+	return array;
+}
+
+function size(val) {
+	if ($.isArray(val)) {
+		return val.length;
+	} else if (val != undefined && val != null) {
+		return 1;
+	} else {
+		return 0;
 	}
 }
 

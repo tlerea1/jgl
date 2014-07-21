@@ -25,6 +25,7 @@ function Phase() {
 	this.randVars;
 	this.thisblock;
 	this.genRandom;
+	this.usingScreen;
 }
 
 /**
@@ -127,7 +128,7 @@ function initTask(task, myscreen, startSegmentCallback,
 		
 		if (! task.hasOwnProperty("segdur") || task.segdur.length < task.segmin.length) {
 			task.segdur = [];
-			task.segdur[task.segmin.length - 1] = [];
+			task.segdur = arrayPad(task.segdur, task.segmin.length, []);
 		} else if (task.segdur.length > task.segmin.length) {
 			task.segmin = arrayPad(task.segmin, task.segdur.length, NaN);
 			task.segmax = arrayPad(task.segmax, task.segdur.length, NaN);
@@ -141,7 +142,7 @@ function initTask(task, myscreen, startSegmentCallback,
 		
 		if (! task.hasOwnProperty("segprob") || task.segprob.length < task.segmin.length) {
 			task.segprob = [];
-			task.segprob[task.segmin.length - 1] = [];
+			task.segprob = arrayPad(task.segprob, task.segmin.length, []);
 		}
 		
 		for (var i=0;i<task.segmin.length;i++) {
@@ -205,6 +206,14 @@ function initTask(task, myscreen, startSegmentCallback,
 				}
 			}
 		}
+	}
+	
+	if (! task.hasOwnProperty("usingScreen")) {
+		task.usingScreen = 0;
+	}
+	
+	if (! task.hasOwnProperty("block")) {
+		task.block = [];
 	}
 	
 	if (! task.hasOwnProperty("timeInTicks")) {
@@ -286,7 +295,7 @@ function initTask(task, myscreen, startSegmentCallback,
 	
 	task.parameter.doRandom_ = task.random;
 	
-	task.trialnum = 1;
+	task.trialnum = 0;
 	task.trialnumTotal = 0;
 	
 	myscreen.numTasks += 1;
@@ -301,6 +310,38 @@ function initTask(task, myscreen, startSegmentCallback,
 		task.data.trace.mouse = [];
 		task.data.trace.keyboard = [];
 	}
+	
+	if (! task.hasOwnProperty("segmentTrace")) {
+		if (myscreen.numTasks == 1) {
+			task.segmentTrace = 2;
+		} else {
+			var temp = addTraces(task, myscreen, 'segment');
+			task = temp[0];
+			myscreen = temp[1];
+		}
+	}
+	
+	if (! task.hasOwnProperty("responseTrace")) {
+		if (myscreen.numTasks == 1) {
+			task.segmentTrace = 3;
+		} else {
+			var temp = addTraces(task, myscreen, 'response');
+			task = temp[0];
+			myscreen = temp[1];
+		}
+	}
+	
+	if (! task.hasOwnProperty("phaseTrace")) {
+		if (myscreen.numTasks == 1) {
+			task.segmentTrace = 4;
+		} else {
+			var temp = addTraces(task, myscreen, 'phase');
+			task = temp[0];
+			myscreen = temp[1];
+		}
+	}
+	
+	myscreen = writeTrace(1, task.phaseTrace, myscreen);
 	
 	if (! task.hasOwnProperty("callback")) {
 		task.callback = {};
@@ -333,10 +374,11 @@ function initTask(task, myscreen, startSegmentCallback,
 	if (randCallback != undefined && jQuery.isFunction(randCallback)) {
 		task.callback.rand = randCallback;
 	} else {
-		//TODO: didnt get line 496
+		task.callback.rand = blockRandomization;
 	}
 	
-	//TODO: skipped line 510
+	
+	task.parameter = task.callback.rand(task, task.parameter);
 	
 	if (task.hasOwnProperty("seglenPrecompute")) {
 		if (typeof task.seglenPrecompute != "object") {
@@ -354,7 +396,7 @@ function initTask(task, myscreen, startSegmentCallback,
 	}
 	
 	//TODO: didnt setup randstate stuff
-	
+	return [task, myscreen];
 }
 
 function seglenPrecompute(task) {
