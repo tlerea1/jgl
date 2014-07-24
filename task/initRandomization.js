@@ -31,7 +31,7 @@ function initRandomization(parameter) {
 		parameter.size_[i] = paramsize;
 	}
 	
-	parameter.totalN_ = sum(parameter.size_); //TODO: verify that this makes sense 
+	parameter.totalN_ = prod(parameter.size_); //TODO: verify that this makes sense 
 	
 	return [parameter, alreadyInitialized];
 }

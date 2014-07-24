@@ -13,20 +13,50 @@ var blockRandomization = function(task, parameter, previousParamIndexes) {
 	
 	var completeRandperm = randPerm(task, parameter.totalN_);
 	
-	innersize = 1;
+	var innersize = 1;
 	var paramIndexes = [];
 	for (var paramnum = 0;paramnum<parameter.n_;paramnum++) {
 		paramIndexes[paramnum] = [];
-		for (var rownum = 0;rownum<parameter.size_[paramnum][0];rownum++) {
-			var lastcol = 0;
-			for (var paramreps = 0; paramreps< (parameter.totalN_ / parameter.size_[paramnum][1]) / innersize; paramreps++) {
-				if (parameter.doRandom_ > 0) {
-					var thisparamIndexes = randPerm(task, parameter.size_[paramnum][1]);
-				} else {
-					var thisparamIndexes = jglMakeArray(1, 1, parameter.size_[paramnum][1]);
-				}
-				
+		var lastcol = 0;
+		for (var paramreps = 0;paramreps < (parameter.totalN_ / parameter.size_[paramnum]) / innersize) {
+			if (parameter.doRandom_ > 0) {
+				var thisparamIndexes = randPerm(task, parameter.size_[paramnum]);
+			} else {
+				var thisparamIndexes = jglMakeArray(0, 1, parameter.size_[paramnum]);
 			}
+			
+			
 		}
 	}
+//	var indexes = [];
+//	
+//	for (var i = 0;i<parameter.n_;i++) {
+//		var randperm = randPerm(task, parameter.size_[i]);
+//		indexes[i] = randperm;
+//	}
+//	
+//	block = {};
+//	
+//	for (var i = 0;i<parameter.n_;i++) {
+//		eval("block.parameter." + parameter.names_[i] + " = parameter." + parameter.names_[i] + ""
+//	}
+	
+//	innersize = 1;
+//	var paramIndexes = [];
+//	for (var paramnum = 0;paramnum<parameter.n_;paramnum++) {
+//		paramIndexes[paramnum] = [];
+//		for (var rownum = 0;rownum<parameter.size_[paramnum][0];rownum++) {
+//			var lastcol = 0;
+//			for (var paramreps = 0; paramreps< (parameter.totalN_ / parameter.size_[paramnum][1]) / innersize; paramreps++) {
+//				if (parameter.doRandom_ > 0) {
+//					var thisparamIndexes = randPerm(task, parameter.size_[paramnum][1]);
+//				} else {
+//					var thisparamIndexes = jglMakeArray(1, 1, parameter.size_[paramnum][1]);
+//				}
+//				
+//			}
+//		}
+//	}
+	
+	
 }
