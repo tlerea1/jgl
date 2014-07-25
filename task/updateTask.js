@@ -303,7 +303,7 @@ function initTrial(task, myscreen, phase) {
 function resetSegmentClock(task, myscreen) {
 	task.thistrial.synchVol = -1;
 	
-	var usedTime = sum(index(task.thistrial.seglen, jglMakeArray(1, 1, task.thistrial.thisseg), false));
+	var usedtime = sum(index(task.thistrial.seglen, jglMakeArray(1, 1, task.thistrial.thisseg), false));
 	
 	if (! (task.timeInVols || task.timeInTicks)) {
 		task.thistrial.segstart = task.thistrial.trialstart - task.timeDiscrepancy + usedtime;

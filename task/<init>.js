@@ -208,15 +208,24 @@ function diff(array) {
 function index(master, slave, logical) {
 	var tempArray = [];
 
-	if (logical) {
+	if (! $.isArray(master)) {
 		for (var i=0;i<slave.length;i++) {
-			if (slave[i] == 1) {
-				tempArray.push(master[i]);
+			if (slave[i] != 0) {
+				throw "index error";
 			}
+			tempArray.push(master);
 		}
 	} else {
-		for (var i =0;i<slave.length;i++) {
-			tempArray.push(master[slave[i]]);
+		if (logical) {
+			for (var i=0;i<slave.length;i++) {
+				if (slave[i] == 1) {
+					tempArray.push(master[i]);
+				}
+			}
+		} else {
+			for (var i =0;i<slave.length;i++) {
+				tempArray.push(master[slave[i]]);
+			}
 		}
 	}
 	return tempArray;

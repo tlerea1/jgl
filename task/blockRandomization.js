@@ -15,19 +15,22 @@ var blockRandomization = function(task, parameter, previousParamIndexes) {
 	
 	var innersize = 1;
 	var paramIndexes = [];
+	var block = {};
+	block.parameter = {};
 	for (var paramnum = 0;paramnum<parameter.n_;paramnum++) {
 		paramIndexes[paramnum] = [];
-		var lastcol = 0;
-		for (var paramreps = 0;paramreps < (parameter.totalN_ / parameter.size_[paramnum]) / innersize) {
-			if (parameter.doRandom_ > 0) {
-				var thisparamIndexes = randPerm(task, parameter.size_[paramnum]);
+		for (var i = 0; i< parameter.totalN_ / parameter.size_[paramnum];i++) {
+
+			if (parameter.doRandom_) {
+				paramIndexes[paramnum] = paramIndexes[paramnum].concat(randPerm(task, parameter.size_[paramnum]));
 			} else {
-				var thisparamIndexes = jglMakeArray(0, 1, parameter.size_[paramnum]);
+				paramIndexes[paramnum] = paramIndexes[paramnum].concat(jglMakeArray(0,1,parameter.size_[paramnum]));
 			}
-			
-			
 		}
+		eval("block.parameter." + parameter.names_[paramnum] + " = index(parameter." + parameter.names_[paramnum] + ",paramIndexes[paramnum], false);");
 	}
+	block.trialn = parameter.totalN_;
+	return block;
 //	var indexes = [];
 //	
 //	for (var i = 0;i<parameter.n_;i++) {
