@@ -68,7 +68,8 @@ function initTask(task, myscreen, startSegmentCallback,
 	                   'randVars', 
 	                   'fudgeLastVolume', 
 	                   'collectEyeData',
-	                   'data'
+	                   'data',
+	                   'html'
 	            ];
 	
 	if (! task.hasOwnProperty("verbose")) {
@@ -206,6 +207,11 @@ function initTask(task, myscreen, startSegmentCallback,
 				}
 			}
 		}
+	}
+	
+	if (! task.hasOwnProperty("html")) {
+		console.error("init Task, defaulting html page");
+		task.html = "blank.html";
 	}
 	
 	if (! task.hasOwnProperty("usingScreen")) {

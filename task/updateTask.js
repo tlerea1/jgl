@@ -3,15 +3,29 @@
  */
 function updateTask(task, myscreen, tnum) {
 	
-	if (tnum > task.length) {
+	if (tnum == task.length) {
 		return [task, myscreen, tnum];
 	}
 	
 	//TODO: randstate line 18
-	
+	// If phase is complete
 	if (task[tnum].trialnum > task[tnum].numTrials) {
 		tnum++;
 		myscreen = writeTrace(tnum, task[tnum - 1].phaseTrace, myscreen);
+		var temp = updateTask(task, myscreen, tnum); // start next phase
+		task = temp[0];
+		myscreen = temp[1];
+		tnum = temp[2];
+		return [task, myscreen, tnum];
+	}
+	
+	if (task[tnum].trialnum == 0) {
+		myscreen.psiTurk.showPage(task[tnum].html);
+	}
+	
+	if (window.jgl_Done_[tnum]) {
+		tnum++;
+		myscreen.writeTrace(tnum, task[tnum - 1].phaseTrace, myscreen);
 		var temp = updateTask(task, myscreen, tnum);
 		task = temp[0];
 		myscreen = temp[1];
@@ -19,11 +33,12 @@ function updateTask(task, myscreen, tnum) {
 		return [task, myscreen, tnum];
 	}
 	
+	//If we need a new block
 	if (task[tnum].blocknum == 0 || task[tnum].blockTrialnum > task[tnum].block[task[tnum].blocknum].trialn) {
-		if (task[tnum].blocknum == task[tnum].numBlocks) {
+		if (task[tnum].blocknum == task[tnum].numBlocks) { // If phase is done due to blocks
 			tnum++;
 			myscreen = writeTrace(tnum, task[tnum - 1].phaseTrace, myscreen);
-			var temp = updateTask(task, myscreen, tnum);
+			var temp = updateTask(task, myscreen, tnum); // start next phase
 			task = temp[0];
 			myscreen = temp[1];
 			tnum = temp[2];
@@ -34,6 +49,7 @@ function updateTask(task, myscreen, tnum) {
 		myscreen = temp[1];
 	}
 	
+	// Update Trial
 	var temp = updateTrial(task, myscreen, tnum);
 	task = temp[0];
 	myscreen = temp[1];
