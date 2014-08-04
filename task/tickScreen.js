@@ -1,30 +1,36 @@
 /**
  * 
  */
-function tickScreen(myscreen, task) {
-	//TODO: skipped a bunch of volume stuff
+function tickScreen() {
 	
-	switch (myscreen.flushMode) {
-		case 0:
-			jglFlush();
-			break;
-		case 1:
-			jglFlush();
-			myscreen.flushMode = -1;
-			break;
-		case 2:
-			jglNoFlushWait();
-			break;
-		case 3:
-			jglFlushAndWait();
-			break;
-		default:
-			myscreen.fliptime = Infinity;
+	for (var i=0;i<task.length;i++) {
+		task[i][tnum].callback.screenUpdate(task[i], myscreen);
 	}
 	
+	//TODO: skipped a bunch of volume stuff
+	switch (myscreen.flushMode) {
+	case 0:
+		jglFlush();
+		break;
+	case 1:
+		jglFlush();
+		myscreen.flushMode = -1;
+		break;
+	case 2:
+		jglNoFlushWait();
+		break;
+	case 3:
+		jglFlushAndWait();
+		break;
+	default:
+		myscreen.fliptime = Infinity;
+	}
+
+
 	if (myscreen.checkForDroppedFrames && myscreen.flushMode >= 0) {
 		var fliptime = jglGetSecs();
 		
+
 		if ((fliptime - myscreen.fliptime) > myscreen.dropThreshold*myscreen.frametime) {
 			myscreen.dropcount++;
 		}
@@ -34,12 +40,13 @@ function tickScreen(myscreen, task) {
 		}
 		myscreen.fliptime = fliptime;
 	}
-	
+	myscreen.tick++;
+
+
 	if (jglGetKeys().indexOf('esc') > -1) {
 		myscreen.userHitEsc = 1;
+		finishExp();
 	}
 	
-	myscreen.tick++;
-	
-	return [myscreen, task];
+
 }

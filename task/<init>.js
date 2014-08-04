@@ -340,22 +340,42 @@ function nan(length) {
  * @param second the second item.
  * @returns {Array} the added array
  */
-function add(first, second) {
+function add(first, second, index) {
 	if ($.isArray(first) && $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array add, dimensions don't agree";
 		}
+		if (index === undefined) {
+			index = ones(first.length);
+		}
 		return jQuery.map(first, function(n, i) {
-			return n + second[i];
+			if (index[i]) {
+				return n + second[i];
+			} else {
+				return n;
+			}
 		});
 	} else if ($.isArray(first) && ! $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(first.length);
+		}
 		return jQuery.map(first, function(n, i) {
-			return n + second;
+			if (index[i]) {
+				return n + second;
+			} else {
+				return n;
+			}
 		});
 	} else if (! $.isArray(first) && $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(second.length);
+		}
 		return jQuery.map(second, function(n, i) {
-			return n + first;
-		});
+			if (index[i]) {
+				return n + first;
+			} else {
+				return n;
+			}		});
 	} else {
 		return [first + second];
 	}
@@ -369,22 +389,42 @@ function add(first, second) {
  * @returns {Array} the subtracted array where if one is an array and one is not,
  *  the scalar is always subtracted from each element of the array.
  */
-function subtract(first, second) {
+function subtract(first, second, index) {
 	if ($.isArray(first) && $.isArray(second)) {
 		if (first.length != second.length) {
-			throw "array subtract, dimensions don't agree";
+			throw "array add, dimensions don't agree";
+		}
+		if (index === undefined) {
+			index = ones(first.length);
 		}
 		return jQuery.map(first, function(n, i) {
-			return n - second[i];
+			if (index[i]) {
+				return n - second[i];
+			} else {
+				return n;
+			}
 		});
 	} else if ($.isArray(first) && ! $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(first.length);
+		}
 		return jQuery.map(first, function(n, i) {
-			return n - second;
+			if (index[i]) {
+				return n - second;
+			} else {
+				return n;
+			}
 		});
 	} else if (! $.isArray(first) && $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(second.length);
+		}
 		return jQuery.map(second, function(n, i) {
-			return n - first;
-		});
+			if (index[i]) {
+				return n - first;
+			} else {
+				return n;
+			}		});
 	} else {
 		return [first - second];
 	}
@@ -574,6 +614,38 @@ function greaterThan(first, second) {
 	}
 }
 
+/**
+ * Function to generate a logical array from element wise checking less than between first and second.
+ * @param first the first item. can be a Number or Array
+ * @param second the second item. can be a Number or Array
+ * @returns {Array} returns a logical array. where 1 means first < second for each element of first/second
+ */
+function lessThan(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array or, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n < second[i] ? 1 : 0;
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n < second ? 1 : 0;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return first < n ? 1 : 0;
+		});
+	} else {
+		return first < second ? [1] : [0];
+	}
+}
+
+/**
+ * Determines the mean of the given array.
+ * @param array the given array
+ * @returns {Number} the mean value
+ */
 function mean(array) {
 	if (array.length == 0) {
 		return 0;
@@ -598,6 +670,12 @@ function randInt(task, low, high) {
 	return Math.round(rand(task) * (high - low - 1)) + low;
 }
 
+/**
+ * Generate a random permutation from 0 - length
+ * @param task the task object to grab random numbers from
+ * @param length the length of the permutation, excludes length
+ * @returns {Array} a random permutation from 0-length
+ */
 function randPerm(task, length) {
 	var array = jglMakeArray(0, 1, length);
 	var randy;
@@ -610,6 +688,11 @@ function randPerm(task, length) {
 	return array;
 }
 
+/**
+ * Generates size of given value
+ * @param val the value to determine size of
+ * @returns {Number} the length of val if val is an array, 1 if not. 0 if null
+ */
 function size(val) {
 	if ($.isArray(val)) {
 		return val.length;
@@ -620,6 +703,11 @@ function size(val) {
 	}
 }
 
+/**
+ * Determines the product of the given array
+ * @param array the array to determine the product of
+ * @returns {Number} the product
+ */
 function prod(array) {
 	if ($.isArray(array)) {
 		var product = 1;
@@ -631,4 +719,42 @@ function prod(array) {
 	return 0;
 }
 
+/**
+ * Generates and returns the not of the given value
+ * @param array the given value
+ * @returns {Number, Array} for every element returns 0 if element, 1 otherwise 
+ */
+function not(array) {
+	if (! $.isArray(array)) {
+		return array ? 1 : 0;
+	} else {
+		var temp = new Array(array.length);
+		for (var i = 0;i < array.length; i++) {
+			temp[i] = array[i] ? 0 : 1;
+		}
+		return temp;
+	}
+}
+
+/**
+ * Generates a sin array of the given array.
+ * @param array the array to sin
+ * @returns {Array} an element wise sin array of the given array
+ */
+function sin(array) {
+	return jQuery.map(array, function(n,i) {
+		return Math.sin(n);
+	});
+}
+
+/**
+ * Generates a cos array of the given array.
+ * @param array the array to cos
+ * @returns {Array} an element wise cos array of the given array
+ */
+function cos(array) {
+	return jQuery.map(array, function(n,i) {
+		return Math.cos(n);
+	});
+}
 

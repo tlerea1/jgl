@@ -1,5 +1,6 @@
 
 /**
+ * Screen object for myscreen.
  * @constructor
  */
 function Screen() {
@@ -55,35 +56,41 @@ function initScreen() {
 	
 	var size = 4096;
 	
-	screen.events.n = 0;
-	screen.events.tracenum = zeros(size);
-	screen.events.data = zeros(size);
-	screen.events.ticknum = zeros(size);
-	screen.events.volnum = zeros(size);
-	screen.events.time = zeros(size);
-	screen.events.force = zeros(size);
-	
-	screen.traceNames = [];
-	screen.traceNames[0] = 'volume';
-	screen.traceNames[1] = 'segmentTime';
-	screen.traceNames[2] = 'responseTime';
-	screen.traceNames[3] = 'taskPhase';
-	screen.traceNames[4] = 'fixationTask';
-	
-	screen.numTraces = 5;
+//	screen.events.n = 0;
+//	screen.events.tracenum = zeros(size);
+//	screen.events.data = zeros(size);
+//	screen.events.ticknum = zeros(size);
+//	screen.events.volnum = zeros(size);
+//	screen.events.time = zeros(size);
+//	screen.events.force = zeros(size);
+//	
+//	screen.traceNames = [];
+//	screen.traceNames[0] = 'volume';
+//	screen.traceNames[1] = 'segmentTime';
+//	screen.traceNames[2] = 'responseTime';
+//	screen.traceNames[3] = 'taskPhase';
+//	screen.traceNames[4] = 'fixationTask';
+//	
+//	screen.numTraces = 5;
 	
 	screen.tick = 0;
 	screen.totaltick = 0;
 	screen.totalflip = 0;
-	screen.volnum = 0;
+//	screen.volnum = 0;
 	screen.intick = 0;
 	screen.fliptime = Infinity;
 	screen.dropcount = 0;
 	screen.checkForDroppedFrames = 1;
 	screen.dropThreshold = 1.05;
+	screen.ppi = 127;
+	screen.flushMode = 0;
 	
 	screen.framesPerSecond = jglGetParam('frameRate');
 	screen.frametime = 1 / screen.framesPerSecond;
+	
+	window.segTimeout = [];
+	window.drawInterval = null;
+	window.tnum = 0;
 	
 	return screen;
 	

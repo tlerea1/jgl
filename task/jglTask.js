@@ -340,22 +340,42 @@ function nan(length) {
  * @param second the second item.
  * @returns {Array} the added array
  */
-function add(first, second) {
+function add(first, second, index) {
 	if ($.isArray(first) && $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array add, dimensions don't agree";
 		}
+		if (index === undefined) {
+			index = ones(first.length);
+		}
 		return jQuery.map(first, function(n, i) {
-			return n + second[i];
+			if (index[i]) {
+				return n + second[i];
+			} else {
+				return n;
+			}
 		});
 	} else if ($.isArray(first) && ! $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(first.length);
+		}
 		return jQuery.map(first, function(n, i) {
-			return n + second;
+			if (index[i]) {
+				return n + second;
+			} else {
+				return n;
+			}
 		});
 	} else if (! $.isArray(first) && $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(second.length);
+		}
 		return jQuery.map(second, function(n, i) {
-			return n + first;
-		});
+			if (index[i]) {
+				return n + first;
+			} else {
+				return n;
+			}		});
 	} else {
 		return [first + second];
 	}
@@ -369,22 +389,42 @@ function add(first, second) {
  * @returns {Array} the subtracted array where if one is an array and one is not,
  *  the scalar is always subtracted from each element of the array.
  */
-function subtract(first, second) {
+function subtract(first, second, index) {
 	if ($.isArray(first) && $.isArray(second)) {
 		if (first.length != second.length) {
-			throw "array subtract, dimensions don't agree";
+			throw "array add, dimensions don't agree";
+		}
+		if (index === undefined) {
+			index = ones(first.length);
 		}
 		return jQuery.map(first, function(n, i) {
-			return n - second[i];
+			if (index[i]) {
+				return n - second[i];
+			} else {
+				return n;
+			}
 		});
 	} else if ($.isArray(first) && ! $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(first.length);
+		}
 		return jQuery.map(first, function(n, i) {
-			return n - second;
+			if (index[i]) {
+				return n - second;
+			} else {
+				return n;
+			}
 		});
 	} else if (! $.isArray(first) && $.isArray(second)) {
+		if (index === undefined) {
+			index = ones(second.length);
+		}
 		return jQuery.map(second, function(n, i) {
-			return n - first;
-		});
+			if (index[i]) {
+				return n - first;
+			} else {
+				return n;
+			}		});
 	} else {
 		return [first - second];
 	}
@@ -574,6 +614,27 @@ function greaterThan(first, second) {
 	}
 }
 
+function lessThan(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array or, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return n < second[i] ? 1 : 0;
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return n < second ? 1 : 0;
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return first < n ? 1 : 0;
+		});
+	} else {
+		return first < second ? [1] : [0];
+	}
+}
+
 function mean(array) {
 	if (array.length == 0) {
 		return 0;
@@ -631,9 +692,39 @@ function prod(array) {
 	return 0;
 }
 
+function not(array) {
+	if (! $.isArray(array)) {
+		return array ? 1 : 0;
+	} else {
+		var temp = new Array(array.length);
+		for (var i = 0;i < array.length; i++) {
+			temp[i] = array[i] ? 0 : 1;
+		}
+		return temp;
+	}
+}
+
+function sin(array) {
+	return jQuery.map(array, function(n,i) {
+		return Math.sin(n);
+	});
+}
+
+function cos(array) {
+	return jQuery.map(array, function(n,i) {
+		return Math.cos(n);
+	});
+}
 
 /**
  * 
+ */
+function addTraces(task, myscreen, other) {
+	return [task, myscreen]
+}/**
+ * Generates block randomized combination of parameters. Unlike mgl it does
+ * not randomly permutate the entire set of parameters. It only permutates
+ * each block of trials individually. 
  */
 var blockRandomization = function(task, parameter, previousParamIndexes) {
 	if (previousParamIndexes === undefined) {
@@ -645,9 +736,7 @@ var blockRandomization = function(task, parameter, previousParamIndexes) {
 		return parameter;
 	}
 	
-	var completeRandperm = randPerm(task, parameter.totalN_);
 	
-	var innersize = 1;
 	var paramIndexes = [];
 	var block = {};
 	block.parameter = {};
@@ -665,37 +754,6 @@ var blockRandomization = function(task, parameter, previousParamIndexes) {
 	}
 	block.trialn = parameter.totalN_;
 	return block;
-//	var indexes = [];
-//	
-//	for (var i = 0;i<parameter.n_;i++) {
-//		var randperm = randPerm(task, parameter.size_[i]);
-//		indexes[i] = randperm;
-//	}
-//	
-//	block = {};
-//	
-//	for (var i = 0;i<parameter.n_;i++) {
-//		eval("block.parameter." + parameter.names_[i] + " = parameter." + parameter.names_[i] + ""
-//	}
-	
-//	innersize = 1;
-//	var paramIndexes = [];
-//	for (var paramnum = 0;paramnum<parameter.n_;paramnum++) {
-//		paramIndexes[paramnum] = [];
-//		for (var rownum = 0;rownum<parameter.size_[paramnum][0];rownum++) {
-//			var lastcol = 0;
-//			for (var paramreps = 0; paramreps< (parameter.totalN_ / parameter.size_[paramnum][1]) / innersize; paramreps++) {
-//				if (parameter.doRandom_ > 0) {
-//					var thisparamIndexes = randPerm(task, parameter.size_[paramnum][1]);
-//				} else {
-//					var thisparamIndexes = jglMakeArray(1, 1, parameter.size_[paramnum][1]);
-//				}
-//				
-//			}
-//		}
-//	}
-	
-	
 }/**
  * Function to get task seglen.
  * @param task the task object.
@@ -722,6 +780,51 @@ function getTaskSeglen(task) {
 	}
 	return [seglen, task];
 	// TODO: line 44 randstate
+}/**
+ * 
+ */
+function initData() {
+	window.psiData = {};
+	psiData.keys = [];
+	psiData.mouse = [];
+	
+	$("body").focus().keydown(keyResponse);
+	$("body").focus().mousedown(mouseResponse);
+}
+
+
+var keyResponse = function(e) {
+	for (var i = 0;i<task.length;i++) {
+		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 1) {
+			task[i][tnum].thistrial.gotResponse = 1;
+			psiData.keys[psiData.keys.length] = {};
+			psiData.keys[psiData.keys.length - 1].keyCode = e.keyCode;
+			psiData.keys[psiData.keys.length - 1].tasknum = i;
+			psiData.keys[psiData.keys.length - 1].phasenum = tnum;
+			psiData.keys[psiData.keys.length - 1].blocknum = task[i][tnum].blocknum;
+			psiData.keys[psiData.keys.length - 1].trialnum = task[i][tnum].trialnum;
+			psiData.keys[psiData.keys.length - 1].segnum = task[i][tnum].thistrial.thisseg;
+			psiData.keys[psiData.keys.length - 1].time = jglGetSecs();
+		}
+	}
+}
+
+var mouseResponse = function(e) {
+	for (var i = 0;i<task.length;i++) {
+		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 2) {
+			task[i][tnum].thistrial.gotResponse = 1;
+			psiData.mouse[psiData.mouse.length] = {};
+			psiData.mouse[psiData.mouse.length - 1].which = e.which;
+			psiData.mouse[psiData.mouse.length - 1].x = e.pageX;
+			psiData.mouse[psiData.mouse.length - 1].y = e.pageY;
+			psiData.mouse[psiData.mouse.length - 1].tasknum = i;
+			psiData.mouse[psiData.mouse.length - 1].phasenum = tnum;
+			psiData.mouse[psiData.mouse.length - 1].blocknum = task[i][tnum].blocknum;
+			psiData.mouse[psiData.mouse.length - 1].trialnum = task[i][tnum].trialnum;
+			psiData.mouse[psiData.mouse.length - 1].segnum = task[i][tnum].thistrial.thisseg;
+			psiData.mouse[psiData.mouse.length - 1].time = jglGetSecs();
+		}
+	}
 }/**
  * 
  */
@@ -755,7 +858,7 @@ function initRandomization(parameter) {
 		parameter.size_[i] = paramsize;
 	}
 	
-	parameter.totalN_ = prod(parameter.size_); //TODO: verify that this makes sense 
+	parameter.totalN_ = prod(parameter.size_);
 	
 	return [parameter, alreadyInitialized];
 }
@@ -841,12 +944,60 @@ function initScreen() {
 	screen.dropcount = 0;
 	screen.checkForDroppedFrames = 1;
 	screen.dropThreshold = 1.05;
+	screen.ppi = 127;
+	screen.flushMode = 0;
 	
 	screen.framesPerSecond = jglGetParam('frameRate');
 	screen.frametime = 1 / screen.framesPerSecond;
 	
+	window.segTimeout = [];
+	window.drawInterval = null;
+	window.tnum = 0;
+	
 	return screen;
 	
+}/**
+ * 
+ */
+function initStimulus(stimName, myscreen) {
+	eval("window." + stimName + ".init = 1");
+	
+	if (! myscreen.hasOwnProperty("stimulusNames")) {
+		myscreen.stimulusNames = [];
+		myscreen.stimulusNames[0] = stimName;
+	} else {
+		var notFound = 1;
+		for (var i = 0;i<myscreen.stimulusNames.length;i++) {
+			if (myscreen.stimulusNames[i].localeCompare(stimName) == 0) {
+				console.log("init Stimulus: There is already a stimulus called " + stimName + " registered");
+				notFound = 0;
+			}
+		}
+		if (notFound) {
+			myscreen.stimulusNames[myscreen.stimulusNames.length] = stimName;
+		}
+	}
+	
+	return myscreen;
+}/**
+ * 
+ */
+function initSurvey(myscreen) {
+	
+	var task = {};
+	task.seglen = [10];
+	
+	var temp = initTask(task, myscreen, function(task, myscreen){return [task, myscreen]}, function(task, myscreen){return [task, myscreen]});
+	task = temp[0];
+	myscreen = temp[1];
+	
+	task.usingScreen = 0;
+	task.html = "survey.html";
+	
+	task.numTrials = Infinity;
+	task.numBlocks = Infinity;
+	
+	return [task, myscreen];
 }/**
  * @constructor
  */
@@ -917,7 +1068,10 @@ function initTask(task, myscreen, startSegmentCallback,
 	                   'randVars', 
 	                   'fudgeLastVolume', 
 	                   'collectEyeData',
-	                   'data'
+	                   'data',
+	                   'html',
+	                   'notYetStarted',
+	                   'usingScreen'
 	            ];
 	
 	if (! task.hasOwnProperty("verbose")) {
@@ -935,7 +1089,7 @@ function initTask(task, myscreen, startSegmentCallback,
 			delete task[taskFieldNames[i]];
 			task[knownFieldNames[upperMatch]] = value;
 		} else if (upperMatch < 0) {
-			console.error('initTaks: unknown task field task.' + taskFieldNames[i]);
+			console.error('initTask: unknown task field task.' + taskFieldNames[i]);
 		}
 	}
 	
@@ -944,7 +1098,9 @@ function initTask(task, myscreen, startSegmentCallback,
 		task.parameter.default = 1;
 	}
 	
-	task.blocknum = 0;
+	
+	task.notYetStarted = 1;
+	task.blocknum = -1;
 	task.thistrial = new Trial();
 	task.thistrial.thisseg = Infinity;
 	
@@ -1055,6 +1211,11 @@ function initTask(task, myscreen, startSegmentCallback,
 				}
 			}
 		}
+	}
+	
+	if (! task.hasOwnProperty("html")) {
+		console.error("init Task, defaulting html page");
+		task.html = "blank.html";
 	}
 	
 	if (! task.hasOwnProperty("usingScreen")) {
@@ -1204,7 +1365,7 @@ function initTask(task, myscreen, startSegmentCallback,
 		task.callback.trialResponse = trialResponseCallback;
 	}
 	
-	if (screenUpdateCallback != undefined && jQuery.isFunction(screenUpdataCallback)) {
+	if (screenUpdateCallback != undefined && jQuery.isFunction(screenUpdateCallback)) {
 		task.callback.screenUpdate = screenUpdateCallback;
 	}
 	
@@ -1657,6 +1818,30 @@ function seglenPrecomputeValidate(task) {
 	
 	return task;
 }/**
+ * 
+ */
+function initTurk(task, myscreen) {
+		
+	myscreen.uniqueId = uniqueId;
+	myscreen.condition = condition;
+	myscreen.counterbalance = counterbalance;
+	myscreen.adServerLoc = adServerLoc;
+	myscreen.psiTurk = new PsiTurk(uniqueId, adServerLoc);
+	
+	var pageNames = [];
+	window.jgl_Done_ = [];
+	for (var i = 0;i<task.length;i++) {
+		for (var j = 0;j<task[i].length;j++) {
+			pageNames.push(task[i][j].html);
+			window.jgl_Done_.push(false);
+		}
+	}
+	myscreen.psiTurk.preloadPages(pageNames);
+	
+	initData();
+	
+	return myscreen;
+}/**
  * Function to generate random numbers in a controlled way.
  * Since one cannot set the random number generator seed in
  * JavaScript this solution was devised. The task object
@@ -1709,6 +1894,188 @@ function randomResize(array) {
 		tempArray[i] = Math.random();
 	}
 	return tempArray;
+}/**
+ * 
+ */
+function finishExp() {
+	clearIntAndTimeouts();
+	$("body").unbind("keydown", keyResponse);
+	$("body").unbind("mousedown", mouseResponse);
+	myscreen.psiTurk.completeHIT();
+	
+}
+
+function clearIntAndTimeouts() {
+	for (var i=0;i<window.segTimeout.length;i++) {
+		if (window.segTimeout.length) {
+			clearTimeout(window.segTimeout[i]);
+		}
+	}
+	if (window.drawInterval) {
+		clearInterval(window.drawInterval);
+	}
+}
+
+function nextPhase() {
+	clearIntAndTimeouts();
+	tnum++;
+	for (var i=0;i<window.task.length;i++) {
+		startPhase(task[i]);
+	}
+}
+
+var startPhase = function(task) {
+	if (tnum == task.length) {
+		finishExp();
+		return;
+	}
+	
+	myscreen.psiTurk.showPage(task[tnum].html);
+	if (task[tnum].usingScreen) {
+		if (! jglIsOpen()) {
+			jglOpen(myscreen.ppi);
+		}
+		if (! window.drawInterval) {
+			window.drawInterval = setInterval(tickScreen, 17);
+		}
+	}
+	
+	initBlock(task[tnum]);
+	startBlock(task);
+}
+
+var startBlock = function(task) {
+	if (task[tnum].blocknum == task[tnum].numBlocks) { // If phase is done due to blocks
+		nextPhase();
+		return;
+	}
+	initTrial(task[tnum]);
+	startTrial(task);
+}
+
+var startTrial = function(task) {
+	if (task[tnum].blockTrialnum == task[tnum].block[task[tnum].blocknum].trialn) {
+		initBlock(task[tnum]);
+		startBlock(task);
+		return;
+	}
+	if (task[tnum].trialnum == task[tnum].numTrials) {
+		nextPhase();
+		return;
+	}
+	
+	startSeg(task);
+}
+
+var startSeg = function(task) {
+	if (task[tnum].thistrial.thisseg == task[tnum].thistrial.seglen.length - 1) {
+		if (task[tnum].callback.hasOwnProperty("endTrial")) {
+			var temp = task[tnum].callback.endTrial(task[tnum], myscreen);
+			task[tnum] = temp[0];
+			myscreen = temp[1];
+		}
+		
+		//TODO: randVars line 253
+		
+		task[tnum].blockTrialnum++;
+		task[tnum].trialnum++;
+		
+//		task[tnum].thistrial.waitingToInit = 1;
+		initTrial(task[tnum]);
+		startTrial(task);
+		return;
+		//TODO: randstate
+		
+	}
+	
+	task[tnum].thistrial.thisseg++;
+	
+	if (task[tnum].callback.hasOwnProperty("startSegment")) {
+		var temp = task[tnum].callback.startSegment(task[tnum], myscreen);
+		task[tnum] = temp[0];
+		myscreen = temp[1];
+	}
+	myscreen = writeTrace(1, task[tnum].segmentTrace, myscreen, 1);
+	thistime = jglGetSecs();
+	
+	if (task[tnum].trialnum > 0) {
+		task[tnum].timeDiscrepancy = (thistime - task[tnum].lasttrial.trialstart) - (sum(subtract(task[tnum].lasttrial.seglen, task[tnum].timeDiscrepancy)));
+	}
+	task[tnum].thistrial.trialstart = thistime;
+	window.segTimeout[task[tnum].taskID] = setTimeout(startSeg, task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg] * 1000, task);
+	return;
+}
+
+function initBlock(task) {
+	
+	task.blocknum++;
+	
+	if (task.blocknum > 0) {
+		task.block[task.blocknum] = task.callback.rand(task, task.parameter, task.block[task.blocknum-1]);
+	} else {
+		task.block[task.blocknum] = task.callback.rand(task, task.parameter, []);
+	}
+	
+	task.blockTrialnum = 0;
+	
+	if (task.callback.hasOwnProperty("startBlock")) {
+		var temp = task.callback.startBlock(task, myscreen);
+		task = temp[0];
+		myscreen = temp[1];
+	}
+}
+
+function initTrial(task) {
+	task.lasttrial = task.thistrial;
+	task.thistrial.thisphase = tnum;
+
+	task.thistrial.thisseg = -1;
+	task.thistrial.gotResponse = 0;
+
+	task.thistrial.segstart = -Infinity;
+
+	if (task.seglenPrecompute === false) {
+		var temp = getTaskSeglen(task);
+		var seglen = temp[0];
+		task = temp[1];
+
+		task.thistrial.seglen = seglen;
+	} else {
+		for (var i = 0;i<task.seglenPrecompute.nFields;i++) {
+			fieldName = task.seglenPrecompute.fieldNames[i];
+
+			fieldRow = (task.trialnum % task.seglenPrecompute[fieldName].nTrials)// + 1
+
+			task.thistrial[fieldName] = task.seglenPrecompute[fieldName].vals[fieldRow];
+		}
+
+		fieldRow = Math.min(task.seglenPrecompute.seglen.nTrials, task.trialnum);
+		task.thistrial.seglen = task.seglenPrecompute.seglen.vals[fieldRow];
+	}
+
+//	if (task.waitForBacktick && (task.blocknum == 0) && task.blockTrialnum == 0) {
+//		task.thistrial.waitForBacktick = 1;
+//		backtick = myscreen.keyboard.backtick;
+//		console.log("updateTask: wating for backtick: '"+ backtick + "'");
+//	} else {
+		task.thistrial.waitForBacktick = 0;
+//	}
+
+	task.thistrial.buttonState = [0,0];
+
+	for (var i =0;i<task.parameter.n_;i++) {
+		eval("task.thistrial." + task.parameter.names_[i] + " = task.block[task.blocknum].parameter." + task.parameter.names_[i] + "[task.blockTrialnum];");
+	}
+
+	//TODO: randvars line 507
+
+	if (task.callback.hasOwnProperty("startTrial")) {
+		var temp = task.callback.startTrial(task, myscreen);
+		task = temp[0];
+		myscreen = temp[1];
+	}
+
+	task.thistrial.waitingToInit = 0;
 }/**
  * Basic Set Data Structure.
  * @constructor
@@ -1779,30 +2146,36 @@ function Set() {
 }/**
  * 
  */
-function tickScreen(myscreen, task) {
-	//TODO: skipped a bunch of volume stuff
+function tickScreen() {
 	
-	switch (myscreen.flushMode) {
-		case 0:
-			jglFlush();
-			break;
-		case 1:
-			jglFlush();
-			myscreen.flushMode = -1;
-			break;
-		case 2:
-			jglNoFlushWait();
-			break;
-		case 3:
-			jglFlushAndWait();
-			break;
-		default:
-			myscreen.fliptime = Infinity;
+	for (var i=0;i<task.length;i++) {
+		task[i][tnum].callback.screenUpdate(task[i], myscreen);
 	}
 	
+	//TODO: skipped a bunch of volume stuff
+	switch (myscreen.flushMode) {
+	case 0:
+		jglFlush();
+		break;
+	case 1:
+		jglFlush();
+		myscreen.flushMode = -1;
+		break;
+	case 2:
+		jglNoFlushWait();
+		break;
+	case 3:
+		jglFlushAndWait();
+		break;
+	default:
+		myscreen.fliptime = Infinity;
+	}
+
+
 	if (myscreen.checkForDroppedFrames && myscreen.flushMode >= 0) {
 		var fliptime = jglGetSecs();
 		
+
 		if ((fliptime - myscreen.fliptime) > myscreen.dropThreshold*myscreen.frametime) {
 			myscreen.dropcount++;
 		}
@@ -1812,334 +2185,16 @@ function tickScreen(myscreen, task) {
 		}
 		myscreen.fliptime = fliptime;
 	}
-	
+	myscreen.tick++;
+
+
 	if (jglGetKeys().indexOf('esc') > -1) {
 		myscreen.userHitEsc = 1;
+		finishExp();
 	}
 	
-	myscreen.tick++;
-	
-	return [myscreen, task];
+
 }/**
- * 
- */
-function updateTask(task, myscreen, tnum) {
-	
-	if (tnum > task.length) {
-		return [task, myscreen, tnum];
-	}
-	
-	//TODO: randstate line 18
-	
-	if (task[tnum].trialnum > task[tnum].numTrials) {
-		tnum++;
-		myscreen = writeTrace(tnum, task[tnum - 1].phaseTrace, myscreen);
-		var temp = updateTask(task, myscreen, tnum);
-		task = temp[0];
-		myscreen = temp[1];
-		tnum = temp[2];
-		return [task, myscreen, tnum];
-	}
-	
-	if (task[tnum].blocknum == 0 || task[tnum].blockTrialnum > task[tnum].block[task[tnum].blocknum].trialn) {
-		if (task[tnum].blocknum == task[tnum].numBlocks) {
-			tnum++;
-			myscreen = writeTrace(tnum, task[tnum - 1].phaseTrace, myscreen);
-			var temp = updateTask(task, myscreen, tnum);
-			task = temp[0];
-			myscreen = temp[1];
-			tnum = temp[2];
-			return [task, myscreen, tnum];
-		}
-		var temp = initBlock(task[tnum], myscreen, tnum);
-		task[tnum] = temp[0];
-		myscreen = temp[1];
-	}
-	
-	var temp = updateTrial(task, myscreen, tnum);
-	task = temp[0];
-	myscreen = temp[1];
-	tnum = temp[2];
-	
-	//TODO: randstate
-	
-	return [task, myscreen, tnum];
-}
-
-function updateTrial(task, myscreen, tnum) {
-	if (task[tnum].thistrial.watingToInit) {
-		var temp = initTrial(task[tnum], myscreen, tnum);
-		task[tnum] = temp[0];
-		myscreen = temp[1];
-	}
-	
-	if (task[tnum].thistrial.segstart == -Infinity) {
-		if (task[tnum].thistrial.waitForBacktick) {
-			if (myscreen.volnum == task[tnum].thistrial.startvolnum) {
-				return [task, myscreen, tnum];
-			} else {
-				console.log("update Task: Backtick recorded: Starting trial");
-				task[tnum].thistrial.waitForBacktick = 0;
-			}
-		}
-		
-		myscreen = writeTrace(1, task[tnum].segmentTrace, myscreen, 1);
-		
-		if (task[tnum].timeInTicks) {
-			task[tnum].thistrial.trialstart = myscreen.tick;
-		} else if (task[tnum].timeInVols) {
-			task[tnum].thistrial.trialstart = myscreen.volnum;
-		} else {
-			thistime = jglGetSecs();
-			
-			if (task[tnum].trialnum > 0) {
-				task[tnum].timeDiscrepancy = (thistime - task[tnum].lasttrial.trialstart) - (sum(subtract(task[tnum].lasttrial.seglen, task[tnum].timeDiscrepancy)));
-			}
-			task[tnum].thistrial.trialstart = thistime;
-		}
-		
-		task[tnum] = resetSegmentClock(task[tnum], myscreen);
-		
-		var temp = task[tnum].callback.startSegment(task[tnum], myscreen);
-		task[tnum] = temp[0];
-		myscreen = temp[1];
-		
-		if (task[tnum].getResponse[task[tnum].thistrial.thisseg] == 2) {
-			myscreen.oldFlushMode = myscreen.flushMode;
-			myscreen.flushMode = 1;
-		}
-	}
-	
-	var segover = 0;
-	
-	if (task[tnum].timeInTicks) {
-		if (myscreen.tick = task[tnum].thistrial.segstart >= task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg]) {
-			segover = 1;
-		}
-	} else if (task[tnum].timeInVols) {
-		if (myscreen.volnum - task[tnum].thistrial.segstart >= task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg]) {
-			segover = 1;
-		}
-	} else {
-		if (jglGetSecs() - task[tnum].thistrial.segstart >= task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg]) {
-			if (task[tnum].synchToVol[task[tnum].thistrial.thisseg]) {
-				if (task[tnum].thistrial.synchVol == -1) {
-					task[tnum].thistrial.synchVol = myscreen.volnum;
-				} else if (task[tnum].thistrial.synchVol < myscreen.volnum) {
-					segover = 1;
-					task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg] = jglGetSecs - task[tnum].thistrial.segstart;
-				}
-			}
-			segover = 1;
-		}
-	}
-	
-	var segmentExpired = 0;
-	
-	if (task[tnum].fudgeLastVolume) {
-		if (task[tnum].trialnum == task[tnum].numTrials 
-				|| (task[tnum].blocknum == task[tnum].numBlocks && task[tnum].blockTrialnum == task[tnum].block[task[tnum].blocknum].trialn)) {
-			if (! task[tnum].thistrial.hasOwnProperty("fudgeLastVolume")) {
-				if (task[tnum].thistrial.thisseg == task[tnum].thistrial.seglen.length) {
-					segmentExpired = 0;
-					if (task[tnum].synchToVol[task[tnum].thistrial.thisseg]) {
-						if (task[tnum].timeInTicks) {
-							if (myscreen.tick - task[tnum].thistrial.segstart >= task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg]) {
-								segmentExpired = 1;
-							}
-						} else {
-							if (jglGetSecs() - task[tnum].thistrial.segstart >= task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg]) {
-								segmentExpired = 1;
-							}
-						}
-					} else {
-						if (task[tnum].timeInVols) {
-							if ((myscreen.volnum - task[tnum].thistrial.segstart) + 1 >= task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg]) {
-								segmentExpried = 1;
-							}
-						}
-					}
-					
-					if (segmentExpired) {
-						
-						//TODO: NEED TRACES FOR THIS TO WORK.....
-						
-						var volumeTimes = index(myscreen.events.time, and(equals(myscreen.events.data, 1), equals(myscreen.events.tracenum == 1)), true);
-						
-						if (! isEmpty(find(volumeTimes))) {
-							task[tnum].thistrial.averageVolumeTime = mean(diff(volumeTimes));
-							task[tnum].thistrial.fudgeLastVolume = volumeTimes[volumeTimes.length - 1] + task[tnum].thistrial.averageVolumeTime;
-						}
-					}
-				}
-			} else {
-				if (jglGetSecs() > task[tnum].thistrial.fudgeLastVolume) {
-					console.log("update Task: Used fudgeLastVolume to end last trial of task (averageVolumeTime=" + task[tnum].thistrial.averageVolumeTime + ")");
-					segover = 1;
-				}
-			}
-		}
-	}
-	
-	if (segover) {
-		if (task[tnum].getResponse[task[tnum].thistrial.thisseg] == 2) {
-			myscreen.flushMode = myscreen.oldFlushMode;
-		}
-		
-		task[tnum].thistrial.thisseg++;
-		
-		if (task[tnum].thistrial.thisseg > task[tnum].thistrial.seglen.length) {
-			if (task[tnum].callback.hasOwnProperty("endTrial")) {
-				var temp = task[tnum].callback.endTrial(task[tnum], myscreen);
-				task[tnum] = temp[0];
-				myscreen = temp[1];
-			}
-			
-			//TODO: randVars line 253
-			
-			task[tnum].blockTrialnum++;
-			task[tnum].trialnum++;
-			
-			task[tnum].thistrial.waitingToInit = 1;
-			var temp = updateTask(task, myscreen, tnum);
-			task = temp[0];
-			myscreen = temp[1];
-			tnum = temp[2];
-
-			//TODO: randstate
-			
-			return [task, myscreen, tnum];
-		}
-		
-		task[tnum] = resetSegmentClock(task[tnum], myscreen);
-		
-		myscreen = writeTrace(task[tnum].thistrial.thisseg, task[tnum].segmentTrace, myscreen, 1);
-		
-		var temp = task[tnum].callback.startSegment(task[tnum], myscreen);
-		task[tnum] = temp[0];
-		myscreen = temp[1];
-		
-		if (task[tnum].getResponse[task[tnum].thistrial.thisseg] == 2) {
-			var temp = task[tnum].callback.screenUpdate(task[tnum], myscreen);
-			task[tnum] = temp[0];
-			myscreen = temp[1];
-			if (task[tnum].usingScreen) {
-				jglFlush();
-			}
-			
-			myscreen.oldFlushMode = myscreen.flushMode;
-			myscreen.flushMode = -1;
-		}
-	}
-	
-	if (task[tnum].getResponse[task[tnum].thistrial.thisseg]) {
-		task[tnum].thistrial.mouseButton = [];
-		// line 315
-		
-	}
-	
-}
-
-function initBlock(task, myscreen, phase) {
-	
-	if (task.blocknum > 0) {
-		task.block[task.blocknum] = task.callback.rand(task, task.parameter, task.block[task.blocknum-1]);
-	} else {
-		task.block[task.blocknum] = task.callback.rand(task, task.parameter, []);
-	}
-	
-	task.blockTrialNum = 0;
-	
-	if (task.callback.hasOwnProperty("startBlock")) {
-		var temp = task.callback.startBlock(task, myscreen);
-		task = temp[0];
-		myscreen = temp[1];
-	}
-	
-	var temp = initTrial(task, myscreen, phase);
-	task = temp[0];
-	myscreen = temp[1];
-
-	task.blocknum++;
-
-	return [task, myscreen];
-}
-
-function initTrial(task, myscreen, phase) {
-	task.lasttrial = task.thistrial;
-	task.thistrial.thisphase = phase;
-
-	task.thistrial.thisseg = 0;
-	task.thistrial.gotResponse = 0;
-
-	task.thistrial.segstart = -Infinity;
-
-	task.thistrial.startvolnum = myscreen.volnum;
-
-	if (task.seglenPrecompute === false) {
-		var temp = getTaskSeglen(task);
-		var seglen = temp[0];
-		task = temp[1];
-
-		task.thistrial.seglen = seglen;
-	} else {
-		for (var i = 0;i<task.seglenPrecompute.nFields;i++) {
-			fieldName = task.seglenPrecompute.fieldNames[i];
-
-			fieldRow = (task.trialnum % task.seglenPrecompute[fieldName].nTrials)// + 1
-
-			task.thistrial[fieldName] = task.seglenPrecompute[fieldName].vals[fieldRow];
-		}
-
-		fieldRow = Math.min(task.seglenPrecompute.seglen.nTrials, task.trialnum);
-		task.thistrial.seglen = task.seglenPrecompute.seglen.vals[fieldRow];
-	}
-
-	if (task.waitForBacktick && (task.blocknum == 0) && task.blockTrialnum == 0) {
-		task.thistrial.waitForBacktick = 1;
-		backtick = myscreen.keyboard.backtick;
-		console.log("updateTask: wating for backtick: '"+ backtick + "'");
-	} else {
-		task.thistrial.waitForBacktick = 0;
-	}
-
-	task.thistrial.buttonState = [0,0];
-
-	for (var i =0;i<task.parameter.n_;i++) {
-		eval("task.thistrial." + task.parameter.names_[i] + " = task.block[task.blocknum].parameter." + task.parameter.names_[i] + "[task.blockTrialnum];");
-	}
-
-	//TODO: randvars line 507
-
-	if (task.callback.hasOwnProperty("startTrial")) {
-		var temp = task.callback.startTrial(task, myscreen);
-		task = temp[0];
-		myscreen = temp[1];
-	}
-
-	task.thistrial.waitingToInit = 0;
-
-	return [task, myscreen];
-}
-
-function resetSegmentClock(task, myscreen) {
-	task.thistrial.synchVol = -1;
-	
-	var usedtime = sum(index(task.thistrial.seglen, jglMakeArray(1, 1, task.thistrial.thisseg), false));
-	
-	if (! (task.timeInVols || task.timeInTicks)) {
-		task.thistrial.segstart = task.thistrial.trialstart - task.timeDiscrepancy + usedtime;
-	} else {
-		task.thistrial.segstart = task.thistrial.trialstart + usedtime;
-	}
-	
-	task.thistrial.segStartSeconds = jglGetSecs();
-	return task;
-}
-
-
-
-/**
  * 
  */
 function writeTrace(data, tracenum, myscreen, force, eventTime) {

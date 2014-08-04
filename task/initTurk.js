@@ -1,28 +1,25 @@
 /**
  * 
  */
-function initTurk(myscreen, task) {
-	
-	var uniqueId = "{{ uniqueId }}";
-	var condition = "{{ condition }}";
-	var counterbalance = "{{ counterbalance }}";
-	var adServerLoc = "{{ adServerLoc }}"
+function initTurk(task, myscreen) {
 		
 	myscreen.uniqueId = uniqueId;
 	myscreen.condition = condition;
 	myscreen.counterbalance = counterbalance;
 	myscreen.adServerLoc = adServerLoc;
-	myscreen.psiTurk = PsiTurk(uniqueId, adServerLoc);
+	myscreen.psiTurk = new PsiTurk(uniqueId, adServerLoc);
 	
 	var pageNames = [];
-	var window.jgl_Done_ = [];
+	window.jgl_Done_ = [];
 	for (var i = 0;i<task.length;i++) {
 		for (var j = 0;j<task[i].length;j++) {
 			pageNames.push(task[i][j].html);
 			window.jgl_Done_.push(false);
 		}
 	}
-	myscreen.psiturk.preloadPages(pageNames);
+	myscreen.psiTurk.preloadPages(pageNames);
+	
+	initData();
 	
 	return myscreen;
 }

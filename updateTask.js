@@ -16,11 +16,18 @@ function updateTask(task, myscreen, tnum) {
 		task = temp[0];
 		myscreen = temp[1];
 		tnum = temp[2];
+		if (task[tnum - 1].usingScreen) {
+			jglClose();
+		}
 		return [task, myscreen, tnum];
 	}
 	
-	if (task[tnum].trialnum == 0) {
+	if (task[tnum].notYetStarted == 1) {
 		myscreen.psiTurk.showPage(task[tnum].html);
+		if (task[tnum].usingScreen) {
+			jglOpen();
+		}
+		task[tnum].notYetStarted = 0;
 	}
 	
 	if (window.jgl_Done_[tnum]) {
@@ -34,7 +41,7 @@ function updateTask(task, myscreen, tnum) {
 	}
 	
 	//If we need a new block
-	if (task[tnum].blocknum == 0 || task[tnum].blockTrialnum > task[tnum].block[task[tnum].blocknum].trialn) {
+	if (task[tnum].blocknum == -1 || task[tnum].blockTrialnum > task[tnum].block[task[tnum].blocknum].trialn) {
 		if (task[tnum].blocknum == task[tnum].numBlocks) { // If phase is done due to blocks
 			tnum++;
 			myscreen = writeTrace(tnum, task[tnum - 1].phaseTrace, myscreen);
@@ -61,7 +68,7 @@ function updateTask(task, myscreen, tnum) {
 }
 
 function updateTrial(task, myscreen, tnum) {
-	if (task[tnum].thistrial.watingToInit) {
+	if (task[tnum].thistrial.waitingToInit) {
 		var temp = initTrial(task[tnum], myscreen, tnum);
 		task[tnum] = temp[0];
 		myscreen = temp[1];
@@ -182,7 +189,7 @@ function updateTrial(task, myscreen, tnum) {
 		
 		task[tnum].thistrial.thisseg++;
 		
-		if (task[tnum].thistrial.thisseg > task[tnum].thistrial.seglen.length) {
+		if (task[tnum].thistrial.thisseg == task[tnum].thistrial.seglen.length) {
 			if (task[tnum].callback.hasOwnProperty("endTrial")) {
 				var temp = task[tnum].callback.endTrial(task[tnum], myscreen);
 				task[tnum] = temp[0];
@@ -232,9 +239,13 @@ function updateTrial(task, myscreen, tnum) {
 		
 	}
 	
+	return [task, myscreen, tnum];
+	
 }
 
 function initBlock(task, myscreen, phase) {
+	
+	task.blocknum++;
 	
 	if (task.blocknum > 0) {
 		task.block[task.blocknum] = task.callback.rand(task, task.parameter, task.block[task.blocknum-1]);
@@ -254,7 +265,6 @@ function initBlock(task, myscreen, phase) {
 	task = temp[0];
 	myscreen = temp[1];
 
-	task.blocknum++;
 
 	return [task, myscreen];
 }
@@ -319,7 +329,7 @@ function initTrial(task, myscreen, phase) {
 function resetSegmentClock(task, myscreen) {
 	task.thistrial.synchVol = -1;
 	
-	var usedtime = sum(index(task.thistrial.seglen, jglMakeArray(1, 1, task.thistrial.thisseg), false));
+	var usedtime = sum(index(task.thistrial.seglen, jglMakeArray(0, 1, task.thistrial.thisseg), false));
 	
 	if (! (task.timeInVols || task.timeInTicks)) {
 		task.thistrial.segstart = task.thistrial.trialstart - task.timeDiscrepancy + usedtime;

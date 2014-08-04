@@ -13,7 +13,7 @@
 
 //--------------------------Setup and Globals----------------------
 // Screen object, holds a bunch of info about the screen and state of the canvas
-var screen;
+var canvas;
 // mouse object, tracks mouse state
 var mouse;
 // The main off-screen canvas/context. 
@@ -33,7 +33,7 @@ var texCtx;
  */
 function Canvas() {	
 	this.canvas = document.getElementById("canvas");
-	this.context = canvas.getContext("2d"); // main on-screen context
+	this.context = this.canvas.getContext("2d"); // main on-screen context
 	this.backCanvas = document.getElementById("backCanvas");
 	this.backCtx = backCanvas.getContext("2d");
 	this.height = $("#canvas").height(); // height of screen
@@ -51,6 +51,7 @@ function Canvas() {
 	this.backgroundColor = "#ffffff";
 	this.lastFlushTime = 0;
 	this.frameRate = 60;
+	this.isOpen = false;
 }
 
 function Mouse() {
@@ -83,34 +84,47 @@ function mouseSetup(mouse) {
  * @param resolution The ppi of the screen.
  */
 function jglOpen(resolution) {
-	$(".jgl").append("<div style=\"position: relative;\"><canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"600\" height=\"600\"></canvas>"
+	var stencils = [];
+	if (canvas !== undefined && canvas.hasOwnProperty("stencils")) {
+		stencils = canvas.stencils;
+	}
+	$(".jgl").append("<div id=\"jglDiv\" style=\"position: relative;\"><canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"600\" height=\"600\"></canvas>"
 			+ "<canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"backCanvas\" width=\"600\" height=\"600\"></canvas> </div>");
 	$("#backCanvas").hide();
-	screen = new Canvas();
+	canvas = new Canvas();
+	canvas.stencils = stencils;
 	mouse = new Mouse();
 	mouseSetup(mouse);
-	screen.ppi = resolution;
-	var inPerDeg = screen.viewDistance * (Math.tan(0.0174532925));
-	screen.pixPerDeg = resolution * inPerDeg;
-	screen.degPerPix = 1 / screen.pixPerDeg;
+	canvas.ppi = resolution;
+	var inPerDeg = canvas.viewDistance * (Math.tan(0.0174532925));
+	canvas.pixPerDeg = resolution * inPerDeg;
+	canvas.degPerPix = 1 / canvas.pixPerDeg;
 	
 	stencilCanvas = document.createElement("canvas");
 //	stencilCanvas = document.getElementById("stencilcanvas");
 	stencilCtx = stencilCanvas.getContext("2d");
 	
-	stencilCanvas.width = screen.width;
-	stencilCanvas.height = screen.height;
+	stencilCanvas.width = canvas.width;
+	stencilCanvas.height = canvas.height;
 	stencilCtx = stencilCanvas.getContext("2d");
 	
 	texCanvas = document.createElement('canvas');
-	texCanvas.width = screen.width;
-	texCanvas.height = screen.height;
+	texCanvas.width = canvas.width;
+	texCanvas.height = canvas.height;
 	texCtx = texCanvas.getContext("2d");
+	
+	jglVisualAngleCoordinates();
+	
+	canvas.isOpen = true;
+}
 
+function jglIsOpen() {
+	return canvas.isOpen;
 }
 
 function jglClose() {
-	
+	$("#jglDiv").remove();
+	canvas.isOpen = false;
 }
 
 /**
@@ -121,52 +135,52 @@ function jglClose() {
  * discrete frames, read Stencil Comment for more information.
  */
 function jglFlush() {
-	if (! screen.useStencil) {
-		screen.backCtx.save();
-		screen.backCtx.globalCompositeOperation = "destination-over"; // enables background painting
+	if (! canvas.useStencil) {
+		canvas.backCtx.save();
+		canvas.backCtx.globalCompositeOperation = "destination-over"; // enables background painting
 		// 2*screen.width is used so either coordinate system will work
-		jglFillRect([0],[0], [2*screen.width, 2*screen.height], screen.backgroundColor); // colors background
-		screen.backCtx.restore();
+		jglFillRect([0],[0], [2*canvas.width, 2*canvas.height], canvas.backgroundColor); // colors background
+		canvas.backCtx.restore();
 		screenSwapPrivate(); // swap buffers (read function comments)
 	} else {
 		// Need to combine stencil and image, use stencilCtx, and offscreen canvas for the combination
 		// First draw the stencil on the canvas
-		stencilCtx.drawImage(screen.stencils[screen.stencilSelected], 0, 0);
+		stencilCtx.drawImage(canvas.stencils[canvas.stencilSelected], 0, 0);
 		stencilCtx.save();
 		// Turn on stenciling
 		stencilCtx.globalCompositeOperation = "source-in";
 		// Draw the image, which will be stenciled
-		stencilCtx.drawImage(screen.backCanvas, 0, 0);
+		stencilCtx.drawImage(canvas.backCanvas, 0, 0);
 		stencilCtx.restore();
 		// Clear the back buffer
-		privateClearContext(screen.backCtx);
+		privateClearContext(canvas.backCtx);
 		// Draw the stenciled image to the back buffer then clear the stencilCanvas for later use
-		if (screen.usingVisualAngles) {
+		if (canvas.usingVisualAngles) {
 			
 			jglScreenCoordinates(); // Change back to screen coordinates for ease of image drawing
-			screen.backCtx.drawImage(stencilCanvas, 0, 0);
+			canvas.backCtx.drawImage(stencilCanvas, 0, 0);
 			jglVisualAngleCoordinates();
 			stencilCtx.clearRect(0, 0, stencilCanvas.width, stencilCanvas.height);
 		} else {
-			screen.backCtx.drawImage(stencilCanvas, 0, 0);
+			canvas.backCtx.drawImage(stencilCanvas, 0, 0);
 			stencilCtx.clearRect(0,0, stencilCanvas.width, stencilCanvas.height);
 		}
 		// Draw background and swap buffers
-		screen.backCtx.save();
-		screen.backCtx.globalCompositeOperation = "destination-over";
-		jglFillRect([0],[0], [2*screen.width, 2*screen.height], screen.backgroundColor);
-		screen.backCtx.restore();
+		canvas.backCtx.save();
+		canvas.backCtx.globalCompositeOperation = "destination-over";
+		jglFillRect([0],[0], [2*canvas.width, 2*canvas.height], canvas.backgroundColor);
+		canvas.backCtx.restore();
 		screenSwapPrivate();
 	}
 	
-	screen.lastFlushTime = jglGetSecs();
+	canvas.lastFlushTime = jglGetSecs();
 
 }
 
 function jglFlushAndWait() {
-	var lastFlushTime = screen.lastFlushTime;
+	var lastFlushTime = canvas.lastFlushTime;
 	
-	var frameRate = screen.frameRate;
+	var frameRate = canvas.frameRate;
 	
 	if (isEmpty(frameRate)) {
 		console.error("jglFushAndWait: No frameRate set");
@@ -179,13 +193,13 @@ function jglFlushAndWait() {
 	
 	jglWaitSecs(frameTime - jglGetSecs(lastFlushTime));
 	
-	screen.lastFlushTime =  jglGetSecs();
+	canvas.lastFlushTime =  jglGetSecs();
 }
 
 function jglNoFlushWait() {
-	var lastFlushTime = screen.lastFlushTime;
+	var lastFlushTime = canvas.lastFlushTime;
 	
-	var frameRate = screen.frameRate;
+	var frameRate = canvas.frameRate;
 	
 	if (isEmpty(frameRate)) {
 		console.error("jglFlushAndWait: no framerate set");
@@ -196,7 +210,7 @@ function jglNoFlushWait() {
 	
 	jglWaitSecs(frameTime - jglGetSecs(lastFlushTime));
 	
-	screen.lastFlushTime = jglGetSecs();
+	canvas.lastFlushTime = jglGetSecs();
 }
 
 /**
@@ -208,12 +222,12 @@ function jglNoFlushWait() {
 function screenSwapPrivate() {
 	$("#canvas").toggle();
 	$("#backCanvas").toggle();
-	var temp = screen.context;
-	screen.context = screen.backCtx;
-	screen.backCtx = temp;
-	temp = screen.canvas;
-	screen.canvas = screen.backCanvas;
-	screen.backCanvas = temp;
+	var temp = canvas.context;
+	canvas.context = canvas.backCtx;
+	canvas.backCtx = temp;
+	temp = canvas.canvas;
+	canvas.canvas = canvas.backCanvas;
+	canvas.backCanvas = temp;
 }
 
 /**
@@ -221,10 +235,10 @@ function screenSwapPrivate() {
  * @param context the context to clear.
  */
 function privateClearContext(context) {
-	if (screen.usingVisualAngles) {
-		context.clearRect(-screen.width / 2, -screen.height / 2, screen.width, screen.height);
+	if (canvas.usingVisualAngles) {
+		context.clearRect(-canvas.width / 2, -canvas.height / 2, canvas.width, canvas.height);
 	} else {
-		context.clearRect(0, 0, screen.width, screen.height);
+		context.clearRect(0, 0, canvas.width, canvas.height);
 	}
 }
 
@@ -245,10 +259,10 @@ function jglClearScreen(background) {
 			g = numToHex(background);
 			b = numToHex(background);
 		}
-		screen.backgroundColor = "#" + r + g + b;
+		canvas.backgroundColor = "#" + r + g + b;
 
 	}
-	privateClearContext(screen.context);
+	privateClearContext(canvas.context);
 }
 
 /**
@@ -281,11 +295,11 @@ function jglPoints2(x, y, size, color) {
 		throw "Points2: Lengths dont match";
 	}
 	for (var i=0;i<x.length;i++) {
-		screen.backCtx.fillStyle=color;
-		screen.backCtx.beginPath();
-		screen.backCtx.arc(x[i], y[i], size/2, 0, 2*Math.PI);
-		screen.backCtx.fill();
-		screen.backCtx.closePath();
+		canvas.backCtx.fillStyle=color;
+		canvas.backCtx.beginPath();
+		canvas.backCtx.arc(x[i], y[i], size/2, 0, 2*Math.PI);
+		canvas.backCtx.fill();
+		canvas.backCtx.closePath();
 	}
 	//screen.context.save();
 }
@@ -305,12 +319,12 @@ function jglLines2(x0, y0, x1, y1, size, color) {
 		throw "Lines2: Lengths dont match";
 	}
 	for (var i=0;i<x0.length;i++) {
-		screen.backCtx.lineWidth = size;
-		screen.backCtx.strokeStyle=color;
-		screen.backCtx.beginPath();
-		screen.backCtx.moveTo(x0[i], y0[i]);
-		screen.backCtx.lineTo(x1[i], y1[i]);
-		screen.backCtx.stroke();
+		canvas.backCtx.lineWidth = size;
+		canvas.backCtx.strokeStyle=color;
+		canvas.backCtx.beginPath();
+		canvas.backCtx.moveTo(x0[i], y0[i]);
+		canvas.backCtx.lineTo(x1[i], y1[i]);
+		canvas.backCtx.stroke();
 	}
 }
 
@@ -320,10 +334,10 @@ function jglFillOval(x, y, size, color) {
 		throw "Fill Oval: Lengths dont match";
 	}
 	var radius = Math.min(size[0], size[1]);
-	screen.backCtx.save();
-	screen.backCtx.transform(0, size[0], size[1],0,0,0);
+	canvas.backCtx.save();
+	canvas.backCtx.transform(0, size[0], size[1],0,0,0);
 	jglPoints2(x, y, radius, color);
-	screen.backCtx.restore();
+	canvas.backCtx.restore();
 }
 
 /**
@@ -343,10 +357,10 @@ function jglFillRect(x, y, size, color) {
 			y:0
 	};
 	for (var i=0;i<x.length;i++) {
-		screen.backCtx.fillStyle = color;
+		canvas.backCtx.fillStyle = color;
 		upperLeft.x = x[i] - (size[0] / 2);
 		upperLeft.y = y[i] - (size[1] / 2);
-		screen.backCtx.fillRect(upperLeft.x, upperLeft.y, size[0], size[1]);
+		canvas.backCtx.fillRect(upperLeft.x, upperLeft.y, size[0], size[1]);
 	}
 }
 
@@ -362,7 +376,7 @@ function jglFillRect(x, y, size, color) {
 function jglFixationCross(width, lineWidth, color, origin) {
 	
 	if (arguments.length == 0) {
-		if (screen.usingVisualAngles) {
+		if (canvas.usingVisualAngles) {
 			width = 1;
 			lineWidth = 0.04;
 			color = "#ff0000";
@@ -371,20 +385,20 @@ function jglFixationCross(width, lineWidth, color, origin) {
 			width = 20;
 			lineWidth = 1;
 			color = "#ff0000";
-			origin = [screen.backCanvas.width / 2 , backCanvas.height / 2];
+			origin = [canvas.backCanvas.width / 2 , backCanvas.height / 2];
 		}
 		
 	}
-	screen.backCtx.lineWidth = lineWidth;
-	screen.backCtx.strokeStyle = color;
-	screen.backCtx.beginPath();
-	screen.backCtx.moveTo(origin[0] - width / 2, origin[1]);
-	screen.backCtx.lineTo(origin[0] + width / 2, origin[1]);
-	screen.backCtx.stroke();
-	screen.backCtx.beginPath();
-	screen.backCtx.moveTo(origin[0], origin[1] - width / 2);
-	screen.backCtx.lineTo(origin[0], origin[1] + width / 2);
-	screen.backCtx.stroke();
+	canvas.backCtx.lineWidth = lineWidth;
+	canvas.backCtx.strokeStyle = color;
+	canvas.backCtx.beginPath();
+	canvas.backCtx.moveTo(origin[0] - width / 2, origin[1]);
+	canvas.backCtx.lineTo(origin[0] + width / 2, origin[1]);
+	canvas.backCtx.stroke();
+	canvas.backCtx.beginPath();
+	canvas.backCtx.moveTo(origin[0], origin[1] - width / 2);
+	canvas.backCtx.lineTo(origin[0], origin[1] + width / 2);
+	canvas.backCtx.stroke();
 }
 
 /**
@@ -400,15 +414,15 @@ function jglPolygon(x, y, color) {
 		// make a polygon.
 		throw "Polygon arrays not same length";
 	}
-	screen.backCtx.fillStyle = color;
-	screen.backCtx.strokeStyle = color;
-	screen.backCtx.beginPath();
-	screen.backCtx.moveTo(x[0], y[0]);
+	canvas.backCtx.fillStyle = color;
+	canvas.backCtx.strokeStyle = color;
+	canvas.backCtx.beginPath();
+	canvas.backCtx.moveTo(x[0], y[0]);
 	for (var i=1;i<x.length;i++) {
-		screen.backCtx.lineTo(x[i], y[i]);
+		canvas.backCtx.lineTo(x[i], y[i]);
 	}
-	screen.backCtx.closePath();
-	screen.backCtx.fill();
+	canvas.backCtx.closePath();
+	canvas.backCtx.fill();
 //	backCtx.stroke();
 }
 
@@ -440,6 +454,8 @@ function jglWaitSecs(secs) {
 	do {
 		second = new Date();
 	} while (Date.now() < current + (secs * 1000));
+	
+//	setTimeout(secs, function(){});
 }
 
 //-----------------------Text Functions------------------------
@@ -464,8 +480,8 @@ function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
 	}
 	
 	fontString = fontString.concat(fontSize, "px ", fontName);
-	screen.backCtx.font = fontString;
-	screen.backCtx.fillStyle = fontColor;
+	canvas.backCtx.font = fontString;
+	canvas.backCtx.fillStyle = fontColor;
 }
 
 /**
@@ -475,7 +491,7 @@ function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
  * @param y the y coordinate of the beginning of the text
  */
 function jglTextDraw(text, x, y) {
-	screen.backCtx.fillText(text, x, y);
+	canvas.backCtx.fillText(text, x, y);
 }
 
 
@@ -549,27 +565,27 @@ var jglGetKeys = function jglGetKeys() {
  * @param stencilNumber the number of the stencil about to be created.
  */
 function jglStencilCreateBegin(stencilNumber) {
-	var canvas = document.createElement('canvas');
-	canvas.width = screen.width;
-	canvas.height = screen.height;
-	screen.stencils[stencilNumber] = canvas;
-	screen.backCtx = canvas.getContext("2d");
-	if (screen.usingVisualAngles) {
-		screen.backCtx.save();
-		screen.backCtx.translate(screen.width / 2, screen.height / 2);
-		screen.backCtx.transform(screen.pixPerDeg,0,0,screen.pixPerDeg, 0,0);
-		screen.usingVisualAnglesStencil = true;
+	var newCanvas = document.createElement('canvas');
+	newCanvas.width = canvas.width;
+	newCanvas.height = canvas.height;
+	canvas.stencils[stencilNumber] = newCanvas;
+	canvas.backCtx = newCanvas.getContext("2d");
+	if (canvas.usingVisualAngles) {
+		canvas.backCtx.save();
+		canvas.backCtx.translate(canvas.width / 2, canvas.height / 2);
+		canvas.backCtx.transform(canvas.pixPerDeg,0,0,canvas.pixPerDeg, 0,0);
+		canvas.usingVisualAnglesStencil = true;
 
 	}
-	screen.drawingStencil = true;
+	canvas.drawingStencil = true;
 }
 
 /**
  * Ends the creation of a stencil.
  */
 function jglStencilCreateEnd() {
-	screen.backCtx = screen.backCanvas.getContext("2d");
-	screen.drawingStencil = false;
+	canvas.backCtx = canvas.backCanvas.getContext("2d");
+	canvas.drawingStencil = false;
 }
 
 /**
@@ -579,24 +595,29 @@ function jglStencilCreateEnd() {
  * @throw No stencil if the number does not correspond to a stencil.
  */
 function jglStencilSelect(stencilNumber) {
-	if (stencilNumber >= screen.stencils.length) {
+	if (stencilNumber == 0) {
+		jglStencilDeselect();
+		return;
+	}
+	
+	if (stencilNumber >= canvas.stencils.length) {
 		//Error
 		throw "StencilSelect: Number too large";
 	}
-	if (screen.stencils[stencilNumber] == null) {
+	if (canvas.stencils[stencilNumber] == null) {
 		// TODO: Not sure if javaScript works like that, need to check
 		throw "StencilSelect: No Stencil with that number";
 	}
 	
-	screen.useStencil = true;
-	screen.stencilSelected = stencilNumber;
+	canvas.useStencil = true;
+	canvas.stencilSelected = stencilNumber;
 }
 
 /**
  * Deselects the selected stencil, this will cause flush to act as normal.
  */
 function jglStencilDeselect() {
-	screen.useStencil = false;
+	canvas.useStencil = false;
 }
 
 //----------------------Coordinate Functions---------------------------
@@ -607,23 +628,23 @@ function jglStencilDeselect() {
  * it does not effect the normal canvas. 
  */
 function jglVisualAngleCoordinates() {
-	if ((screen.usingVisualAngles && ! screen.drawingStencil) || 
-			(screen.usingVisualAnglesStencil && screen.drawingStencil)) {
+	if ((canvas.usingVisualAngles && ! canvas.drawingStencil) || 
+			(canvas.usingVisualAnglesStencil && canvas.drawingStencil)) {
 		//Error
 		throw "VisualCoordinates: Already using visual coordinates";
 	}
-	screen.backCtx.save();
-	screen.backCtx.translate(screen.width / 2, screen.height / 2);
-	screen.backCtx.transform(screen.pixPerDeg,0,0,screen.pixPerDeg, 0,0);
+	canvas.backCtx.save();
+	canvas.backCtx.translate(canvas.width / 2, canvas.height / 2);
+	canvas.backCtx.transform(canvas.pixPerDeg,0,0,canvas.pixPerDeg, 0,0);
 	
-	screen.context.save();
-	screen.context.translate(screen.width / 2, screen.height / 2);
-	screen.context.transform(screen.pixPerDeg,0,0,screen.pixPerDeg, 0,0);
+	canvas.context.save();
+	canvas.context.translate(canvas.width / 2, canvas.height / 2);
+	canvas.context.transform(canvas.pixPerDeg,0,0,canvas.pixPerDeg, 0,0);
 	
-	if (! screen.drawingStencil) {
-		screen.usingVisualAngles = true;
+	if (! canvas.drawingStencil) {
+		canvas.usingVisualAngles = true;
 	} else {
-		screen.usingVisualAnglesStencil = true;
+		canvas.usingVisualAnglesStencil = true;
 	}
 }
 
@@ -633,18 +654,18 @@ function jglVisualAngleCoordinates() {
  * it does not effect the normal canvas.
  */
 function jglScreenCoordinates() {
-	if ((! screen.usingVisualAngles && ! screen.drawingStencil) || 
-			(screen.drawingStencil && ! screen.usingVisualAnglesStencil)) {
+	if ((! canvas.usingVisualAngles && ! canvas.drawingStencil) || 
+			(canvas.drawingStencil && ! canvas.usingVisualAnglesStencil)) {
 		// Error
 		throw "ScreenCoordinates: Already using screen coordinates";
 	}
-	screen.backCtx.restore();
+	canvas.backCtx.restore();
 	
-	screen.context.restore();
-	if (! screen.drawingStencil) {
-		screen.usingVisualAngles = false;
+	canvas.context.restore();
+	if (! canvas.drawingStencil) {
+		canvas.usingVisualAngles = false;
 	} else {
-		screen.usingVisualAnglesStencil = false;
+		canvas.usingVisualAnglesStencil = false;
 	}
 }
 
@@ -710,7 +731,7 @@ function jglCreateTexture(array) {
 	var image;
 	if ( ! $.isArray(array[0])) {
 		// 1D array passed in
-		image = screen.backCtx.createImageData(array.length, array.length);
+		image = canvas.backCtx.createImageData(array.length, array.length);
 		var counter = 0;
 		for (var i=0;i<image.data.length;i += 4) {
 			image.data[i + 0] = array[counter];
@@ -726,7 +747,7 @@ function jglCreateTexture(array) {
 		
 	} else if (! $.isArray(array[0][0])) {
 		// 2D array passed in
-		image = screen.backCtx.createImageData(array.length, array.length);
+		image = canvas.backCtx.createImageData(array.length, array.length);
 		var row = 0;
 		var col = 0;
 		for (var i=0;i<image.data.length;i += 4) {
@@ -746,7 +767,7 @@ function jglCreateTexture(array) {
 		// 3D array passed in
 		if (array[0][0].length == 3) {
 			// RGB
-			image = screen.backCtx.createImageData(array.length, array.length);
+			image = canvas.backCtx.createImageData(array.length, array.length);
 			var row = 0;
 			var col = 0;
 			for (var i=0;i<image.data.length;i += 4) {
@@ -763,7 +784,7 @@ function jglCreateTexture(array) {
 			return image;
 		} else if(array[0][0].length == 4) {
 			//RGB and Alpha
-			image = screen.backCtx.createImageData(array.length, array.length);
+			image = canvas.backCtx.createImageData(array.length, array.length);
 			var row = 0;
 			var col = 0;
 			for (var i=0;i<image.data.length;i += 4) {
@@ -803,36 +824,36 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 
 	if (xpos === undefined) {
 		// default to center
-		if (screen.usingVisualAngles) {
-			xpos = -texture.width * screen.degPerPix/2;
+		if (canvas.usingVisualAngles) {
+			xpos = -texture.width * canvas.degPerPix/2;
 			xcenter = 0;
 		} else {
-			xpos = screen.width / 2 - texture.width/2;
-			xcenter = screen.width / 2;
+			xpos = canvas.width / 2 - texture.width/2;
+			xcenter = canvas.width / 2;
 		}
 	} else { // center is given
 		xcenter = xpos; // remember given center
 		// determine top left corner given size of texture
-		if (screen.usingVisualAngles) {
-			xpos = xpos - (texture.width * screen.degPerPix) / 2;
+		if (canvas.usingVisualAngles) {
+			xpos = xpos - (texture.width * canvas.degPerPix) / 2;
 		} else {
 			xpos = xpos - texture.width / 2;
 		}
 	}
 	if (ypos === undefined) {
 		// default to center
-		if (screen.usingVisualAngles) {
-			ypos = texture.height * screen.degPerPix / 2;
+		if (canvas.usingVisualAngles) {
+			ypos = texture.height * canvas.degPerPix / 2;
 			ycenter = 0;
 		} else {
-			ypos = screen.height / 2 - texture.height / 2
-			ycenter = screen.height / 2;
+			ypos = canvas.height / 2 - texture.height / 2
+			ycenter = canvas.height / 2;
 		}
 	} else { // center is given
 		ycenter = ypos; // remember given center
 		// determine top left corner given size of texture
-		if (screen.usingVisualAngles) {
-			ypos = ypos + (texture.height * screen.degPerPix) / 2;
+		if (canvas.usingVisualAngles) {
+			ypos = ypos + (texture.height * canvas.degPerPix) / 2;
 		} else {
 			ypos = ypos - texture.height / 2;
 		}
@@ -844,39 +865,39 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 	
 	// x and y coordinates of the top left corner in pixels, will only be used, 
 	// if visualAngles are being used, meaning that xpos and ypos are in degrees
-	var xtopLeft = (backCanvas.width / 2) + (xpos * screen.pixPerDeg);
-	var ytopLeft = (backCanvas.height / 2) - (ypos * screen.pixPerDeg);
+	var xtopLeft = (backCanvas.width / 2) + (xpos * canvas.pixPerDeg);
+	var ytopLeft = (backCanvas.height / 2) - (ypos * canvas.pixPerDeg);
 
 	// need another canvas to put the ImageData to so that stenciling and Alpha will work
 	// since drawImage will be allow for those things, but putImageData will not. So,
 	// the texture is drawn to the texCtx, and then the texCtx is drawn to the back buffer.
 
-	if (screen.usingVisualAngles) {
-		xcenter = xcenter * screen.pixPerDeg;
-		xcenter = screen.width / 2 + xcenter;
+	if (canvas.usingVisualAngles) {
+		xcenter = xcenter * canvas.pixPerDeg;
+		xcenter = canvas.width / 2 + xcenter;
 		
-		ycenter = ycenter * screen.pixPerDeg;
-		ycenter = screen.width / 2 - ycenter;
+		ycenter = ycenter * canvas.pixPerDeg;
+		ycenter = canvas.width / 2 - ycenter;
 		
 		texCtx.putImageData(texture, xtopLeft, ytopLeft); // draws texture to texCtx
 		jglScreenCoordinates(); // switch to screenCoordinates to make image placement easier
-		screen.backCtx.save();
-		screen.backCtx.translate(xcenter, ycenter); // translate to rotate about the center of the texture
-		screen.backCtx.rotate(rotation * 0.0174532925); // rotate uses radians, must convert
-		screen.backCtx.drawImage(texCanvas, -xcenter, -ycenter); // draw image, 
+		canvas.backCtx.save();
+		canvas.backCtx.translate(xcenter, ycenter); // translate to rotate about the center of the texture
+		canvas.backCtx.rotate(rotation * 0.0174532925); // rotate uses radians, must convert
+		canvas.backCtx.drawImage(texCanvas, -xcenter, -ycenter); // draw image, 
 		// The translate means that the top left corner is -width/2, -height/2
-		screen.backCtx.restore(); // restore back to factory settings
+		canvas.backCtx.restore(); // restore back to factory settings
 		jglVisualAngleCoordinates(); // go back to visualAngleCoordinates
 	} else {
 		// put texture on texCtx
 		texCtx.putImageData(texture, xpos, ypos);
-		screen.backCtx.save();
-		screen.backCtx.translate(xcenter, ycenter); //rotate about the center of the texture 
-		screen.backCtx.rotate(rotation * 0.0174532925); // rotate in degrees
-		screen.backCtx.drawImage(texCanvas, -xcenter, -ycenter);
-		screen.backCtx.restore();
+		canvas.backCtx.save();
+		canvas.backCtx.translate(xcenter, ycenter); //rotate about the center of the texture 
+		canvas.backCtx.rotate(rotation * 0.0174532925); // rotate in degrees
+		canvas.backCtx.drawImage(texCanvas, -xcenter, -ycenter);
+		canvas.backCtx.restore();
 	}
-	texCtx.clearRect(0,0,screen.width, screen.height); // clear texCtx
+	texCtx.clearRect(0,0,canvas.width, canvas.height); // clear texCtx
 
 
 }

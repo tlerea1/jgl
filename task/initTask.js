@@ -69,7 +69,9 @@ function initTask(task, myscreen, startSegmentCallback,
 	                   'fudgeLastVolume', 
 	                   'collectEyeData',
 	                   'data',
-	                   'html'
+	                   'html',
+	                   'notYetStarted',
+	                   'usingScreen'
 	            ];
 	
 	if (! task.hasOwnProperty("verbose")) {
@@ -87,7 +89,7 @@ function initTask(task, myscreen, startSegmentCallback,
 			delete task[taskFieldNames[i]];
 			task[knownFieldNames[upperMatch]] = value;
 		} else if (upperMatch < 0) {
-			console.error('initTaks: unknown task field task.' + taskFieldNames[i]);
+			console.error('initTask: unknown task field task.' + taskFieldNames[i]);
 		}
 	}
 	
@@ -96,7 +98,9 @@ function initTask(task, myscreen, startSegmentCallback,
 		task.parameter.default = 1;
 	}
 	
-	task.blocknum = 0;
+	
+	task.notYetStarted = 1;
+	task.blocknum = -1;
 	task.thistrial = new Trial();
 	task.thistrial.thisseg = Infinity;
 	
@@ -307,47 +311,47 @@ function initTask(task, myscreen, startSegmentCallback,
 	myscreen.numTasks += 1;
 	task.taskID = myscreen.numTasks;
 	
-	if (! task.hasOwnProperty("data")) {
-		task.data = {};
-		task.data.events = {};
-		task.data.events.mouse = [];
-		task.data.events.keyboard = [];
-		task.data.trace = {};
-		task.data.trace.mouse = [];
-		task.data.trace.keyboard = [];
-	}
+//	if (! task.hasOwnProperty("data")) {
+//		task.data = {};
+//		task.data.events = {};
+//		task.data.events.mouse = [];
+//		task.data.events.keyboard = [];
+//		task.data.trace = {};
+//		task.data.trace.mouse = [];
+//		task.data.trace.keyboard = [];
+//	}
+//	
+//	if (! task.hasOwnProperty("segmentTrace")) {
+//		if (myscreen.numTasks == 1) {
+//			task.segmentTrace = 2;
+//		} else {
+//			var temp = addTraces(task, myscreen, 'segment');
+//			task = temp[0];
+//			myscreen = temp[1];
+//		}
+//	}
+//	
+//	if (! task.hasOwnProperty("responseTrace")) {
+//		if (myscreen.numTasks == 1) {
+//			task.segmentTrace = 3;
+//		} else {
+//			var temp = addTraces(task, myscreen, 'response');
+//			task = temp[0];
+//			myscreen = temp[1];
+//		}
+//	}
+//	
+//	if (! task.hasOwnProperty("phaseTrace")) {
+//		if (myscreen.numTasks == 1) {
+//			task.segmentTrace = 4;
+//		} else {
+//			var temp = addTraces(task, myscreen, 'phase');
+//			task = temp[0];
+//			myscreen = temp[1];
+//		}
+//	}
 	
-	if (! task.hasOwnProperty("segmentTrace")) {
-		if (myscreen.numTasks == 1) {
-			task.segmentTrace = 2;
-		} else {
-			var temp = addTraces(task, myscreen, 'segment');
-			task = temp[0];
-			myscreen = temp[1];
-		}
-	}
-	
-	if (! task.hasOwnProperty("responseTrace")) {
-		if (myscreen.numTasks == 1) {
-			task.segmentTrace = 3;
-		} else {
-			var temp = addTraces(task, myscreen, 'response');
-			task = temp[0];
-			myscreen = temp[1];
-		}
-	}
-	
-	if (! task.hasOwnProperty("phaseTrace")) {
-		if (myscreen.numTasks == 1) {
-			task.segmentTrace = 4;
-		} else {
-			var temp = addTraces(task, myscreen, 'phase');
-			task = temp[0];
-			myscreen = temp[1];
-		}
-	}
-	
-	myscreen = writeTrace(1, task.phaseTrace, myscreen);
+//	myscreen = writeTrace(1, task.phaseTrace, myscreen);
 	
 	if (! task.hasOwnProperty("callback")) {
 		task.callback = {};
@@ -361,7 +365,7 @@ function initTask(task, myscreen, startSegmentCallback,
 		task.callback.trialResponse = trialResponseCallback;
 	}
 	
-	if (screenUpdateCallback != undefined && jQuery.isFunction(screenUpdataCallback)) {
+	if (screenUpdateCallback != undefined && jQuery.isFunction(screenUpdateCallback)) {
 		task.callback.screenUpdate = screenUpdateCallback;
 	}
 	
