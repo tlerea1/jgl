@@ -1,9 +1,11 @@
 /**
- * 
+ * Function to register a stimulus name with myscreen.
+ * Must be used if stimulus is to be saved to database.
  */
-function initStimulus(stimName, myscreen) {
-	eval("window." + stimName + ".init = 1");
+function initStimulus(stimName) {
+	eval("window." + stimName + ".init = 1"); // set stimulus to inited.
 	
+	// register name in myscreen
 	if (! myscreen.hasOwnProperty("stimulusNames")) {
 		myscreen.stimulusNames = [];
 		myscreen.stimulusNames[0] = stimName;
@@ -19,6 +21,4 @@ function initStimulus(stimName, myscreen) {
 			myscreen.stimulusNames[myscreen.stimulusNames.length] = stimName;
 		}
 	}
-	
-	return myscreen;
 }

@@ -11,10 +11,7 @@ function testExperiment() {
 	window.task = [];
 	task[0] = [];
 	task[0][0] = {};
-	var temp = initSurvey(myscreen);
-	
-	task[0][0] = temp[0];
-	myscreen = temp[1];
+	task[0][0] = initSurvey();
 	task[0][1] = {};
 	task[0][1].seglen = [2];
 	task[0][1].getResponse = [1];
@@ -25,20 +22,16 @@ function testExperiment() {
 	task[0][1].parameter.coherence = 0;
 	task[0][1].html = "canvas.html";
 	task[0][1].usingScreen = 1;
-	
-	var temp = initTask(task[0][1], myscreen, startSegmentCallback, updateScreenCallback);
-	task[0][1] = temp[0];
-	myscreen = temp[1];
-	temp = initSurvey(myscreen);
-	task[0][2] = temp[0];
-	task[0][2].html = "postquestionnaire.html";
+	task[0][1] = initTask(task[0][1], startSegmentCallback, updateScreenCallback);
+	task[0][2] = initSurvey(myscreen);
+//	task[0][2].html = "postquestionnaire.html";
 	
 	window.stimulus = {};
 	
-	myscreen = initStimulus("stimulus", myscreen);
+	initStimulus("stimulus");
 	task[0][1] = initDots(task[0][1], myscreen);
 	
-	myscreen = initTurk(task, myscreen);
+	initTurk(task);
 	
 	startPhase(task[0]);
 	

@@ -758,3 +758,22 @@ function cos(array) {
 	});
 }
 
+/**
+ * Determine if a value is numeric. 
+ * @param val the value to check
+ * @returns {Boolean} true if single element is numeric or if all elements in
+ * an array or numeric
+ */
+function isNumeric(val) {
+	if ($.isArray(val)) {
+		for (var i=0;i<val.length;i++) {
+			if (! $.isNumeric(val[i])) {
+				return false;
+			}
+		}
+		return true;
+	}else {
+		return $.isNumeric(val);
+	}
+}
+

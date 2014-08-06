@@ -1,7 +1,11 @@
 /**
- * 
+ * Initializes turk experiment.
+ * Gathers all turk data (uniqueID, condition, adServerloc, and counterbalance)
+ * initializes the psiTurk object.
+ * loads the pages.
+ * calls initData to setup key and mouse events. 
  */
-function initTurk(task, myscreen) {
+function initTurk(task) {
 		
 	myscreen.uniqueId = uniqueId;
 	myscreen.condition = condition;
@@ -18,8 +22,6 @@ function initTurk(task, myscreen) {
 		}
 	}
 	myscreen.psiTurk.preloadPages(pageNames);
-	
+	myscreen.htmlPages = pageNames;
 	initData();
-	
-	return myscreen;
 }

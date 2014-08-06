@@ -35,7 +35,7 @@ function Trial() {
 	this.thisseg;
 }
 
-function initTask(task, myscreen, startSegmentCallback,
+function initTask(task, startSegmentCallback,
 		screenUpdateCallback, trialResponseCallback,
 		startTrialCallback, endTrialCallback, 
 		startBlockCallback, randCallback) {
@@ -406,7 +406,7 @@ function initTask(task, myscreen, startSegmentCallback,
 	}
 	
 	//TODO: didnt setup randstate stuff
-	return [task, myscreen];
+	return task;
 }
 
 function seglenPrecompute(task) {

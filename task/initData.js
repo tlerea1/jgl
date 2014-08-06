@@ -16,7 +16,11 @@ function initData() {
 	$("body").focus().mousedown(mouseResponse);
 }
 
-
+/**
+ * Gathers key events and saves them in psiData.
+ * checks to see for each running task if the current segment wants a response
+ * if so records it.
+ */
 var keyResponse = function(e) {
 	for (var i = 0;i<task.length;i++) { //cycle through tasks
 		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 1) {
@@ -36,6 +40,11 @@ var keyResponse = function(e) {
 	}
 }
 
+/**
+ * Gathers mouse events and saves them in psiData.
+ * checks to see for each running task if the current segment wants a response
+ * if so records it.
+ */
 var mouseResponse = function(e) {
 	for (var i = 0;i<task.length;i++) { //cycle through tasks
 		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 2) {

@@ -614,6 +614,12 @@ function greaterThan(first, second) {
 	}
 }
 
+/**
+ * Function to generate a logical array from element wise checking less than between first and second.
+ * @param first the first item. can be a Number or Array
+ * @param second the second item. can be a Number or Array
+ * @returns {Array} returns a logical array. where 1 means first < second for each element of first/second
+ */
 function lessThan(first, second) {
 	if ($.isArray(first) && $.isArray(second)) {
 		if (first.length != second.length) {
@@ -635,6 +641,11 @@ function lessThan(first, second) {
 	}
 }
 
+/**
+ * Determines the mean of the given array.
+ * @param array the given array
+ * @returns {Number} the mean value
+ */
 function mean(array) {
 	if (array.length == 0) {
 		return 0;
@@ -659,6 +670,12 @@ function randInt(task, low, high) {
 	return Math.round(rand(task) * (high - low - 1)) + low;
 }
 
+/**
+ * Generate a random permutation from 0 - length
+ * @param task the task object to grab random numbers from
+ * @param length the length of the permutation, excludes length
+ * @returns {Array} a random permutation from 0-length
+ */
 function randPerm(task, length) {
 	var array = jglMakeArray(0, 1, length);
 	var randy;
@@ -671,6 +688,11 @@ function randPerm(task, length) {
 	return array;
 }
 
+/**
+ * Generates size of given value
+ * @param val the value to determine size of
+ * @returns {Number} the length of val if val is an array, 1 if not. 0 if null
+ */
 function size(val) {
 	if ($.isArray(val)) {
 		return val.length;
@@ -681,6 +703,11 @@ function size(val) {
 	}
 }
 
+/**
+ * Determines the product of the given array
+ * @param array the array to determine the product of
+ * @returns {Number} the product
+ */
 function prod(array) {
 	if ($.isArray(array)) {
 		var product = 1;
@@ -692,6 +719,11 @@ function prod(array) {
 	return 0;
 }
 
+/**
+ * Generates and returns the not of the given value
+ * @param array the given value
+ * @returns {Number, Array} for every element returns 0 if element, 1 otherwise 
+ */
 function not(array) {
 	if (! $.isArray(array)) {
 		return array ? 1 : 0;
@@ -704,12 +736,22 @@ function not(array) {
 	}
 }
 
+/**
+ * Generates a sin array of the given array.
+ * @param array the array to sin
+ * @returns {Array} an element wise sin array of the given array
+ */
 function sin(array) {
 	return jQuery.map(array, function(n,i) {
 		return Math.sin(n);
 	});
 }
 
+/**
+ * Generates a cos array of the given array.
+ * @param array the array to cos
+ * @returns {Array} an element wise cos array of the given array
+ */
 function cos(array) {
 	return jQuery.map(array, function(n,i) {
 		return Math.cos(n);
@@ -717,11 +759,25 @@ function cos(array) {
 }
 
 /**
- * 
+ * Determine if a value is numeric. 
+ * @param val the value to check
+ * @returns {Boolean} true if single element is numeric or if all elements in
+ * an array or numeric
  */
-function addTraces(task, myscreen, other) {
-	return [task, myscreen]
-}/**
+function isNumeric(val) {
+	if ($.isArray(val)) {
+		for (var i=0;i<val.length;i++) {
+			if (! $.isNumeric(val[i])) {
+				return false;
+			}
+		}
+		return true;
+	}else {
+		return $.isNumeric(val);
+	}
+}
+
+/**
  * Generates block randomized combination of parameters. Unlike mgl it does
  * not randomly permutate the entire set of parameters. It only permutates
  * each block of trials individually. 
@@ -781,7 +837,13 @@ function getTaskSeglen(task) {
 	return [seglen, task];
 	// TODO: line 44 randstate
 }/**
- * 
+ * This function is in charge of initializing the psiData object.
+ * The psiData object holds all data, responses as well as survey responses.
+ * psiData has two main fields, keys and mouse. Keys holds all keyboard event data,
+ * and mouse holds all mouse response data. keys fields are tasknum, phasenum, blocknum,
+ * trialnum, segnum, time, and keyCode. mouse fields are: which, x, y, tasknum, phasenum, blocknum,
+ * trialnum, segnum, time. When an event occurs if the segment requires a response gotResponse is set to one
+ * the event is recorded in psiData, and if a trialResponse callback is set it is called. 
  */
 function initData() {
 	window.psiData = {};
@@ -792,9 +854,13 @@ function initData() {
 	$("body").focus().mousedown(mouseResponse);
 }
 
-
+/**
+ * Gathers key events and saves them in psiData.
+ * checks to see for each running task if the current segment wants a response
+ * if so records it.
+ */
 var keyResponse = function(e) {
-	for (var i = 0;i<task.length;i++) {
+	for (var i = 0;i<task.length;i++) { //cycle through tasks
 		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 1) {
 			task[i][tnum].thistrial.gotResponse = 1;
 			psiData.keys[psiData.keys.length] = {};
@@ -805,12 +871,20 @@ var keyResponse = function(e) {
 			psiData.keys[psiData.keys.length - 1].trialnum = task[i][tnum].trialnum;
 			psiData.keys[psiData.keys.length - 1].segnum = task[i][tnum].thistrial.thisseg;
 			psiData.keys[psiData.keys.length - 1].time = jglGetSecs();
+			if (task[i][tnum].callback.hasOwnProperty("trialResponse")) {
+				task[i][tnum].callback.trialResponse;
+			}
 		}
 	}
 }
 
+/**
+ * Gathers mouse events and saves them in psiData.
+ * checks to see for each running task if the current segment wants a response
+ * if so records it.
+ */
 var mouseResponse = function(e) {
-	for (var i = 0;i<task.length;i++) {
+	for (var i = 0;i<task.length;i++) { //cycle through tasks
 		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 2) {
 			task[i][tnum].thistrial.gotResponse = 1;
 			psiData.mouse[psiData.mouse.length] = {};
@@ -823,6 +897,9 @@ var mouseResponse = function(e) {
 			psiData.mouse[psiData.mouse.length - 1].trialnum = task[i][tnum].trialnum;
 			psiData.mouse[psiData.mouse.length - 1].segnum = task[i][tnum].thistrial.thisseg;
 			psiData.mouse[psiData.mouse.length - 1].time = jglGetSecs();
+			if (task[i][tnum].callback.hasOwnProperty("trialResponse")) {
+				task[i][tnum].callback.trialResponse;
+			}
 		}
 	}
 }/**
@@ -863,26 +940,11 @@ function initRandomization(parameter) {
 	return [parameter, alreadyInitialized];
 }
 /**
+ * Screen object for myscreen.
  * @constructor
  */
 function Screen() {
-	this.screenWidth = screen.width; // width in pixels
-	this.screenHeight = screen.height; // height in pixels
-	this.ppi; // pixels per inch
-	this.data = {}; // some sort of data object TODO: more notes
-	this.events = {};
-	this.thisPhase; // current running phase
-	this.htmlPages = []; // all html pages to be used
-	this.psiTurk; // psiTurk object
-	this.keyboard = {};
-	this.keyboard.state = jglGetKeys; // pointer to keyboard status function
-	this.keyboard.backtick = '`';
-	this.mouse = jglGetMouse; // pointer to mouse status function
-	this.assignmentID; // assignmentID given by turk
-	this.hitID; // hitID given by turk
-	this.workerID; // workerID given by turk
-	this.startTime = jglGetSecs(); // start time, used for random state
-	this.numTasks = 0; // number of tasks
+
 }
 
 /**
@@ -904,7 +966,25 @@ function getURLParams() {
  * @returns the setup screen object
  */
 function initScreen() {
-	var screen = new Screen();
+	var screen = {};
+	
+	screen.screenWidth = window.screen.width; // width in pixels
+	screen.screenHeight = window.screen.height; // height in pixels
+	screen.ppi; // pixels per inch
+	screen.data = {}; // some sort of data object TODO: more notes
+	screen.events = {};
+	screen.thisPhase; // current running phase
+	screen.htmlPages = []; // all html pages to be used
+	screen.psiTurk; // psiTurk object
+//	this.keyboard = {};
+//	this.keyboard.state = jglGetKeys; // pointer to keyboard status function
+//	this.keyboard.backtick = '`';
+//	this.mouse = jglGetMouse; // pointer to mouse status function
+	screen.assignmentID; // assignmentID given by turk
+	screen.hitID; // hitID given by turk
+	screen.workerID; // workerID given by turk
+	screen.startTime = jglGetSecs(); // start time, used for random state
+	screen.numTasks = 0; // number of tasks
 	var params = getURLParams();
 	if (! isEmpty(params)) {
 		screen.assignmentID = params[0].substring(params[0].indexOf('='));
@@ -916,29 +996,10 @@ function initScreen() {
 	
 	screen.userHitEsc = 0;
 	
-	var size = 4096;
-	
-	screen.events.n = 0;
-	screen.events.tracenum = zeros(size);
-	screen.events.data = zeros(size);
-	screen.events.ticknum = zeros(size);
-	screen.events.volnum = zeros(size);
-	screen.events.time = zeros(size);
-	screen.events.force = zeros(size);
-	
-	screen.traceNames = [];
-	screen.traceNames[0] = 'volume';
-	screen.traceNames[1] = 'segmentTime';
-	screen.traceNames[2] = 'responseTime';
-	screen.traceNames[3] = 'taskPhase';
-	screen.traceNames[4] = 'fixationTask';
-	
-	screen.numTraces = 5;
-	
 	screen.tick = 0;
 	screen.totaltick = 0;
 	screen.totalflip = 0;
-	screen.volnum = 0;
+//	screen.volnum = 0;
 	screen.intick = 0;
 	screen.fliptime = Infinity;
 	screen.dropcount = 0;
@@ -957,11 +1018,13 @@ function initScreen() {
 	return screen;
 	
 }/**
- * 
+ * Function to register a stimulus name with myscreen.
+ * Must be used if stimulus is to be saved to database.
  */
-function initStimulus(stimName, myscreen) {
-	eval("window." + stimName + ".init = 1");
+function initStimulus(stimName) {
+	eval("window." + stimName + ".init = 1"); // set stimulus to inited.
 	
+	// register name in myscreen
 	if (! myscreen.hasOwnProperty("stimulusNames")) {
 		myscreen.stimulusNames = [];
 		myscreen.stimulusNames[0] = stimName;
@@ -977,27 +1040,25 @@ function initStimulus(stimName, myscreen) {
 			myscreen.stimulusNames[myscreen.stimulusNames.length] = stimName;
 		}
 	}
-	
-	return myscreen;
 }/**
- * 
+ * Function for making a survey phase. Currently, all a survey phase is 
+ * is a phase that has infinite blocks and trials and does not use the screen. 
  */
-function initSurvey(myscreen) {
+function initSurvey() {
 	
 	var task = {};
 	task.seglen = [10];
-	
-	var temp = initTask(task, myscreen, function(task, myscreen){return [task, myscreen]}, function(task, myscreen){return [task, myscreen]});
-	task = temp[0];
-	myscreen = temp[1];
-	
 	task.usingScreen = 0;
 	task.html = "survey.html";
+	
+	task = initTask(task, function(task, myscreen){return [task, myscreen]}, function(task, myscreen){return [task, myscreen]});
+	
+
 	
 	task.numTrials = Infinity;
 	task.numBlocks = Infinity;
 	
-	return [task, myscreen];
+	return task;
 }/**
  * @constructor
  */
@@ -1035,7 +1096,7 @@ function Trial() {
 	this.thisseg;
 }
 
-function initTask(task, myscreen, startSegmentCallback,
+function initTask(task, startSegmentCallback,
 		screenUpdateCallback, trialResponseCallback,
 		startTrialCallback, endTrialCallback, 
 		startBlockCallback, randCallback) {
@@ -1311,47 +1372,47 @@ function initTask(task, myscreen, startSegmentCallback,
 	myscreen.numTasks += 1;
 	task.taskID = myscreen.numTasks;
 	
-	if (! task.hasOwnProperty("data")) {
-		task.data = {};
-		task.data.events = {};
-		task.data.events.mouse = [];
-		task.data.events.keyboard = [];
-		task.data.trace = {};
-		task.data.trace.mouse = [];
-		task.data.trace.keyboard = [];
-	}
+//	if (! task.hasOwnProperty("data")) {
+//		task.data = {};
+//		task.data.events = {};
+//		task.data.events.mouse = [];
+//		task.data.events.keyboard = [];
+//		task.data.trace = {};
+//		task.data.trace.mouse = [];
+//		task.data.trace.keyboard = [];
+//	}
+//	
+//	if (! task.hasOwnProperty("segmentTrace")) {
+//		if (myscreen.numTasks == 1) {
+//			task.segmentTrace = 2;
+//		} else {
+//			var temp = addTraces(task, myscreen, 'segment');
+//			task = temp[0];
+//			myscreen = temp[1];
+//		}
+//	}
+//	
+//	if (! task.hasOwnProperty("responseTrace")) {
+//		if (myscreen.numTasks == 1) {
+//			task.segmentTrace = 3;
+//		} else {
+//			var temp = addTraces(task, myscreen, 'response');
+//			task = temp[0];
+//			myscreen = temp[1];
+//		}
+//	}
+//	
+//	if (! task.hasOwnProperty("phaseTrace")) {
+//		if (myscreen.numTasks == 1) {
+//			task.segmentTrace = 4;
+//		} else {
+//			var temp = addTraces(task, myscreen, 'phase');
+//			task = temp[0];
+//			myscreen = temp[1];
+//		}
+//	}
 	
-	if (! task.hasOwnProperty("segmentTrace")) {
-		if (myscreen.numTasks == 1) {
-			task.segmentTrace = 2;
-		} else {
-			var temp = addTraces(task, myscreen, 'segment');
-			task = temp[0];
-			myscreen = temp[1];
-		}
-	}
-	
-	if (! task.hasOwnProperty("responseTrace")) {
-		if (myscreen.numTasks == 1) {
-			task.segmentTrace = 3;
-		} else {
-			var temp = addTraces(task, myscreen, 'response');
-			task = temp[0];
-			myscreen = temp[1];
-		}
-	}
-	
-	if (! task.hasOwnProperty("phaseTrace")) {
-		if (myscreen.numTasks == 1) {
-			task.segmentTrace = 4;
-		} else {
-			var temp = addTraces(task, myscreen, 'phase');
-			task = temp[0];
-			myscreen = temp[1];
-		}
-	}
-	
-	myscreen = writeTrace(1, task.phaseTrace, myscreen);
+//	myscreen = writeTrace(1, task.phaseTrace, myscreen);
 	
 	if (! task.hasOwnProperty("callback")) {
 		task.callback = {};
@@ -1406,7 +1467,7 @@ function initTask(task, myscreen, startSegmentCallback,
 	}
 	
 	//TODO: didnt setup randstate stuff
-	return [task, myscreen];
+	return task;
 }
 
 function seglenPrecompute(task) {
@@ -1818,9 +1879,13 @@ function seglenPrecomputeValidate(task) {
 	
 	return task;
 }/**
- * 
+ * Initializes turk experiment.
+ * Gathers all turk data (uniqueID, condition, adServerloc, and counterbalance)
+ * initializes the psiTurk object.
+ * loads the pages.
+ * calls initData to setup key and mouse events. 
  */
-function initTurk(task, myscreen) {
+function initTurk(task) {
 		
 	myscreen.uniqueId = uniqueId;
 	myscreen.condition = condition;
@@ -1837,10 +1902,8 @@ function initTurk(task, myscreen) {
 		}
 	}
 	myscreen.psiTurk.preloadPages(pageNames);
-	
+	myscreen.htmlPages = pageNames;
 	initData();
-	
-	return myscreen;
 }/**
  * Function to generate random numbers in a controlled way.
  * Since one cannot set the random number generator seed in
@@ -1894,17 +1957,37 @@ function randomResize(array) {
 		tempArray[i] = Math.random();
 	}
 	return tempArray;
-}/**
+}/*
+ * This file contains the functions that control the experimental timing.
+ * The experiment is now event based unlike mgl. The experiment is started
+ * by calling startPhase on each task. These calls then fall down a chain
+ * starting the first block, then the first trial, then the first segment. 
+ * The segment then sets a timeout to call startSeg after the segment has 
+ * finished. startPhase, startBlock, startTrial, and startSeg all check to
+ * see if they are the last one and if so to start the next. Note that if 
+ * startPhase sees that its past the last phase it calls finishExp. 
  * 
+ * nextPhase is an important function for artificially changing phases. This
+ * is used for survey type phases where there are infinite trials and blocks.
+ * nextPhase should be called when a done button is pressed. This JS must be
+ * included in the html page for that phase. 
+ */
+
+/**
+ * This experiment finishes the Experiment, it clears all intervals and timeouts.
+ * It unbinds the keydown and mousedown events, and calles completeHIT.
  */
 function finishExp() {
 	clearIntAndTimeouts();
 	$("body").unbind("keydown", keyResponse);
 	$("body").unbind("mousedown", mouseResponse);
-	myscreen.psiTurk.completeHIT();
-	
+	saveAllData();	
 }
 
+/**
+ * This function clears all timeouts and intervals that have been set. 
+ * This is important when advancing to the next phase or ending the experiment. 
+ */
 function clearIntAndTimeouts() {
 	for (var i=0;i<window.segTimeout.length;i++) {
 		if (window.segTimeout.length) {
@@ -1916,6 +1999,10 @@ function clearIntAndTimeouts() {
 	}
 }
 
+/**
+ * This function advances to the next phase. It stops the previous phase by
+ * clearing the timeout and interval that runs that phase then calls startPhase.
+ */
 function nextPhase() {
 	clearIntAndTimeouts();
 	tnum++;
@@ -1924,6 +2011,12 @@ function nextPhase() {
 	}
 }
 
+/**
+ * This function starts the current phase dictated by tnum. It loads the html page for 
+ * the phase, opens the screen if needed, and starts an interval if needed.
+ * If tnum is too high it calls finishExp.
+ * @param task the task object (an array of phases)
+ */
 var startPhase = function(task) {
 	if (tnum == task.length) {
 		finishExp();
@@ -1944,6 +2037,11 @@ var startPhase = function(task) {
 	startBlock(task);
 }
 
+/**
+ * This function starts a block. First is checks to make sure there are blocks left, if
+ * so it starts the current block by initing a trial and starting it.
+ * @param the task object
+ */
 var startBlock = function(task) {
 	if (task[tnum].blocknum == task[tnum].numBlocks) { // If phase is done due to blocks
 		nextPhase();
@@ -1953,6 +2051,11 @@ var startBlock = function(task) {
 	startTrial(task);
 }
 
+/**
+ * This function starts a trial. First it checks to make sure that there are more trials
+ * left in the block, if not, it inits a new block and starts it. If there are no more trials
+ * left in the phase it calls nextPhase. Otherwise it starts the first segment.
+ */
 var startTrial = function(task) {
 	if (task[tnum].blockTrialnum == task[tnum].block[task[tnum].blocknum].trialn) {
 		initBlock(task[tnum]);
@@ -1967,6 +2070,14 @@ var startTrial = function(task) {
 	startSeg(task);
 }
 
+/**
+ * This function is very important. It starts a segment. First it checks to makes sure
+ * that there are more segments to run, if not it inits a new trial and starts it, otherwise, 
+ * it sets a timeout for the length of the current segment to call startSeg again. This timeout
+ * is only set if the segment has a finite length. If the length of the segment is infinite, 
+ * It does not set a timeout. In this case it is vital that startSeg be called in the response callback.
+ * @param task the task object.
+ */
 var startSeg = function(task) {
 	if (task[tnum].thistrial.thisseg == task[tnum].thistrial.seglen.length - 1) {
 		if (task[tnum].callback.hasOwnProperty("endTrial")) {
@@ -1995,17 +2106,20 @@ var startSeg = function(task) {
 		task[tnum] = temp[0];
 		myscreen = temp[1];
 	}
-	myscreen = writeTrace(1, task[tnum].segmentTrace, myscreen, 1);
 	thistime = jglGetSecs();
-	
-	if (task[tnum].trialnum > 0) {
-		task[tnum].timeDiscrepancy = (thistime - task[tnum].lasttrial.trialstart) - (sum(subtract(task[tnum].lasttrial.seglen, task[tnum].timeDiscrepancy)));
-	}
+
 	task[tnum].thistrial.trialstart = thistime;
-	window.segTimeout[task[tnum].taskID] = setTimeout(startSeg, task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg] * 1000, task);
+	if (isFinite(task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg])) {
+		window.segTimeout[task[tnum].taskID] = setTimeout(startSeg, task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg] * 1000, task);
+	}
 	return;
 }
 
+/**
+ * This function inits a block. It calls the rand callback which is defaultly set to blockRandomization
+ * to set the parameter orders. then calls startBlock callback if present. 
+ * @param task
+ */
 function initBlock(task) {
 	
 	task.blocknum++;
@@ -2025,6 +2139,11 @@ function initBlock(task) {
 	}
 }
 
+/**
+ * This function inits a trial. A trial object keeps track of the current segment,
+ * if a response has been collected, and the seglen array. Calls startTrial callback.
+ * @param task the task object
+ */
 function initTrial(task) {
 	task.lasttrial = task.thistrial;
 	task.thistrial.thisphase = tnum;
@@ -2076,6 +2195,104 @@ function initTrial(task) {
 	}
 
 	task.thistrial.waitingToInit = 0;
+}/**
+ * Function for generating an XML object from a javascript object.
+ * Requires that the root tag be places around the return value.
+ * This is the xml tagname scheme:
+ * All objects are surrounded by an object tag, every field of an
+ * object has its own tagname. Arrays are surrounded by array tag
+ * names. Array tags have an attribute type, with either cell or mat
+ * as the value. mat means its a numeric array and can be a matrix in matlab.
+ * cell means the array contains non-numeric elements. Every value is enclosed in
+ * a val tag. val tags also have a type attribute, with a value num or str. num means
+ * it isNumeric, str means its not.
+ * @param object the object to XMLify
+ * @param xml should always be left undefined
+ * @returns {String} The XML version of the given object, object 
+ * field names are tags, array tag starts an array, val tag for value of a given item.
+ */
+function genXML(object, xml) {
+	if (xml === undefined) {
+		xml = "";
+	}
+	if ($.type(object) == "object") {
+		var fieldNames = fields(object);
+		xml += "<object>";
+		for (var i =0; i<fieldNames.length;i++) {
+			if (fieldNames[i] != "callback" && fieldNames[i] != "psiTurk") {
+				xml += "<" + fieldNames[i] + ">";
+				xml += genXML(object[fieldNames[i]]);
+				xml += "</" + fieldNames[i] + ">";
+			}
+		}
+		xml += "</object>";
+	} else if ($.isArray(object)) {
+		if (isNumeric(object)) {
+			xml += '<array type=&quot;mat&quot;>'; // &quot; is an escaped " in xml
+		} else {
+			xml += '<array type=&quot;cell&quot;>';
+		}
+		for (var i = 0;i<object.length;i++) {
+			xml += genXML(object[i]);
+		}
+		xml += "</array>";
+	} else {
+		if (isNumeric(object)) {
+			xml += '<val type=&quot;num&quot;>' + object + '</val>';
+		} else {
+			xml += '<val type=&quot;str&quot;>' + object + '</val>';
+		}
+	}
+	return xml;
+}
+
+/**
+ * Function to save all of the data to the database.
+ * This function creates a large object xml string containing
+ * the psiData object, the task array, the myscreen object, and
+ * all stimulus objects that have been registered with initStimulus.
+ * The xml is then saved in the database using psiTurk with the key
+ * experimentXML.
+ */
+function saveAllData() {
+	/*
+	 * xml will represent an xml object with psiData, task, myscreen, and all
+	 * the stimuli as fields. The generateMat function in matlab can then use
+	 * the xml to make a mat file
+	 */
+	
+	var xml = "<object>";
+	
+	xml += "<psiData>";
+	xml += genXML(psiData);
+	xml += "</psiData>";
+	
+	xml += "<task>";
+	xml += genXML(task);
+	xml += "</task>";
+	
+	xml += "<myscreen>";
+	xml += genXML(myscreen);
+	xml += "</myscreen>";
+	
+	// Get all stimuli registered using initStimulus.
+	for (var i=0;i<myscreen.stimulusNames.length;i++) {
+		xml += "<" + myscreen.stimulusNames[i] + ">";
+		xml += eval("genXML(" + myscreen.stimulusNames[i] + ");");
+		xml += "</" + myscreen.stimulusNames[i] + ">";
+	}
+	
+	xml += "</object>";
+	
+	// Save data.
+	myscreen.psiTurk.recordUnstructuredData("experimentXML", xml);
+	myscreen.psiTurk.saveData({
+		success: function() {
+			myscreen.psiTurk.completeHIT();
+		},
+		error: function() {alert("error!!!");}
+	});
+	
 }/**
  * Basic Set Data Structure.
  * @constructor
@@ -2194,32 +2411,4 @@ function tickScreen() {
 	}
 	
 
-}/**
- * 
- */
-function writeTrace(data, tracenum, myscreen, force, eventTime) {
-	if (force === undefined) {
-		force = 0;
-	}
-	if (eventTime === undefined) {
-		eventTime = jglGetSecs();
-	}
-	
-	var getlast = find(equals(myscreen.events.tracenum, tracenum));
-	
-	if (! isEmpty(getlast)) {
-		getlast = getlast[getlast.length - 1];
-	}
-	
-	if ((tracenum > 0) && (force || isEmpty(getlast) || myscreen.events.data[getlast] != data)) {
-		myscreen.events.tracenum[myscreen.events.n] = tracenum;
-		myscreen.events.data[myscreen.events.n] = data;
-		myscreen.events.ticknum[myscreen.events.n] = myscreen.tick;
-		myscreen.events.volnum[myscreen.events.n] = myscreen.volnum;
-		myscreen.events.time[myscreen.events.n] = eventTime;
-		myscreen.events.force[myscreen.events.n] = force;
-		myscreen.events.n++;
-	}
-	
-	return myscreen;
 }

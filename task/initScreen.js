@@ -4,23 +4,7 @@
  * @constructor
  */
 function Screen() {
-	this.screenWidth = screen.width; // width in pixels
-	this.screenHeight = screen.height; // height in pixels
-	this.ppi; // pixels per inch
-	this.data = {}; // some sort of data object TODO: more notes
-	this.events = {};
-	this.thisPhase; // current running phase
-	this.htmlPages = []; // all html pages to be used
-	this.psiTurk; // psiTurk object
-	this.keyboard = {};
-	this.keyboard.state = jglGetKeys; // pointer to keyboard status function
-	this.keyboard.backtick = '`';
-	this.mouse = jglGetMouse; // pointer to mouse status function
-	this.assignmentID; // assignmentID given by turk
-	this.hitID; // hitID given by turk
-	this.workerID; // workerID given by turk
-	this.startTime = jglGetSecs(); // start time, used for random state
-	this.numTasks = 0; // number of tasks
+
 }
 
 /**
@@ -42,7 +26,25 @@ function getURLParams() {
  * @returns the setup screen object
  */
 function initScreen() {
-	var screen = new Screen();
+	var screen = {};
+	
+	screen.screenWidth = window.screen.width; // width in pixels
+	screen.screenHeight = window.screen.height; // height in pixels
+	screen.ppi; // pixels per inch
+	screen.data = {}; // some sort of data object TODO: more notes
+	screen.events = {};
+	screen.thisPhase; // current running phase
+	screen.htmlPages = []; // all html pages to be used
+	screen.psiTurk; // psiTurk object
+//	this.keyboard = {};
+//	this.keyboard.state = jglGetKeys; // pointer to keyboard status function
+//	this.keyboard.backtick = '`';
+//	this.mouse = jglGetMouse; // pointer to mouse status function
+	screen.assignmentID; // assignmentID given by turk
+	screen.hitID; // hitID given by turk
+	screen.workerID; // workerID given by turk
+	screen.startTime = jglGetSecs(); // start time, used for random state
+	screen.numTasks = 0; // number of tasks
 	var params = getURLParams();
 	if (! isEmpty(params)) {
 		screen.assignmentID = params[0].substring(params[0].indexOf('='));
@@ -53,25 +55,6 @@ function initScreen() {
 	}
 	
 	screen.userHitEsc = 0;
-	
-	var size = 4096;
-	
-//	screen.events.n = 0;
-//	screen.events.tracenum = zeros(size);
-//	screen.events.data = zeros(size);
-//	screen.events.ticknum = zeros(size);
-//	screen.events.volnum = zeros(size);
-//	screen.events.time = zeros(size);
-//	screen.events.force = zeros(size);
-//	
-//	screen.traceNames = [];
-//	screen.traceNames[0] = 'volume';
-//	screen.traceNames[1] = 'segmentTime';
-//	screen.traceNames[2] = 'responseTime';
-//	screen.traceNames[3] = 'taskPhase';
-//	screen.traceNames[4] = 'fixationTask';
-//	
-//	screen.numTraces = 5;
 	
 	screen.tick = 0;
 	screen.totaltick = 0;

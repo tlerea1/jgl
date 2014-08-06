@@ -904,11 +904,11 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 
 
 function jglGetParam(str) {
-	return eval("screen." + str);
+	return eval("canvas." + str);
 }
 
 function jglSetParam(param, val) {
-	eval("screen." + param + " = " + val);
+	eval("canvas." + param + " = " + val);
 }
 
 
