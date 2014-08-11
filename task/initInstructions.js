@@ -2,7 +2,7 @@
  * 
  */
 function initInstructions(pages) {
-	myscreen.psiTurk.preloadPages(pages);
+//	myscreen.psiTurk.preloadPages(pages);
 	var task = {};
 	task.seglen = [10];
 	task.usingScreen = 0;

@@ -17,8 +17,11 @@ function initTurk() {
 	window.jgl_Done_ = [];
 	for (var i = 0;i<task.length;i++) {
 		for (var j = 0;j<task[i].length;j++) {
-			pageNames.push(task[i][j].html);
-			window.jgl_Done_.push(false);
+			if (task[i][j].html.localeCompare("instructions")) {
+				pageNames = pageNames.concat(task[i][j].instructionPages);
+			} else {
+				pageNames.push(task[i][j].html);
+			}
 		}
 	}
 	myscreen.psiTurk.preloadPages(pageNames);
