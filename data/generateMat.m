@@ -7,8 +7,7 @@ function generateMat()
     for i=1:length(fieldNames)
         eval(sprintf('%s = xData.%s;', fieldNames{i}, fieldNames{i}));
     end
-    fileName = strrep(datestr(now), ' ', '_');
-    fileName = strcat(fileName,'.mat');
+    fileName = strcat(myscreen.uniqueId,'.mat');
     clear xData i fieldNames;
     
     save(fileName);

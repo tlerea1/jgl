@@ -67,6 +67,10 @@ var startPhase = function(task) {
 		finishExp();
 		return;
 	}
+	if (task[tnum].html.localeCompare("instructions") == 0) {
+		myscreen.psiTurk.doInstructions(task[tnum].instructionPages, nextPhase());
+		return;
+	}
 	
 	myscreen.psiTurk.showPage(task[tnum].html);
 	if (task[tnum].usingScreen) {

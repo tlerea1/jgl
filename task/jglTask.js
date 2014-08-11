@@ -945,6 +945,20 @@ var mouseResponse = function(e) {
 }/**
  * 
  */
+function initInstructions(pages) {
+	myscreen.psiTurk.preloadPages(pages);
+	var task = {};
+	task.seglen = [10];
+	task.usingScreen = 0;
+	task.html = "instructions";
+	
+	task = initTask(task, function(task, myscreen){return [task, myscreen]}, function(task, myscreen){return [task, myscreen]});
+	task.instructionPages = pages;
+	
+	return task;
+}/**
+ * 
+ */
 function initRandomization(parameter) {
 	var alreadyInitialized = false;
 	
@@ -2064,6 +2078,10 @@ function nextPhase() {
 var startPhase = function(task) {
 	if (tnum == task.length) {
 		finishExp();
+		return;
+	}
+	if (task[tnum].html.localeCompare("instructions") == 0) {
+		myscreen.psiTurk.doInstructions(task[tnum].instructionPages, nextPhase());
 		return;
 	}
 	
