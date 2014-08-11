@@ -167,15 +167,15 @@ var startSeg = function(task) {
 function jumpSegment(task, tasknum, segnum) {
 	clearTimeout(window.segTimeout[task.taskID]);
 	if (segnum === undefined) {
-		startSeg(task[tasknum]);
+		startSeg(window.task[tasknum]);
 	} else if (! isFinite(segnum)) {
-		startTrial(task[tasknum]);
+		startTrial(window.task[tasknum]);
 	} else {
 		if (segnum >= task.thistrial.seglen.length) {
 			throw "jumpSegment: segnum too high";
 		}
 		task.thistrial.thisseg = segnum - 1;
-		startSeg(task[tasknum]);
+		startSeg(window.task[tasknum]);
 	}
 }
 

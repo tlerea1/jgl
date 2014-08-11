@@ -34,7 +34,7 @@ var keyResponse = function(e) {
 			psiData.keys[psiData.keys.length - 1].segnum = task[i][tnum].thistrial.thisseg;
 			psiData.keys[psiData.keys.length - 1].time = jglGetSecs();
 			if (task[i][tnum].callback.hasOwnProperty("trialResponse")) {
-				task[i][tnum].callback.trialResponse;
+				task[i][tnum].callback.trialResponse(task[i][tnum], myscreen);
 			}
 		}
 	}
@@ -60,7 +60,7 @@ var mouseResponse = function(e) {
 			psiData.mouse[psiData.mouse.length - 1].segnum = task[i][tnum].thistrial.thisseg;
 			psiData.mouse[psiData.mouse.length - 1].time = jglGetSecs();
 			if (task[i][tnum].callback.hasOwnProperty("trialResponse")) {
-				task[i][tnum].callback.trialResponse;
+				task[i][tnum].callback.trialResponse(task[i][tnum], myscreen);
 			}
 		}
 	}

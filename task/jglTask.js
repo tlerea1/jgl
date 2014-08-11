@@ -912,7 +912,7 @@ var keyResponse = function(e) {
 			psiData.keys[psiData.keys.length - 1].segnum = task[i][tnum].thistrial.thisseg;
 			psiData.keys[psiData.keys.length - 1].time = jglGetSecs();
 			if (task[i][tnum].callback.hasOwnProperty("trialResponse")) {
-				task[i][tnum].callback.trialResponse;
+				task[i][tnum].callback.trialResponse(task[i][tnum], myscreen);
 			}
 		}
 	}
@@ -938,12 +938,15 @@ var mouseResponse = function(e) {
 			psiData.mouse[psiData.mouse.length - 1].segnum = task[i][tnum].thistrial.thisseg;
 			psiData.mouse[psiData.mouse.length - 1].time = jglGetSecs();
 			if (task[i][tnum].callback.hasOwnProperty("trialResponse")) {
-				task[i][tnum].callback.trialResponse;
+				task[i][tnum].callback.trialResponse(task[i][tnum], myscreen);
 			}
 		}
 	}
 }/**
- * 
+ * Function for initializing an instruction phase.
+ * runExp checks to see if the current phase is an instruction phase
+ *  and if so it starts instructions and when they finish it starts
+ *  the next phase.
  */
 function initInstructions(pages) {
 //	myscreen.psiTurk.preloadPages(pages);
@@ -2178,6 +2181,21 @@ var startSeg = function(task) {
 		window.segTimeout[task[tnum].taskID] = setTimeout(startSeg, task[tnum].thistrial.seglen[task[tnum].thistrial.thisseg] * 1000, task);
 	}
 	return;
+}
+
+function jumpSegment(task, tasknum, segnum) {
+	clearTimeout(window.segTimeout[task.taskID]);
+	if (segnum === undefined) {
+		startSeg(window.task[tasknum]);
+	} else if (! isFinite(segnum)) {
+		startTrial(window.task[tasknum]);
+	} else {
+		if (segnum >= task.thistrial.seglen.length) {
+			throw "jumpSegment: segnum too high";
+		}
+		task.thistrial.thisseg = segnum - 1;
+		startSeg(window.task[tasknum]);
+	}
 }
 
 /**
