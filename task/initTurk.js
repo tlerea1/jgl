@@ -17,7 +17,7 @@ function initTurk() {
 	window.jgl_Done_ = [];
 	for (var i = 0;i<task.length;i++) {
 		for (var j = 0;j<task[i].length;j++) {
-			if (task[i][j].html.localeCompare("instructions")) {
+			if (task[i][j].html.localeCompare("instructions") == 0) {
 				pageNames = pageNames.concat(task[i][j].instructionPages);
 			} else {
 				pageNames.push(task[i][j].html);
