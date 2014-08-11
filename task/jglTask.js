@@ -2061,7 +2061,7 @@ function clearIntAndTimeouts() {
  * This function advances to the next phase. It stops the previous phase by
  * clearing the timeout and interval that runs that phase then calls startPhase.
  */
-function nextPhase() {
+var nextPhase = function() {
 	clearIntAndTimeouts();
 	tnum++;
 	if (task[0][tnum - 1].usingScreen) {
@@ -2084,7 +2084,7 @@ var startPhase = function(task) {
 		return;
 	}
 	if (task[tnum].html.localeCompare("instructions") == 0) {
-		myscreen.psiTurk.doInstructions(task[tnum].instructionPages, nextPhase());
+		myscreen.psiTurk.doInstructions(task[tnum].instructionPages, nextPhase);
 		return;
 	}
 	
