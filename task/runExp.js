@@ -164,6 +164,21 @@ var startSeg = function(task) {
 	return;
 }
 
+function jumpSegment(task, tasknum, segnum) {
+	clearTimeout(window.segTimeout[task.taskID]);
+	if (segnum === undefined) {
+		startSeg(task[tasknum]);
+	} else if (! isFinite(segnum)) {
+		startTrial(task[tasknum]);
+	} else {
+		if (segnum >= task.thistrial.seglen.length) {
+			throw "jumpSegment: segnum too high";
+		}
+		task.thistrial.thisseg = segnum - 1;
+		startSeg(task[tasknum]);
+	}
+}
+
 /**
  * This function inits a block. It calls the rand callback which is defaultly set to blockRandomization
  * to set the parameter orders. then calls startBlock callback if present. 

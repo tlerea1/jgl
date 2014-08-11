@@ -1,5 +1,8 @@
 /**
- * 
+ * Function for initializing an instruction phase.
+ * runExp checks to see if the current phase is an instruction phase
+ *  and if so it starts instructions and when they finish it starts
+ *  the next phase.
  */
 function initInstructions(pages) {
 //	myscreen.psiTurk.preloadPages(pages);
