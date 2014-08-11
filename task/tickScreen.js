@@ -4,7 +4,9 @@
 function tickScreen() {
 	
 	for (var i=0;i<task.length;i++) {
-		task[i][tnum].callback.screenUpdate(task[i], myscreen);
+		var temp = task[i][tnum].callback.screenUpdate(task[i][tnum], myscreen);
+		task[i][tnum] = temp[0];
+		myscreen = temp[1];
 	}
 	
 	//TODO: skipped a bunch of volume stuff

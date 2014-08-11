@@ -88,10 +88,11 @@ function jglOpen(resolution) {
 	if (canvas !== undefined && canvas.hasOwnProperty("stencils")) {
 		stencils = canvas.stencils;
 	}
-	$(".jgl").append("<div id=\"jglDiv\" style=\"position: relative;\"><canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"600\" height=\"600\"></canvas>"
-			+ "<canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"backCanvas\" width=\"600\" height=\"600\"></canvas> </div>");
+	$(".jgl").append("<div id=\"jglDiv\" style=\"position: relative;\"><canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"800\" height=\"800\"></canvas>"
+			+ "<canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"backCanvas\" width=\"800\" height=\"800\"></canvas> </div>");
 	$("#backCanvas").hide();
 	canvas = new Canvas();
+	window.resizeTo(canvas.width + 50, canvas.height + 80);
 	canvas.stencils = stencils;
 	mouse = new Mouse();
 	mouseSetup(mouse);
@@ -119,6 +120,9 @@ function jglOpen(resolution) {
 }
 
 function jglIsOpen() {
+	if (canvas === undefined) {
+		return false;
+	}
 	return canvas.isOpen;
 }
 

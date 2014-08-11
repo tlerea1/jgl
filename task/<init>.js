@@ -588,6 +588,33 @@ function and(first, second) {
 }
 
 /**
+ * Function to calculate an element bit wise xor. works with logical inputs. Inputs can be Arrays or Numbers.
+ * @param first the first input
+ * @param second the second input
+ * @returns {Array} returns an array of element bit wise xors of the inputs. 
+ */
+function xor(first, second) {
+	if ($.isArray(first) && $.isArray(second)) {
+		if (first.length != second.length) {
+			throw "array or, dimensions don't agree";
+		}
+		return jQuery.map(first, function(n, i) {
+			return !(n & second[i]) & (n | second[i]);
+		});
+	} else if ($.isArray(first) && ! $.isArray(second)) {
+		return jQuery.map(first, function(n, i) {
+			return !(n & second[i]) & (n | second[i]);
+		});
+	} else if (! $.isArray(first) && $.isArray(second)) {
+		return jQuery.map(second, function(n, i) {
+			return !(n & second[i]) & (n | second[i]);
+		});
+	} else {
+		return [!(n & second[i]) & (n | second[i])];
+	}
+}
+
+/**
  * Function to generate a logical array from element wise checking greater than between first and second.
  * @param first the first item. can be a Number or Array
  * @param second the second item. can be a Number or Array
@@ -775,5 +802,18 @@ function isNumeric(val) {
 	}else {
 		return $.isNumeric(val);
 	}
+}
+
+function change(array, values, indexer) {
+	var places = find(indexer);
+	if (places.length != values.length) {
+		throw "change: array lengths dont match";
+	}
+	
+	for (var i =0 ;i<places.length;i++) {
+		array[places[i]] = values[i];
+	}
+	
+	return array;
 }
 

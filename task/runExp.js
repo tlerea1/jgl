@@ -37,6 +37,7 @@ function clearIntAndTimeouts() {
 	}
 	if (window.drawInterval) {
 		clearInterval(window.drawInterval);
+		window.drawInterval = null;
 	}
 }
 
@@ -47,6 +48,9 @@ function clearIntAndTimeouts() {
 function nextPhase() {
 	clearIntAndTimeouts();
 	tnum++;
+	if (task[0][tnum - 1].usingScreen) {
+		jglClose();
+	}
 	for (var i=0;i<window.task.length;i++) {
 		startPhase(task[i]);
 	}

@@ -68,7 +68,7 @@ function initScreen() {
 	screen.ppi = 127;
 	screen.flushMode = 0;
 	
-	screen.framesPerSecond = jglGetParam('frameRate');
+	screen.framesPerSecond = 60;
 	screen.frametime = 1 / screen.framesPerSecond;
 	
 	window.segTimeout = [];

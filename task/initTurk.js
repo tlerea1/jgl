@@ -5,7 +5,7 @@
  * loads the pages.
  * calls initData to setup key and mouse events. 
  */
-function initTurk(task) {
+function initTurk() {
 		
 	myscreen.uniqueId = uniqueId;
 	myscreen.condition = condition;

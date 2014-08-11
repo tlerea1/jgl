@@ -13,7 +13,7 @@ function testExperiment() {
 	task[0][0] = {};
 	task[0][0] = initSurvey();
 	task[0][1] = {};
-	task[0][1].seglen = [2];
+	task[0][1].seglen = [2, Infinity];
 	task[0][1].getResponse = [1];
 	task[0][1].numBlocks = 10;
 	task[0][1].numTrials = 10;
@@ -31,7 +31,7 @@ function testExperiment() {
 	initStimulus("stimulus");
 	task[0][1] = initDots(task[0][1], myscreen);
 	
-	initTurk(task);
+	initTurk();
 	
 	startPhase(task[0]);
 	
