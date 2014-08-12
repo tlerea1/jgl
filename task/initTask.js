@@ -2,9 +2,7 @@
  * This is a phase object, while this constructor is never used, 
  * It is useful to see what members a phase object can have. 
  * @constructor
- * @module jglTask
- * @requires module:stdlib
- * @requires module:jgllib
+
  * @property {Number} verbose determines if the phase object is verbose with the console.
  * @property {Object} parameter an object to hold parameters for trials.
  * @property {Array} seglen holds definite lengths of all segments within a trial
@@ -29,6 +27,7 @@
  * @property {Object} genRandom this is an object whose structure can be found in [rand.js]{@link rand.js}
  * @property {Number} usingScreen 1 means yes, 0 means no
  * @property {String} html the name of the html page to be used
+ * @memberof module:jglTask
  */
 function Phase() {
 	this.verbose;
@@ -56,6 +55,13 @@ function Phase() {
 	this.genRandom;
 	this.usingScreen;
 }
+
+/**
+ * This is the jglTask module. It is in charge of managing an experiment and its structure. 
+ * @module jglTask
+ * @requires module:stdlib
+ * @requires module:jgllib
+ */
 
 /**
  * Function for initializing a stimulus phase. 

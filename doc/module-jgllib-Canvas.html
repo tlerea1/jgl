@@ -67,6 +67,495 @@
 <dl class="details">
     
 
+        <h5 class="subsection-title">Properties:</h5>
+
+        <dl>
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>canvas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the front canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>context</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Ojbect</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the context for the front canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>backCanvas</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the back canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>backCtx</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Ojbect</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the context for the back canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>height</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the height of the canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>width</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the width of the canvas.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stencils</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">an array of all of the saved stencils.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>drawingStencil</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">boolean to determine if you are currently drawing a stencil.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>useStencil</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">determines if you are currently using a stencil</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>stencilSelected</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the number of the currently selected stencil</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>viewDistance</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">defaults to 24 inches</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>ppi</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the pixels per inch of the screen.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>degPerPix</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the degrees in visual angles per pixel</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>pixPerDeg</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the pixels per degree of visual angle</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>usingVisualAngles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">tells if you are currently drawing in visual angles</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>usingVisualAnglesStencil</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">tells if you are currently drawing in visual angels for your stencil</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>backgroundColor</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">String</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the color of the background</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>lastFlushTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the time of the last call to flush</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>frameRate</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the number of frames per second</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>isOpen</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">tells if jgllib is open.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+</dl>
+
+    
+
     
 
     
@@ -88,7 +577,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="jgllib.js.html">jgllib.js</a>, <a href="jgllib.js.html#line36">line 36</a>
+        <a href="jgllib.js.html">jgllib.js</a>, <a href="jgllib.js.html#line56">line 56</a>
     </li></ul></dd>
     
 
@@ -145,13 +634,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-jgllib.html">jgllib</a></li><li><a href="module-jglTask.html">jglTask</a></li><li><a href="module-stdlib.html">stdlib</a></li></ul><h3>Classes</h3><ul><li><a href="module-jgllib-Canvas.html">Canvas</a></li><li><a href="Set.html">Set</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Starting with jgl.html">Starting with jgl</a></li><li><a href="tutorial-Working with surveys.html">Working with surveys</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-jgllib.html">jgllib</a></li><li><a href="module-jglTask.html">jglTask</a></li><li><a href="module-stdlib.html">stdlib</a></li></ul><h3>Classes</h3><ul><li><a href="module-jgllib-Canvas.html">Canvas</a></li><li><a href="module-jgllib-Mouse.html">Mouse</a></li><li><a href="module-jglTask.Phase.html">Phase</a></li><li><a href="Set.html">Set</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Starting with jgl.html">Starting with jgl</a></li><li><a href="tutorial-Working with surveys.html">Working with surveys</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Mon Aug 11 2014 23:30:09 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Mon Aug 11 2014 23:48:08 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>

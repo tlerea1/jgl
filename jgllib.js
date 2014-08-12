@@ -32,6 +32,26 @@ var texCtx;
 /**
  * Screen object, contains the canvases and other information
  * @constructor
+ * @property {Object} canvas the front canvas.
+ * @property {Ojbect} context the context for the front canvas.
+ * @property {Object} backCanvas the back canvas.
+ * @property {Ojbect} backCtx the context for the back canvas.
+ * @property {Number} height the height of the canvas.
+ * @property {Number} width the width of the canvas.
+ * @property {Array} stencils an array of all of the saved stencils.
+ * @property {Boolean} drawingStencil boolean to determine if you are currently drawing a stencil.
+ * @property {Boolean} useStencil determines if you are currently using a stencil
+ * @property {Number} stencilSelected the number of the currently selected stencil
+ * @property {Number} viewDistance defaults to 24 inches
+ * @property {Number} ppi the pixels per inch of the screen.
+ * @property {Number} degPerPix the degrees in visual angles per pixel
+ * @property {Number} pixPerDeg the pixels per degree of visual angle
+ * @property {Boolean} usingVisualAngles tells if you are currently drawing in visual angles
+ * @property {Boolean} usingVisualAnglesStencil tells if you are currently drawing in visual angels for your stencil
+ * @property {String} backgroundColor the color of the background
+ * @property {Number} lastFlushTime the time of the last call to flush
+ * @property {Number} frameRate the number of frames per second
+ * @property {Boolean} isOpen tells if jgllib is open. 
  */
 function Canvas() {	
 	this.canvas = document.getElementById("canvas");
@@ -56,12 +76,24 @@ function Canvas() {
 	this.isOpen = false;
 }
 
+/**
+ * Creates a mouse object. 
+ * @constructor
+ * @property {Array} buttons [left, middle, right]
+ * @property {Number} x the x-coordinate
+ * @property {Number} y the y-coordinate
+ */
 function Mouse() {
 	this.buttons = []; // [left, middle, right]
 	this.x = 0; // x-coordinate
 	this.y = 0; // y-coordinate
 }
 
+/**
+ * Sets up the mouse tracker. 
+ * Binds the mouse move, down, and up events to keep track of the mouse movements.
+ * @param {Ojbect} mouse the mouse object to keep track of the location of the mouse.
+ */
 function mouseSetup(mouse) {
 	$(window).mousemove(function(event){
 		mouse.x = event.pageX;
@@ -121,6 +153,10 @@ function jglOpen(resolution) {
 	canvas.isOpen = true;
 }
 
+/**
+ * Determines if jgllib is currently open
+ * @returns {Boolean} true is yes, false if no
+ */
 function jglIsOpen() {
 	if (canvas === undefined) {
 		return false;
@@ -128,6 +164,10 @@ function jglIsOpen() {
 	return canvas.isOpen;
 }
 
+/**
+ * Closes jgllib by removing the canvases from the page
+ * sets isOpen to false. 
+ */
 function jglClose() {
 	$("#jglDiv").remove();
 	canvas.isOpen = false;
@@ -183,6 +223,9 @@ function jglFlush() {
 
 }
 
+/**
+ * Flushes and then waits for a frame to pass.
+ */
 function jglFlushAndWait() {
 	var lastFlushTime = canvas.lastFlushTime;
 	
@@ -202,6 +245,9 @@ function jglFlushAndWait() {
 	canvas.lastFlushTime =  jglGetSecs();
 }
 
+/**
+ * Waits for a frame but does not flush
+ */
 function jglNoFlushWait() {
 	var lastFlushTime = canvas.lastFlushTime;
 	
@@ -908,11 +954,20 @@ function jglBltTexture(texture, xpos, ypos, rotation) {
 
 }
 
-
+/**
+ * Function to get a parameter of the canvas object. 
+ * @param {String} str the name of the parameter
+ * @returns the value of that field in canvas
+ */
 function jglGetParam(str) {
 	return eval("canvas." + str);
 }
 
+/**
+ * Function to set a parameter of the canvas object
+ * @param {String} param the field to set
+ * @param {Any} val the value to set it to.
+ */
 function jglSetParam(param, val) {
 	eval("canvas." + param + " = " + val);
 }
