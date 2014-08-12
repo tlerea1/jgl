@@ -873,7 +873,7 @@ to set the parameter orders. then calls startBlock callback if present.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task_runExp.js.html">task/runExp.js</a>, <a href="task_runExp.js.html#line206">line 206</a>
+        <a href="task_runExp.js.html">task/runExp.js</a>, <a href="task_runExp.js.html#line208">line 208</a>
     </li></ul></dd>
     
 
@@ -1904,7 +1904,7 @@ if a response has been collected, and the seglen array. Calls startTrial callbac
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task_runExp.js.html">task/runExp.js</a>, <a href="task_runExp.js.html#line231">line 231</a>
+        <a href="task_runExp.js.html">task/runExp.js</a>, <a href="task_runExp.js.html#line233">line 233</a>
     </li></ul></dd>
     
 
@@ -2154,7 +2154,7 @@ if number, start that segment.</td>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task_runExp.js.html">task/runExp.js</a>, <a href="task_runExp.js.html#line185">line 185</a>
+        <a href="task_runExp.js.html">task/runExp.js</a>, <a href="task_runExp.js.html#line187">line 187</a>
     </li></ul></dd>
     
 
@@ -2404,7 +2404,7 @@ if so records it.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task_initData.js.html">task/initData.js</a>, <a href="task_initData.js.html#line53">line 53</a>
+        <a href="task_initData.js.html">task/initData.js</a>, <a href="task_initData.js.html#line54">line 54</a>
     </li></ul></dd>
     
 
@@ -3000,7 +3000,7 @@ experimentXML.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task_initTask.js.html">task/initTask.js</a>, <a href="task_initTask.js.html#line820">line 820</a>
+        <a href="task_initTask.js.html">task/initTask.js</a>, <a href="task_initTask.js.html#line812">line 812</a>
     </li></ul></dd>
     
 
@@ -3635,6 +3635,198 @@ not running fast enough. It is entirely disconnected from the actual drawing on 
             
 <dt>
     
+        <h4 class="name" id="writeTrace"><span class="type-signature">(static) </span>writeTrace<span class="signature">(data, tracenum, force, eventTime)</span><span class="type-signature"></span></h4>
+
+        
+    
+</dt>
+<dd>
+
+    
+    <div class="description">
+        Function to write to a trace.
+    </div>
+    
+
+    
+
+    
+
+    
+        <h5>Parameters:</h5>
+        
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>data</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">for response positive values are keyCodes, negative are mouse presses</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>tracenum</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the trace to write to</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>force</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">NOT USED defaults to 0</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>eventTime</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">the time the event occured defaults to the current time</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+    
+
+    
+<dl class="details">
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="task_writeTrace.js.html">task/writeTrace.js</a>, <a href="task_writeTrace.js.html#line9">line 9</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dd>
+
+        
+            
+<dt>
+    
         <h4 class="name" id="seglenPrecompute"><span class="type-signature">(inner) </span>seglenPrecompute<span class="signature">(task)</span><span class="type-signature"> &rarr; {Object}</span></h4>
 
         
@@ -3727,7 +3919,7 @@ not running fast enough. It is entirely disconnected from the actual drawing on 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="task_initTask.js.html">task/initTask.js</a>, <a href="task_initTask.js.html#line458">line 458</a>
+        <a href="task_initTask.js.html">task/initTask.js</a>, <a href="task_initTask.js.html#line450">line 450</a>
     </li></ul></dd>
     
 
@@ -3792,13 +3984,13 @@ not running fast enough. It is entirely disconnected from the actual drawing on 
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-jgllib.html">jgllib</a></li><li><a href="module-jglTask.html">jglTask</a></li><li><a href="module-stdlib.html">stdlib</a></li></ul><h3>Classes</h3><ul><li><a href="module-jgllib-Canvas.html">Canvas</a></li><li><a href="module-jgllib-Mouse.html">Mouse</a></li><li><a href="module-jglTask.Phase.html">Phase</a></li><li><a href="Set.html">Set</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Starting with jglTask.html">Starting with jglTask</a></li><li><a href="tutorial-Working with surveys.html">Working with surveys</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-jgllib.html">jgllib</a></li><li><a href="module-jglTask.html">jglTask</a></li><li><a href="module-stdlib.html">stdlib</a></li></ul><h3>Classes</h3><ul><li><a href="module-jgllib-Canvas.html">Canvas</a></li><li><a href="module-jgllib-Mouse.html">Mouse</a></li><li><a href="module-jglTask.Phase.html">Phase</a></li><li><a href="Set.html">Set</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Starting with jglTask.html">Starting with jglTask</a></li><li><a href="tutorial-Working with psiTurk.html">Working with psiTurk</a></li><li><a href="tutorial-Working with surveys.html">Working with surveys</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Tue Aug 12 2014 13:36:32 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Tue Aug 12 2014 15:28:27 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>
