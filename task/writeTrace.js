@@ -9,12 +9,6 @@ function writeTrace(data, tracenum, force, eventTime) {
 		eventTime = jglGetSecs();
 	}
 	
-	var getlast = find(equals(myscreen.events.tracenum, tracenum));
-	
-	if (! isEmpty(getlast)) {
-		getlast = getlast[getlast.length - 1];
-	}
-	
 	if ((tracenum > 0)) {
 		myscreen.events.tracenum[myscreen.events.n] = tracenum;
 		myscreen.events.data[myscreen.events.n] = data;

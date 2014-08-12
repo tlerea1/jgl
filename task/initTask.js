@@ -142,7 +142,7 @@ function initTask(task, startSegmentCallback,
 	
 	task.notYetStarted = 1;
 	task.blocknum = -1;
-	task.thistrial = new Trial();
+	task.thistrial = {};
 	task.thistrial.thisseg = Infinity;
 	
 	if (task.hasOwnProperty("seglenPrecompute") && typeof task.seglenPrecompute === "object") {

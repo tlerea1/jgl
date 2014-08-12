@@ -53,6 +53,11 @@ function initScreen() {
 
 	screen.events = {};
 	screen.events.n = 0;
+	screen.events.tracenum = [];
+	screen.events.data = [];
+	screen.events.ticknum = [];
+	screen.events.time = [];
+	screen.events.force = [];
 
 	screen.traceNames = [];
 	screen.traceNames[0] = 'volume';
