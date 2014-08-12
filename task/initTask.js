@@ -352,15 +352,6 @@ function initTask(task, startSegmentCallback,
 	myscreen.numTasks += 1;
 	task.taskID = myscreen.numTasks;
 	
-//	if (! task.hasOwnProperty("data")) {
-//		task.data = {};
-//		task.data.events = {};
-//		task.data.events.mouse = [];
-//		task.data.events.keyboard = [];
-//		task.data.trace = {};
-//		task.data.trace.mouse = [];
-//		task.data.trace.keyboard = [];
-//	}
 //	
 //	if (! task.hasOwnProperty("segmentTrace")) {
 //		if (myscreen.numTasks == 1) {
@@ -428,6 +419,7 @@ function initTask(task, startSegmentCallback,
 		task.callback.rand = blockRandomization;
 	}
 	
+	task = setupTraces(task);
 	
 	task.parameter = task.callback.rand(task, task.parameter);
 	
@@ -868,5 +860,20 @@ function seglenPrecomputeValidate(task) {
 		arrayPad(task.segprob, task.numsegs, []);
 	}
 	
+	return task;
+}
+
+/**
+ * Function to setup trace numbers
+ * @param {Object} task the phase object
+ * @returns the setup phase object
+ * @memberof module:jglTask
+ * @private
+ */
+function setupTraces(task) {
+	var start = ((task.taskID - 1) * 3) + 1;
+	task.segmentTrace = start++;
+	task.responseTrace = start++;
+	task.phaseTrace = start;
 	return task;
 }

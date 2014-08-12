@@ -50,6 +50,18 @@ function initScreen() {
 	}
 	
 	screen.userHitEsc = 0;
+
+	screen.events = {};
+	screen.events.n = 0;
+
+	screen.traceNames = [];
+	screen.traceNames[0] = 'volume';
+	screen.traceNames[1] = 'segmentTime';
+	screen.traceNames[2] = 'responseTime';
+	screen.traceNames[3] = 'taskPhase';
+	screen.traceNames[4] = 'fixationTask';
+
+	screen.numTraces = 5;
 	
 	screen.tick = 0;
 	screen.totaltick = 0;

@@ -86,7 +86,7 @@ var startPhase = function(task) {
 			window.drawInterval = setInterval(tickScreen, 17);
 		}
 	}
-	
+	writeTrace(1, task[tnum].phaseTrace);
 	initBlock(task[tnum]);
 	startBlock(task);
 }
@@ -164,6 +164,8 @@ var startSeg = function(task) {
 		task[tnum] = temp[0];
 		myscreen = temp[1];
 	}
+	
+	writeTrace(1, task[tnum].segmentTrace);
 	thistime = jglGetSecs();
 
 	task[tnum].thistrial.trialstart = thistime;

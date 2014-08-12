@@ -28,6 +28,7 @@ var keyResponse = function(e) {
 	for (var i = 0;i<task.length;i++) { //cycle through tasks
 		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 1) {
 			task[i][tnum].thistrial.gotResponse = 1;
+			writeTrace(e.keyCode, task[i][tnum].responseTrace);
 			psiData.keys[psiData.keys.length] = {};
 			psiData.keys[psiData.keys.length - 1].keyCode = e.keyCode;
 			psiData.keys[psiData.keys.length - 1].tasknum = i;
@@ -54,6 +55,7 @@ var mouseResponse = function(e) {
 	for (var i = 0;i<task.length;i++) { //cycle through tasks
 		if (task[i][tnum].thistrial.gotResponse == 0 && task[i][tnum].getResponse[task[i][tnum].thistrial.thisseg] == 2) {
 			task[i][tnum].thistrial.gotResponse = 1;
+			writeTrace(-e.which, task[i][tnum].responseTrace);
 			psiData.mouse[psiData.mouse.length] = {};
 			psiData.mouse[psiData.mouse.length - 1].which = e.which;
 			psiData.mouse[psiData.mouse.length - 1].x = e.pageX;
