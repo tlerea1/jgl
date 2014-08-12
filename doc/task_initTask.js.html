@@ -1,4 +1,31 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: task/initTask.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: task/initTask.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * This is a phase object, while this constructor is never used, 
  * It is useful to see what members a phase object can have. 
  * @constructor
@@ -115,15 +142,15 @@ function initTask(task, startSegmentCallback,
 	var taskFieldNames = fields(task);
 	
 	
-	for (var i = 0; i < taskFieldNames.length;i++) {
+	for (var i = 0; i &lt; taskFieldNames.length;i++) {
 		var upperMatch = upper(knownFieldNames).indexOf(taskFieldNames[i].toUpperCase());
 		var match = knownFieldNames.indexOf(taskFieldNames[i]);
-		if (upperMatch > -1 && match == -1) {
+		if (upperMatch > -1 &amp;&amp; match == -1) {
 			console.error('initTask: task.' + taskFieldNames[i] + ' is miscappatilized, changing to task.' + knownFieldNames[upperMatch]);
 			var value = task[taskFieldNames[i]];
 			delete task[taskFieldNames[i]];
 			task[knownFieldNames[upperMatch]] = value;
-		} else if (upperMatch < 0) {
+		} else if (upperMatch &lt; 0) {
 			console.error('initTask: unknown task field task.' + taskFieldNames[i]);
 		}
 	}
@@ -139,7 +166,7 @@ function initTask(task, startSegmentCallback,
 	task.thistrial = new Trial();
 	task.thistrial.thisseg = Infinity;
 	
-	if (task.hasOwnProperty("seglenPrecompute") && typeof task.seglenPrecompute === "object") {
+	if (task.hasOwnProperty("seglenPrecompute") &amp;&amp; typeof task.seglenPrecompute === "object") {
 		task = seglenPrecomputeValidate(task);
 	} else {
 		if (task.hasOwnProperty("seglen")) {
@@ -156,36 +183,36 @@ function initTask(task, startSegmentCallback,
 		
 		if (! task.hasOwnProperty("segquant")) {
 			task.segquant = zeros(task.segmin.length);
-		} else if (task.segquant.length < task.segmin.length) {
+		} else if (task.segquant.length &lt; task.segmin.length) {
 			task.segquant = arrayPad(task.segquant, task.segmin.length, 0);
 		}
 		
 		if (! task.hasOwnProperty("synchToVol")) {
 			task.synchToVol = zeros(task.segmin.length);
-		} else if (task.synchToVol.length < task.segmin.length) {
+		} else if (task.synchToVol.length &lt; task.segmin.length) {
 			task.synchToVol = arrayPad(task.synchToVol, task.segmin.length, 0);
 		}
 		
-		if (! task.hasOwnProperty("segdur") || task.segdur.length < task.segmin.length) {
+		if (! task.hasOwnProperty("segdur") || task.segdur.length &lt; task.segmin.length) {
 			task.segdur = [];
 			task.segdur = arrayPad(task.segdur, task.segmin.length, []);
 		} else if (task.segdur.length > task.segmin.length) {
 			task.segmin = arrayPad(task.segmin, task.segdur.length, NaN);
 			task.segmax = arrayPad(task.segmax, task.segdur.length, NaN);
-			if (task.segquant.length < task.segmin.length) {
+			if (task.segquant.length &lt; task.segmin.length) {
 				task.segquant = arrayPad(task.segquant,task.segmin.length,0);
 			}
-			if (task.synchToVol.length < task.segmin.length) {
+			if (task.synchToVol.length &lt; task.segmin.length) {
 				task.synchToVol = arrayPad(task.synchToVol,task.segmin.length,0);
 			}
 		}
 		
-		if (! task.hasOwnProperty("segprob") || task.segprob.length < task.segmin.length) {
+		if (! task.hasOwnProperty("segprob") || task.segprob.length &lt; task.segmin.length) {
 			task.segprob = [];
 			task.segprob = arrayPad(task.segprob, task.segmin.length, []);
 		}
 		
-		for (var i=0;i<task.segmin.length;i++) {
+		for (var i=0;i&lt;task.segmin.length;i++) {
 			if (! isEmpty(task.segdur[i])) {
 				if (isEmpty(task.segprob[i])) {
 					task.segprob[i] = fillArray(1 / task.segdur[i].length, task.segdur[i].length);
@@ -211,7 +238,7 @@ function initTask(task, startSegmentCallback,
 			}
 		}
 		
-		for (var i = 0; i<task.segquant.length;i++) {
+		for (var i = 0; i&lt;task.segquant.length;i++) {
 			if (task.segquant[i] != 0) {
 				if (isEmpty(task.segdur[i])) {
 					task.segdur[i] = jglMakeArray(task.segmin[i], task.segquant[i], task.segmax[i]);
@@ -230,7 +257,7 @@ function initTask(task, startSegmentCallback,
 			throw "init Task: task.segmin and task.segmax not of same length";
 		}
 		var difference = jQuery.map(task.segmax, function (n, i) {
-			if (n - task.segmin[i] < 0)
+			if (n - task.segmin[i] &lt; 0)
 				return 1;
 			return 0;
 		});
@@ -241,7 +268,7 @@ function initTask(task, startSegmentCallback,
 			if (numel(task.segnames) != task.numsegs) {
 				console.error("init Task: task.segnames does not match the number of segments");
 			} else {
-				for (var i=0;i<task.segnames.length;i++) {
+				for (var i=0;i&lt;task.segnames.length;i++) {
 					// TODO: did not understand MATLAB code
 				}
 			}
@@ -269,7 +296,7 @@ function initTask(task, startSegmentCallback,
 		task.timeInVols = 0;
 	}
 	
-	if (task.timeInTicks && task.timeInVols) {
+	if (task.timeInTicks &amp;&amp; task.timeInVols) {
 		console.error("init Task: Time is both in ticks and vols, setting to vols");
 		task.timeInTicks = 0;
 	}
@@ -283,7 +310,7 @@ function initTask(task, startSegmentCallback,
 //	task.randVars.calculated_n_ = 0;
 //	
 //	if (! task.randVars.hasOwnProperty("len_")) {
-//		if (task.hasOwnProperty("numTrials") && task.numTrials > -1) {
+//		if (task.hasOwnProperty("numTrials") &amp;&amp; task.numTrials > -1) {
 //			task.randVars.len_ = Math.max(task.numTrials, 250);
 //		} else {
 //			task.randVars.len_ = 250;
@@ -292,7 +319,7 @@ function initTask(task, startSegmentCallback,
 //	
 //	var randVarNames = fields(task.randVars);
 //	var originalNames = [], shortNames = [];
-//	for (var i=0;i<randVarNames.length;i++) {
+//	for (var i=0;i&lt;randVarNames.length;i++) {
 //		if (any(strcmp(randVarNames[i], randTypes))) {
 //			var vars = {};
 //			var thisRandVar = [];
@@ -306,9 +333,9 @@ function initTask(task, startSegmentCallback,
 //				thisIsCell = true;
 //			}
 //			
-//			for (var i=0;i<thisRandVar.length;i++) {
+//			for (var i=0;i&lt;thisRandVar.length;i++) {
 //				var varBlock = [], totalTrials = 0;
-//				for (var vnum = 0;vnum<vars.n_;i++) {
+//				for (var vnum = 0;vnum&lt;vars.n_;i++) {
 //					if (thisIsCell) {
 //						shortNames[shortNames.length] = vars.names_[vnum];
 //					}
@@ -392,31 +419,31 @@ function initTask(task, startSegmentCallback,
 		task.callback = {};
 	}
 	
-	if (startSegmentCallback != undefined && jQuery.isFunction(startSegmentCallback)) {
+	if (startSegmentCallback != undefined &amp;&amp; jQuery.isFunction(startSegmentCallback)) {
 		task.callback.startSegment = startSegmentCallback;
 	}
 	
-	if (trialResponseCallback != undefined && jQuery.isFunction(trialResponseCallback)) {
+	if (trialResponseCallback != undefined &amp;&amp; jQuery.isFunction(trialResponseCallback)) {
 		task.callback.trialResponse = trialResponseCallback;
 	}
 	
-	if (screenUpdateCallback != undefined && jQuery.isFunction(screenUpdateCallback)) {
+	if (screenUpdateCallback != undefined &amp;&amp; jQuery.isFunction(screenUpdateCallback)) {
 		task.callback.screenUpdate = screenUpdateCallback;
 	}
 	
-	if (endTrialCallback != undefined && jQuery.isFunction(endTrialCallback)) {
+	if (endTrialCallback != undefined &amp;&amp; jQuery.isFunction(endTrialCallback)) {
 		task.callback.endTrial = endTrialCallback;
 	}
 	
-	if (startTrialCallback != undefined && jQuery.isFunction(startTrialCallback)) {
+	if (startTrialCallback != undefined &amp;&amp; jQuery.isFunction(startTrialCallback)) {
 		task.callback.startTrial = startTrialCallback;
 	}
 	
-	if (startBlockCallback != undefined && jQuery.isFunction(startBlockCallback)) {
+	if (startBlockCallback != undefined &amp;&amp; jQuery.isFunction(startBlockCallback)) {
 		task.callback.startBlock = startBlockCallback;
 	}
 	
-	if (randCallback != undefined && jQuery.isFunction(randCallback)) {
+	if (randCallback != undefined &amp;&amp; jQuery.isFunction(randCallback)) {
 		task.callback.rand = randCallback;
 	} else {
 		task.callback.rand = blockRandomization;
@@ -464,7 +491,7 @@ function seglenPrecompute(task) {
 	                        {key: "idealDiffFromIdeal", value: []}
 	                        ];
 
-	for (var i=0;i<settingsDefaults.length;i++) {
+	for (var i=0;i&lt;settingsDefaults.length;i++) {
 		var settingsName = settingsDefaults[i].key;
 		var settingsDefault = settingsDefaults[i].value;
 		if (! task.seglenPrecomputeSettings.hasOwnProperty(settingsName)
@@ -473,7 +500,7 @@ function seglenPrecompute(task) {
 		}
 	}
 	
-	for (var i = 0; i<settingsDefaults.length;i++) {
+	for (var i = 0; i&lt;settingsDefaults.length;i++) {
 		settingsName = settingsDefaults[i].key;
 		eval("var " + settingsName + " = task.seglenPrecomputeSettings." + settingsName + ";");
 	}
@@ -507,12 +534,12 @@ function seglenPrecompute(task) {
 		trialLens[0].segmax = [];
 		trialLens[0].synchmin = [];
 		trialLens[0].synchmax = [];
-		for (var i=0;i<nSegs;i++) {
+		for (var i=0;i&lt;nSegs;i++) {
 			if (isNaN(task.segmin[i])) {
 				var newTrialLens = [];
 				var segprob = diff(task.segprob[i].concat([1]));
-				for (var iTrial = 0;iTrial<trialLens.length;iTrial++) {
-					for (var iSeg = 0;iSeg<task.segdur[i].length;iSeg++) {
+				for (var iTrial = 0;iTrial&lt;trialLens.length;iTrial++) {
+					for (var iSeg = 0;iSeg&lt;task.segdur[i].length;iSeg++) {
 						if (isEmpty(newTrialLens)) {
 							newTrialLens = trialLens[iTrial];
 						} else {
@@ -530,7 +557,7 @@ function seglenPrecompute(task) {
 				}
 				trialLens = newTrialLens;
 			} else if (task.segquant[i] == 0) {
-				for (var iTrialLens=0;iTrialLens<trialLens.length;iTrialLens++) {
+				for (var iTrialLens=0;iTrialLens&lt;trialLens.length;iTrialLens++) {
 					trialLens[iTrialLens].min += task.segmin[i];
 					trialLens[iTrialLens].max += task.segmax[i];
 					trialLens[iTrialLens].segmin[trialLens[iTrialLens].segmin.length] = task.segmin[i];
@@ -545,10 +572,10 @@ function seglenPrecompute(task) {
 					segLens[segLens.length] = task.segmax[i];
 				}
 				var newTrialLens = [];
-				for (var iTrialLen = 0;iTrialLen<trialLens.length;iTrialLen++) {
+				for (var iTrialLen = 0;iTrialLen&lt;trialLens.length;iTrialLen++) {
 					var thisSegLenMin = task.segmin[i];
 					var thisSegLen = task.segmax[i] - task.segmin[i];
-					for (var iSegLen=0;iSegLen<segLens.length;iSegLen++) {
+					for (var iSegLen=0;iSegLen&lt;segLens.length;iSegLen++) {
 						if (isEmpty(newTrialLens)) {
 							newTrialLens = trialLens[iTrialLen];
 						} else {
@@ -579,12 +606,12 @@ function seglenPrecompute(task) {
 			
 			if (task.synchToVol[i]) {
 				var newTrialLens = [];
-				for (var iTrialLen = 0; iTrialLen<trialLens.length;iTrialLen++) {
+				for (var iTrialLen = 0; iTrialLen&lt;trialLens.length;iTrialLen++) {
 					var minLen = trialLens[iTrialLen].min;
 					var maxLen = trialLens[iTrialLen].max;
 					var segLens = jglMakeArray(Math.ceil(minLen / framePeriod) * framePeriod, framePeriod, Math.ceil(maxLen / framePeriod) * framePeriod);
 					var segLensProbCompute = [minLen].concat(segLens);
-					for (var iSegLen = 0;iSegLen < segLens.length;iSegLen++) {
+					for (var iSegLen = 0;iSegLen &lt; segLens.length;iSegLen++) {
 						if (isEmpty(newTrialLens)) {
 							newTrialLens = trialLens[iTrialLen];
 						} else {
@@ -616,14 +643,14 @@ function seglenPrecompute(task) {
 		
 		var averageLen = 0, actualNumTrials = 0;
 		
-		for (var iTrialLen = 0;iTrialLen < trialLens.length; iTrialLen++) {
+		for (var iTrialLen = 0;iTrialLen &lt; trialLens.length; iTrialLen++) {
 			averageLen += trialLens[iTrialLen].freq * (trialLens[iTrialLen].max + trialLens[iTrialLen].min) / 2;
 		}
 		
 		if (verbose > 1) {
-			for (var i =0 ; i < trialLens.length;i++) {
+			for (var i =0 ; i &lt; trialLens.length;i++) {
 				var seglenStr = "seglen=[";
-				for (iSeg = 0; iSeg < trialLens[i].segmin.length;iSeg++) {
+				for (iSeg = 0; iSeg &lt; trialLens[i].segmin.length;iSeg++) {
 					if (task.synchToVol[iSeg]) {
 						var seglen = trialLens[i].segmin[iSeg] + synchWaitBeforeTime;
 						seglenStr = seglenStr.concat("*", seglen);
@@ -649,9 +676,9 @@ function seglenPrecompute(task) {
 		}
 	}
 	if (isEmpty(numTrials)) {
-		if (task.hasOwnProperty("numTrials") && ! isEmpty(task.numTrials) && isFinite(task.numTrials)) {
+		if (task.hasOwnProperty("numTrials") &amp;&amp; ! isEmpty(task.numTrials) &amp;&amp; isFinite(task.numTrials)) {
 			numTrials = task.numTrials;
-		} else if (task.hasOwnProperty("numBlocks") && ! isEmpty(task.numBlocks) && ! isFinite(task.numTrials)) {
+		} else if (task.hasOwnProperty("numBlocks") &amp;&amp; ! isEmpty(task.numBlocks) &amp;&amp; ! isFinite(task.numTrials)) {
 			numTrials = task.numBlocks * task.parameter.totalN_;
 		} else {
 			console.error("init Task: Must set number of trials to precompute");
@@ -662,7 +689,7 @@ function seglenPrecompute(task) {
 	console.log("init Task: Computing " + numTrials + " trials with average length " + averageLen);
 	var trialLength = [], seglen, newTrialLength;
 	task.seglenPrecompute.seglen = [];
-	for (var i = 0;i < numTrials;i++) {
+	for (var i = 0;i &lt; numTrials;i++) {
 		var temp = getTaskSeglen(task);
 		seglen = temp[0];
 		task = temp[1];
@@ -700,7 +727,7 @@ function seglenPrecompute(task) {
 			(sum(index(trialLength,jglMakeArray(0, undefined, randTrialNum - 1).concat(jglMakeArray(randTrialNum+1, undefined, trialLength.length)), false))
 					+ newTrialLength);
 		
-		if ((Math.abs(newDiffFromIdeal) < Math.abs(diffFromIdeal)) || (rand(task) < 0.1)) {
+		if ((Math.abs(newDiffFromIdeal) &lt; Math.abs(diffFromIdeal)) || (rand(task) &lt; 0.1)) {
 			trialLength[randTrialNum] = newTrialLength;
 			task.seglenPrecompute.seglen[randTrialNum] = seglen;
 			diffFromIdeal = newDiffFromIdeal;
@@ -716,7 +743,7 @@ function seglenPrecompute(task) {
 		// TODO: line 876
 
 	trialLength = [];
-	for (var i=0;i<numTrials;i++) {
+	for (var i=0;i&lt;numTrials;i++) {
 		var temp = computeTrialLen(task.seglenPrecompute.seglen[i], task.synchToVol, framePeriod, synchWaitBeforeTime);
 		trialLength[i] = temp[0];
 		seglen = temp[1];
@@ -747,7 +774,7 @@ function seglenPrecompute(task) {
 			var indexes = temp[2];
 
 			var expectedFreq = [];
-			for (var iLen = 0; iLen< expectedLens.length;iLen++) {
+			for (var iLen = 0; iLen&lt; expectedLens.length;iLen++) {
 				expectedFreq[iLen] = sum(gatherFields(index(trialLens, equals(indexes, iLen), true), "freq"));
 			}
 		} else {
@@ -761,7 +788,7 @@ function seglenPrecompute(task) {
 			return Math.round(n * 1000000) / 1000000;
 		});
 
-		for (var iLen = 0;iLen<expectedLens.length;iLen++) {
+		for (var iLen = 0;iLen&lt;expectedLens.length;iLen++) {
 			var matchLen = find(equals(lens, expectedLens[iLen]));
 			if (isEmpty(matchLen)) {
 				if (expectedFreq[iLen] > 0) {
@@ -775,7 +802,7 @@ function seglenPrecompute(task) {
 	
 	task = seglenPrecomputeValidate(task);
 	
-	if (! isEmpty(numVolumes) && ! task.seglenPrecompute.hasOwnProperty("numVolumes")) {
+	if (! isEmpty(numVolumes) &amp;&amp; ! task.seglenPrecompute.hasOwnProperty("numVolumes")) {
 		task.seglenPrecompute.numVolumes = numVolumes;
 	}
 	if (! task.seglenPrecompute.hasOwnProperty("totalLength")) {
@@ -789,12 +816,12 @@ function seglenPrecompute(task) {
 function computeTrialLen(seglen, synchToVol, framePeriod, synchWaitBeforeTime) {
 	var seglenSynch = seglen;
 	var findArray = find(synchToVol);
-	for (var i = 0;i < findArray.length;i++) {
+	for (var i = 0;i &lt; findArray.length;i++) {
 		seglenSynch[findArray[i]] = Math.ceil(sum(index(seglenSynch, jglMakeArray(1, undefined, findArray[i]), false)) / framePeriod)*framePeriod - sum(index(seglenSynch, jglMakeArray(1, undefined, findArray[i]-1), false));
 	}
 	var trialLen = sum(seglenSynch);
 	findArray = find(synchToVol);
-	for (var i = 0; i < findArray.length;i++) {
+	for (var i = 0; i &lt; findArray.length;i++) {
 		if (seglenSynch[findArray[i]] > synchWaitBeforeTime) {
 			seglen[findArray[i]] = Math.min(seglen[findArray[i]], seglenSynch[findArray[i]] - synchWaitBeforeTime);
 		}
@@ -831,7 +858,7 @@ function seglenPrecomputeValidate(task) {
 	
 	var x = {};
 	
-	for (var i = 0;i<task.seglenPrecompute.nFields;i++) {
+	for (var i = 0;i&lt;task.seglenPrecompute.nFields;i++) {
 		x.vals = eval("task.seglenPrecompute." + task.seglenPrecompute.fieldNames[i]);
 		$.isArray(x.vals) ? x.nTrials = x.vals.length : x.nTrials = 1;
 		eval("task.seglenPrecompute." + task.seglenPrecompute.fieldNames[i] + " = x");
@@ -842,25 +869,47 @@ function seglenPrecomputeValidate(task) {
 	
 	task.numsegs = 0;
 	
-	for (var i = 0; i<task.seglenPrecompute.seglen.nTrials;i++) {
+	for (var i = 0; i&lt;task.seglenPrecompute.seglen.nTrials;i++) {
 		task.numsegs = Math.max(task.numsegs, task.seglenPrecompute.seglen.vals[i].length);
 	}
 	
-	if (! task.hasOwnProperty('synchToVol') || task.synchToVol.length < task.numsegs) {
+	if (! task.hasOwnProperty('synchToVol') || task.synchToVol.length &lt; task.numsegs) {
 		arrayPad(task.synchToVol, task.numsegs, 0);
 	}
 	
-	if (! task.hasOwnProperty('segquant') || task.segquant.length < task.numsegs) {
+	if (! task.hasOwnProperty('segquant') || task.segquant.length &lt; task.numsegs) {
 		arrayPad(task.segquant, task.numsegs, 0);
 	}
 	
-	if (! task.hasOwnProperty('segdur') || task.segdur.length < task.numsegs) {
+	if (! task.hasOwnProperty('segdur') || task.segdur.length &lt; task.numsegs) {
 		arrayPad(task.segdur, task.numsegs, []);
 	}
 	
-	if (! task.hasOwnProperty('segprob') || task.segprob.length < task.numsegs) {
+	if (! task.hasOwnProperty('segprob') || task.segprob.length &lt; task.numsegs) {
 		arrayPad(task.segprob, task.numsegs, []);
 	}
 	
 	return task;
-}
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-jgllib.html">jgllib</a></li><li><a href="module-jglTask.html">jglTask</a></li><li><a href="module-stdlib.html">stdlib</a></li></ul><h3>Classes</h3><ul><li><a href="module-jgllib-Canvas.html">Canvas</a></li><li><a href="Set.html">Set</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Starting with jgl.html">Starting with jgl</a></li><li><a href="tutorial-Working with surveys.html">Working with surveys</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Mon Aug 11 2014 23:30:09 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

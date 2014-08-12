@@ -6,9 +6,10 @@
  * this function grabs a number from that array while growing the array
  * if necessary. To recreate the experiment initialize the task object with
  * the same genRandom field. 
- * @param task the task object
- * @param length the length of the array to return, if left undefined a single number will be returned
- * @returns {Number, Array} A single number or array of random numbers between 0 and 1
+ * @param {Object} task the task object
+ * @param {Number} length the length of the array to return, if left undefined a single number will be returned
+ * @returns {Number|Array} A single number or array of random numbers between 0 and 1
+ * @memberof module:jglTask
  */
 function rand(task, length) {
 	if (! task.hasOwnProperty("genRandom")) {
@@ -41,6 +42,7 @@ function rand(task, length) {
  * Function for growing the array of random numbers.
  * @param array the array to grow
  * @returns {Array} the new array, twice the size
+ * @memberof module:jglTask
  */
 function randomResize(array) {
 	var tempArray = new Array(array.length * 2);

@@ -1,6 +1,8 @@
 /**
  * Function to register a stimulus name with myscreen.
  * Must be used if stimulus is to be saved to database.
+ * @param {String} stimName the name of the stimulus to be registered with myscreen.
+ * @memberof module:jglTask
  */
 function initStimulus(stimName) {
 	eval("window." + stimName + ".init = 1"); // set stimulus to inited.

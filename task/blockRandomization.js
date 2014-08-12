@@ -2,6 +2,7 @@
  * Generates block randomized combination of parameters. Unlike mgl it does
  * not randomly permutate the entire set of parameters. It only permutates
  * each block of trials individually. 
+ * @memberof module:jglTask
  */
 var blockRandomization = function(task, parameter, previousParamIndexes) {
 	if (previousParamIndexes === undefined) {

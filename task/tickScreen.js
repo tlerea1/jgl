@@ -1,5 +1,12 @@
 /**
- * 
+ * Function that is in charge of ticking the screen.
+ * This is the function that is called every frame, i.e. every 17 miliseconds.
+ * Here, the screenUpdate callback is called, and the screen is flushed, assuming
+ * myscreen.flushMode is > 0. Additional, it keeps track of dropped frames. Now,
+ * since JavaScript does not have as much control as mgl does, a dropped frame is 
+ * when it takes too long for tickScreen to get called again, i.e. the interval is
+ * not running fast enough. It is entirely disconnected from the actual drawing on the screen.
+ * @memberof module:jglTask
  */
 function tickScreen() {
 	

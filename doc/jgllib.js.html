@@ -1,4 +1,31 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: jgllib.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: jgllib.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * JGL - A javascript Graphics Library.
  * Modeled after mgl (MATLAB graphics library)
  * 
@@ -87,11 +114,11 @@ function mouseSetup(mouse) {
  */
 function jglOpen(resolution) {
 	var stencils = [];
-	if (canvas !== undefined && canvas.hasOwnProperty("stencils")) {
+	if (canvas !== undefined &amp;&amp; canvas.hasOwnProperty("stencils")) {
 		stencils = canvas.stencils;
 	}
-	$(".jgl").append("<div id=\"jglDiv\" style=\"position: relative;\"><canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"800\" height=\"800\"></canvas>"
-			+ "<canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"backCanvas\" width=\"800\" height=\"800\"></canvas> </div>");
+	$(".jgl").append("&lt;div id=\"jglDiv\" style=\"position: relative;\">&lt;canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"canvas\" width=\"800\" height=\"800\">&lt;/canvas>"
+			+ "&lt;canvas style=\" position: absolute; top: 0px; left: 0px;\" id=\"backCanvas\" width=\"800\" height=\"800\">&lt;/canvas> &lt;/div>");
 	$("#backCanvas").hide();
 	canvas = new Canvas();
 	window.resizeTo(canvas.width + 50, canvas.height + 80);
@@ -300,7 +327,7 @@ function jglPoints2(x, y, size, color) {
 		// Error
 		throw "Points2: Lengths dont match";
 	}
-	for (var i=0;i<x.length;i++) {
+	for (var i=0;i&lt;x.length;i++) {
 		canvas.backCtx.fillStyle=color;
 		canvas.backCtx.beginPath();
 		canvas.backCtx.arc(x[i], y[i], size/2, 0, 2*Math.PI);
@@ -324,7 +351,7 @@ function jglLines2(x0, y0, x1, y1, size, color) {
 		//Error
 		throw "Lines2: Lengths dont match";
 	}
-	for (var i=0;i<x0.length;i++) {
+	for (var i=0;i&lt;x0.length;i++) {
 		canvas.backCtx.lineWidth = size;
 		canvas.backCtx.strokeStyle=color;
 		canvas.backCtx.beginPath();
@@ -362,7 +389,7 @@ function jglFillRect(x, y, size, color) {
 			x:0,
 			y:0
 	};
-	for (var i=0;i<x.length;i++) {
+	for (var i=0;i&lt;x.length;i++) {
 		canvas.backCtx.fillStyle = color;
 		upperLeft.x = x[i] - (size[0] / 2);
 		upperLeft.y = y[i] - (size[1] / 2);
@@ -415,7 +442,7 @@ function jglFixationCross(width, lineWidth, color, origin) {
  * @param color the color, in hex format #000000
  */
 function jglPolygon(x, y, color) {
-	if (x.length != y.length || x.length < 3) {
+	if (x.length != y.length || x.length &lt; 3) {
 		// Error, need at least three points to
 		// make a polygon.
 		throw "Polygon arrays not same length";
@@ -424,7 +451,7 @@ function jglPolygon(x, y, color) {
 	canvas.backCtx.strokeStyle = color;
 	canvas.backCtx.beginPath();
 	canvas.backCtx.moveTo(x[0], y[0]);
-	for (var i=1;i<x.length;i++) {
+	for (var i=1;i&lt;x.length;i++) {
 		canvas.backCtx.lineTo(x[i], y[i]);
 	}
 	canvas.backCtx.closePath();
@@ -459,7 +486,7 @@ function jglWaitSecs(secs) {
 	var current = first.getTime();
 	do {
 		second = new Date();
-	} while (Date.now() < current + (secs * 1000));
+	} while (Date.now() &lt; current + (secs * 1000));
 	
 //	setTimeout(secs, function(){});
 }
@@ -634,8 +661,8 @@ function jglStencilDeselect() {
  * it does not effect the normal canvas. 
  */
 function jglVisualAngleCoordinates() {
-	if ((canvas.usingVisualAngles && ! canvas.drawingStencil) || 
-			(canvas.usingVisualAnglesStencil && canvas.drawingStencil)) {
+	if ((canvas.usingVisualAngles &amp;&amp; ! canvas.drawingStencil) || 
+			(canvas.usingVisualAnglesStencil &amp;&amp; canvas.drawingStencil)) {
 		//Error
 		throw "VisualCoordinates: Already using visual coordinates";
 	}
@@ -660,8 +687,8 @@ function jglVisualAngleCoordinates() {
  * it does not effect the normal canvas.
  */
 function jglScreenCoordinates() {
-	if ((! canvas.usingVisualAngles && ! canvas.drawingStencil) || 
-			(canvas.drawingStencil && ! canvas.usingVisualAnglesStencil)) {
+	if ((! canvas.usingVisualAngles &amp;&amp; ! canvas.drawingStencil) || 
+			(canvas.drawingStencil &amp;&amp; ! canvas.usingVisualAnglesStencil)) {
 		// Error
 		throw "ScreenCoordinates: Already using screen coordinates";
 	}
@@ -689,11 +716,11 @@ function jglMakeArray(low, step, high) {
 		step = 1;
 	}
 	
-	if (low < high) {
+	if (low &lt; high) {
 		var size = Math.floor((high - low) / step);
 		var array = new Array(size);
 		array[0] = low;
-		for (var i=1;i<array.length;i++) {
+		for (var i=1;i&lt;array.length;i++) {
 			array[i] = array[i-1] + step;
 		}
 		return array;
@@ -701,7 +728,7 @@ function jglMakeArray(low, step, high) {
 		var size = Math.floor((low - high) / step);
 		var array = new Array(size);
 		array[0] = low;
-		for (var i=1;i<array.length;i++) {
+		for (var i=1;i&lt;array.length;i++) {
 			array[i] = array[i-1] - step;
 		}
 		return array;
@@ -739,7 +766,7 @@ function jglCreateTexture(array) {
 		// 1D array passed in
 		image = canvas.backCtx.createImageData(array.length, array.length);
 		var counter = 0;
-		for (var i=0;i<image.data.length;i += 4) {
+		for (var i=0;i&lt;image.data.length;i += 4) {
 			image.data[i + 0] = array[counter];
 			image.data[i + 1] = array[counter];
 			image.data[i + 2] = array[counter];
@@ -756,7 +783,7 @@ function jglCreateTexture(array) {
 		image = canvas.backCtx.createImageData(array.length, array.length);
 		var row = 0;
 		var col = 0;
-		for (var i=0;i<image.data.length;i += 4) {
+		for (var i=0;i&lt;image.data.length;i += 4) {
 			image.data[i + 0] = array[row][col];
 			image.data[i + 1] = array[row][col];
 			image.data[i + 2] = array[row][col];
@@ -776,7 +803,7 @@ function jglCreateTexture(array) {
 			image = canvas.backCtx.createImageData(array.length, array.length);
 			var row = 0;
 			var col = 0;
-			for (var i=0;i<image.data.length;i += 4) {
+			for (var i=0;i&lt;image.data.length;i += 4) {
 				image.data[i + 0] = array[row][col][0];
 				image.data[i + 1] = array[row][col][1];
 				image.data[i + 2] = array[row][col][2];
@@ -793,7 +820,7 @@ function jglCreateTexture(array) {
 			image = canvas.backCtx.createImageData(array.length, array.length);
 			var row = 0;
 			var col = 0;
-			for (var i=0;i<image.data.length;i += 4) {
+			for (var i=0;i&lt;image.data.length;i += 4) {
 				image.data[i + 0] = array[row][col][0];
 				image.data[i + 1] = array[row][col][1];
 				image.data[i + 2] = array[row][col][2];
@@ -919,3 +946,26 @@ function jglSetParam(param, val) {
 
 
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-jgllib.html">jgllib</a></li><li><a href="module-jglTask.html">jglTask</a></li><li><a href="module-stdlib.html">stdlib</a></li></ul><h3>Classes</h3><ul><li><a href="module-jgllib-Canvas.html">Canvas</a></li><li><a href="Set.html">Set</a></li></ul><h3>Tutorials</h3><ul><li><a href="tutorial-Starting with jgl.html">Starting with jgl</a></li><li><a href="tutorial-Working with surveys.html">Working with surveys</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Mon Aug 11 2014 23:30:09 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

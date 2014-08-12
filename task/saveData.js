@@ -9,10 +9,11 @@
  * cell means the array contains non-numeric elements. Every value is enclosed in
  * a val tag. val tags also have a type attribute, with a value num or str. num means
  * it isNumeric, str means its not.
- * @param object the object to XMLify
- * @param xml should always be left undefined
+ * @param {Any} object the object to XMLify
+ * @param {String} xml should always be left undefined
  * @returns {String} The XML version of the given object, object 
  * field names are tags, array tag starts an array, val tag for value of a given item.
+ * @memberof module:jglTask
  */
 function genXML(object, xml) {
 	if (xml === undefined) {
@@ -56,6 +57,7 @@ function genXML(object, xml) {
  * all stimulus objects that have been registered with initStimulus.
  * The xml is then saved in the database using psiTurk with the key
  * experimentXML.
+ * @memberof module:jglTask
  */
 function saveAllData() {
 	/*

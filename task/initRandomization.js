@@ -1,5 +1,9 @@
 /**
- * 
+ * Function to initialize the parameter object for the rand callback.
+ * @param {Object} parameter the parameter object that needs initializing
+ * @returns {Array} the first element is the initialized parameter object,
+ * the second is a number, 1 means it was already initialized, 0 means it was not
+ * @memberof module:jglTask
  */
 function initRandomization(parameter) {
 	var alreadyInitialized = false;

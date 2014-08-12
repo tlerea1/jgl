@@ -4,6 +4,7 @@
  * initializes the psiTurk object.
  * loads the pages.
  * calls initData to setup key and mouse events. 
+ * @memberof module:jglTask
  */
 function initTurk() {
 		

@@ -1,6 +1,9 @@
 /**
  * Function for making a survey phase. Currently, all a survey phase is 
- * is a phase that has infinite blocks and trials and does not use the screen. 
+ * is a phase that has infinite blocks and trials and does not use the screen.
+ * The html page defaults to survey.html
+ * @returns {Object} the initialized task object 
+ * @memberof module:jglTask
  */
 function initSurvey() {
 	

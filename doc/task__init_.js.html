@@ -1,4 +1,31 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: task/<init>.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: task/<init>.js</h1>
+
+    
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * Things that need to be at the beginning of the concatenated file.
  */
 
@@ -10,7 +37,7 @@
  */
 function upper(array) {
 	var tempArray = [];
-	for (var i = 0;i<array.length;i++) {
+	for (var i = 0;i&lt;array.length;i++) {
 		tempArray.push(array[i].toUpperCase());
 	}
 	return tempArray;
@@ -39,7 +66,7 @@ function fields(object) {
  */
 function zeros(length) {
 	var tempArray = new Array(length);
-	for (var i=0;i<tempArray.length;i++) {
+	for (var i=0;i&lt;tempArray.length;i++) {
 		tempArray[i] = 0;
 	}
 	return tempArray;
@@ -52,7 +79,7 @@ function zeros(length) {
  */
 function ones(length) {
 	var tempArray = new Array(length);
-	for (var i=0;i<length;i++) {
+	for (var i=0;i&lt;length;i++) {
 		tempArray[i] = 1;
 	}
 	return tempArray;
@@ -66,7 +93,7 @@ function ones(length) {
  * @returns {Array} the padded array
  */
 function arrayPad(array, endLength, padVal) {
-	while (array.length < endLength) {
+	while (array.length &lt; endLength) {
 		array.push(padVal);
 	}
 	return array;
@@ -80,7 +107,7 @@ function arrayPad(array, endLength, padVal) {
  */
 function fillArray(value, length) {
 	var tempArray = new Array(length);
-	for (var i=0;i<length;i++) {
+	for (var i=0;i&lt;length;i++) {
 		tempArray[i] = value;
 	}
 	return tempArray;
@@ -93,7 +120,7 @@ function fillArray(value, length) {
  */
 function sum(array) {
 	var sum = 0;
-	for (var i=0;i<array.length;i++) {
+	for (var i=0;i&lt;array.length;i++) {
 		sum += array[i];
 	}
 	return sum;
@@ -109,7 +136,7 @@ function cumsum(array) {
 		return [];
 	}
 	var sum = array[0];
-	for (var i=0;i<array.length;i++) {
+	for (var i=0;i&lt;array.length;i++) {
 		sum += array[i];
 		array[i] = sum;
 	}
@@ -145,7 +172,7 @@ function isEmpty(array) {
  * @returns {Boolean} true if there is at least one non-zero value in array
  */
 function any(array) {
-	for (var i =0; i< array.length;i++) {
+	for (var i =0; i&lt; array.length;i++) {
 		if (array[i] != 0) {
 			return true;
 		}
@@ -160,7 +187,7 @@ function any(array) {
  */
 function numel(array) {
 	var count = 0;
-	for (var i=0;i<array.length;i++) {
+	for (var i=0;i&lt;array.length;i++) {
 		if (array[i] != undefined) {
 			count++;
 		}
@@ -177,7 +204,7 @@ function numel(array) {
  */
 function strcmp(string, array) {
 	var tempArray = zeros(array.length);
-	for (var i=0;i<array.length;i++) {
+	for (var i=0;i&lt;array.length;i++) {
 		if (string.localeCompare(array[i]) == 0) {
 			tempArray[i] = 1;
 		}
@@ -192,7 +219,7 @@ function strcmp(string, array) {
  */
 function diff(array) {
 	var tempArray = new Array(array.length - 1);
-	for (var i = 1;i<array.length;i++) {
+	for (var i = 1;i&lt;array.length;i++) {
 		tempArray[i-1] = array[i] - array[i-1];
 	}
 	return tempArray;
@@ -209,7 +236,7 @@ function index(master, slave, logical) {
 	var tempArray = [];
 
 	if (! $.isArray(master)) {
-		for (var i=0;i<slave.length;i++) {
+		for (var i=0;i&lt;slave.length;i++) {
 			if (slave[i] != 0) {
 				throw "index error";
 			}
@@ -217,13 +244,13 @@ function index(master, slave, logical) {
 		}
 	} else {
 		if (logical) {
-			for (var i=0;i<slave.length;i++) {
+			for (var i=0;i&lt;slave.length;i++) {
 				if (slave[i] == 1) {
 					tempArray.push(master[i]);
 				}
 			}
 		} else {
-			for (var i =0;i<slave.length;i++) {
+			for (var i =0;i&lt;slave.length;i++) {
 				tempArray.push(master[slave[i]]);
 			}
 		}
@@ -241,7 +268,7 @@ function isEqual(first, second) {
 	if (first.length != second.length) {
 		return false;
 	}
-	for (var i =0;i<first.length;i++) {
+	for (var i =0;i&lt;first.length;i++) {
 		if (first[i] != second[i]) {
 			return false;
 		}
@@ -256,7 +283,7 @@ function isEqual(first, second) {
  */
 function find(array) {
 	var tempArray = [];
-	for (var i =0;i<array.length;i++) {
+	for (var i =0;i&lt;array.length;i++) {
 		if (array[i] != 0) {
 			tempArray.push(i);
 		}
@@ -277,17 +304,17 @@ function unique(A) {
 	var C = [];
 	var IA = [];
 	var IC = [];
-	for (var i=0;i<A.length;i++) {
+	for (var i=0;i&lt;A.length;i++) {
 		if (! set.contains(A[i])) {
 			set.insert(A[i]);
 		}
 	}
 	C = set.toArray();
 	C = C.sort();
-	for (var i = 0;i<C.length;i++) {
+	for (var i = 0;i&lt;C.length;i++) {
 		IA.push(A.indexOf(C[i]));
 	}
-	for (var i =0;i<A.length;i++) {
+	for (var i =0;i&lt;A.length;i++) {
 		IC.push(C.indexOf(A[i]));
 	}
 
@@ -302,7 +329,7 @@ function unique(A) {
  */
 function gatherFields(array, field) {
 	var tempArray = new Array(array.length);
-	for (var i=0;i<tempArray.length;i++) {
+	for (var i=0;i&lt;tempArray.length;i++) {
 		tempArray[i] = eval("array[i]." + field);
 	}
 	return tempArray;
@@ -316,7 +343,7 @@ function gatherFields(array, field) {
  */
 function equals(array, val) {
 	var temp = zeros(array.length);
-	for (var i = 0;i< array.length;i++) {
+	for (var i = 0;i&lt; array.length;i++) {
 		if (array[i] === val) {
 			temp[i] = 1;
 		}
@@ -341,7 +368,7 @@ function nan(length) {
  * @returns {Array} the added array
  */
 function add(first, second, index) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array add, dimensions don't agree";
 		}
@@ -355,7 +382,7 @@ function add(first, second, index) {
 				return n;
 			}
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		if (index === undefined) {
 			index = ones(first.length);
 		}
@@ -366,7 +393,7 @@ function add(first, second, index) {
 				return n;
 			}
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (index === undefined) {
 			index = ones(second.length);
 		}
@@ -390,7 +417,7 @@ function add(first, second, index) {
  *  the scalar is always subtracted from each element of the array.
  */
 function subtract(first, second, index) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array add, dimensions don't agree";
 		}
@@ -404,7 +431,7 @@ function subtract(first, second, index) {
 				return n;
 			}
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		if (index === undefined) {
 			index = ones(first.length);
 		}
@@ -415,7 +442,7 @@ function subtract(first, second, index) {
 				return n;
 			}
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (index === undefined) {
 			index = ones(second.length);
 		}
@@ -437,18 +464,18 @@ function subtract(first, second, index) {
  * @returns {Array} the multiplied array.
  */
 function multiply(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array multiply, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
 			return n * second[i];
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
 			return n * second;
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
 			return n * first;
 		});
@@ -464,18 +491,18 @@ function multiply(first, second) {
  * @returns {Array} the divided array. if a scalar is involved, each element of the array is divided by the scalar. 
  */
 function divide(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array divide, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
 			return n / second[i];
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
 			return n / second;
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
 			return n / first;
 		});
@@ -540,18 +567,18 @@ function isnan(val) {
  * @returns {Array} returns an array of element bit wise ors of the inputs. 
  */
 function or(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array or, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
 			return n | second[i];
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
 			return n | second;
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
 			return n | first;
 		});
@@ -567,23 +594,23 @@ function or(first, second) {
  * @returns {Array} returns an array of element bit wise ands of the inputs. 
  */
 function and(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array or, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
-			return n & second[i];
+			return n &amp; second[i];
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
-			return n & second;
+			return n &amp; second;
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
-			return n & first;
+			return n &amp; first;
 		});
 	} else {
-		return [first & second];
+		return [first &amp; second];
 	}
 }
 
@@ -594,23 +621,23 @@ function and(first, second) {
  * @returns {Array} returns an array of element bit wise xors of the inputs. 
  */
 function xor(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array or, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
-			return !(n & second[i]) & (n | second[i]);
+			return !(n &amp; second[i]) &amp; (n | second[i]);
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
-			return !(n & second[i]) & (n | second[i]);
+			return !(n &amp; second[i]) &amp; (n | second[i]);
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
-			return !(n & second[i]) & (n | second[i]);
+			return !(n &amp; second[i]) &amp; (n | second[i]);
 		});
 	} else {
-		return [!(n & second[i]) & (n | second[i])];
+		return [!(n &amp; second[i]) &amp; (n | second[i])];
 	}
 }
 
@@ -621,18 +648,18 @@ function xor(first, second) {
  * @returns {Array} returns a logical array. where 1 means first > second for each element of first/second
  */
 function greaterThan(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array or, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
 			return n > second[i] ? 1 : 0;
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
 			return n > second ? 1 : 0;
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
 			return first > n ? 1 : 0;
 		});
@@ -645,26 +672,26 @@ function greaterThan(first, second) {
  * Function to generate a logical array from element wise checking less than between first and second.
  * @param first the first item. can be a Number or Array
  * @param second the second item. can be a Number or Array
- * @returns {Array} returns a logical array. where 1 means first < second for each element of first/second
+ * @returns {Array} returns a logical array. where 1 means first &lt; second for each element of first/second
  */
 function lessThan(first, second) {
-	if ($.isArray(first) && $.isArray(second)) {
+	if ($.isArray(first) &amp;&amp; $.isArray(second)) {
 		if (first.length != second.length) {
 			throw "array or, dimensions don't agree";
 		}
 		return jQuery.map(first, function(n, i) {
-			return n < second[i] ? 1 : 0;
+			return n &lt; second[i] ? 1 : 0;
 		});
-	} else if ($.isArray(first) && ! $.isArray(second)) {
+	} else if ($.isArray(first) &amp;&amp; ! $.isArray(second)) {
 		return jQuery.map(first, function(n, i) {
-			return n < second ? 1 : 0;
+			return n &lt; second ? 1 : 0;
 		});
-	} else if (! $.isArray(first) && $.isArray(second)) {
+	} else if (! $.isArray(first) &amp;&amp; $.isArray(second)) {
 		return jQuery.map(second, function(n, i) {
-			return first < n ? 1 : 0;
+			return first &lt; n ? 1 : 0;
 		});
 	} else {
-		return first < second ? [1] : [0];
+		return first &lt; second ? [1] : [0];
 	}
 }
 
@@ -678,7 +705,7 @@ function mean(array) {
 		return 0;
 	}
 	var sum = 0, count = 0;
-	for (var i =0 ;i<array.length;i++) {
+	for (var i =0 ;i&lt;array.length;i++) {
 		sum += array[i];
 		count++;
 	}
@@ -706,7 +733,7 @@ function randInt(task, low, high) {
 function randPerm(task, length) {
 	var array = jglMakeArray(0, 1, length);
 	var randy;
-	for (var i = 0;i<array.length - 1;i++) {
+	for (var i = 0;i&lt;array.length - 1;i++) {
 		randy = randInt(task, i, array.length);
 		var temp = array[randy];
 		array[randy] = array[i];
@@ -723,7 +750,7 @@ function randPerm(task, length) {
 function size(val) {
 	if ($.isArray(val)) {
 		return val.length;
-	} else if (val != undefined && val != null) {
+	} else if (val != undefined &amp;&amp; val != null) {
 		return 1;
 	} else {
 		return 0;
@@ -738,7 +765,7 @@ function size(val) {
 function prod(array) {
 	if ($.isArray(array)) {
 		var product = 1;
-		for (var i = 0;i<array.length;i++) {
+		for (var i = 0;i&lt;array.length;i++) {
 			product *= array[i];
 		}
 		return product;
@@ -756,7 +783,7 @@ function not(array) {
 		return array ? 1 : 0;
 	} else {
 		var temp = new Array(array.length);
-		for (var i = 0;i < array.length; i++) {
+		for (var i = 0;i &lt; array.length; i++) {
 			temp[i] = array[i] ? 0 : 1;
 		}
 		return temp;
@@ -793,7 +820,7 @@ function cos(array) {
  */
 function isNumeric(val) {
 	if ($.isArray(val)) {
-		for (var i=0;i<val.length;i++) {
+		for (var i=0;i&lt;val.length;i++) {
 			if (! $.isNumeric(val[i])) {
 				return false;
 			}
@@ -810,10 +837,33 @@ function change(array, values, indexer) {
 		throw "change: array lengths dont match";
 	}
 	
-	for (var i =0 ;i<places.length;i++) {
+	for (var i =0 ;i&lt;places.length;i++) {
 		array[places[i]] = values[i];
 	}
 	
 	return array;
 }
 
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Classes</h3><ul><li><a href="Canvas.html">Canvas</a></li><li><a href="Phase.html">Phase</a></li><li><a href="Screen.html">Screen</a></li><li><a href="Set.html">Set</a></li><li><a href="Trial.html">Trial</a></li></ul><h3>Global</h3><ul><li><a href="global.html#add">add</a></li><li><a href="global.html#and">and</a></li><li><a href="global.html#any">any</a></li><li><a href="global.html#arrayPad">arrayPad</a></li><li><a href="global.html#blockRandomization">blockRandomization</a></li><li><a href="global.html#canvas">canvas</a></li><li><a href="global.html#clearIntAndTimeouts">clearIntAndTimeouts</a></li><li><a href="global.html#cos">cos</a></li><li><a href="global.html#cumsum">cumsum</a></li><li><a href="global.html#diff">diff</a></li><li><a href="global.html#divide">divide</a></li><li><a href="global.html#equals">equals</a></li><li><a href="global.html#fields">fields</a></li><li><a href="global.html#fillArray">fillArray</a></li><li><a href="global.html#find">find</a></li><li><a href="global.html#finishExp">finishExp</a></li><li><a href="global.html#floor">floor</a></li><li><a href="global.html#gatherFields">gatherFields</a></li><li><a href="global.html#genXML">genXML</a></li><li><a href="global.html#getTaskSeglen">getTaskSeglen</a></li><li><a href="global.html#getURLParams">getURLParams</a></li><li><a href="global.html#greaterThan">greaterThan</a></li><li><a href="global.html#index">index</a></li><li><a href="global.html#initBlock">initBlock</a></li><li><a href="global.html#initData">initData</a></li><li><a href="global.html#initInstructions">initInstructions</a></li><li><a href="global.html#initRandomization">initRandomization</a></li><li><a href="global.html#initScreen">initScreen</a></li><li><a href="global.html#initStimulus">initStimulus</a></li><li><a href="global.html#initSurvey">initSurvey</a></li><li><a href="global.html#initTrial">initTrial</a></li><li><a href="global.html#initTurk">initTurk</a></li><li><a href="global.html#isEmpty">isEmpty</a></li><li><a href="global.html#isEqual">isEqual</a></li><li><a href="global.html#isinf">isinf</a></li><li><a href="global.html#isnan">isnan</a></li><li><a href="global.html#isNumeric">isNumeric</a></li><li><a href="global.html#jglBltTexture">jglBltTexture</a></li><li><a href="global.html#jglClearScreen">jglClearScreen</a></li><li><a href="global.html#jglCreateTexture">jglCreateTexture</a></li><li><a href="global.html#jglFillRect">jglFillRect</a></li><li><a href="global.html#jglFixationCross">jglFixationCross</a></li><li><a href="global.html#jglFlush">jglFlush</a></li><li><a href="global.html#jglGetMouse">jglGetMouse</a></li><li><a href="global.html#jglGetSecs">jglGetSecs</a></li><li><a href="global.html#jglLines2">jglLines2</a></li><li><a href="global.html#jglMakeArray">jglMakeArray</a></li><li><a href="global.html#jglOnKeyDown">jglOnKeyDown</a></li><li><a href="global.html#jglOnMouseClick">jglOnMouseClick</a></li><li><a href="global.html#jglOpen">jglOpen</a></li><li><a href="global.html#jglPoints2">jglPoints2</a></li><li><a href="global.html#jglPolygon">jglPolygon</a></li><li><a href="global.html#jglScreenCoordinates">jglScreenCoordinates</a></li><li><a href="global.html#jglStencilCreateBegin">jglStencilCreateBegin</a></li><li><a href="global.html#jglStencilCreateEnd">jglStencilCreateEnd</a></li><li><a href="global.html#jglStencilDeselect">jglStencilDeselect</a></li><li><a href="global.html#jglStencilSelect">jglStencilSelect</a></li><li><a href="global.html#jglTextDraw">jglTextDraw</a></li><li><a href="global.html#jglTextSet">jglTextSet</a></li><li><a href="global.html#jglVisualAngleCoordinates">jglVisualAngleCoordinates</a></li><li><a href="global.html#jglWaitSecs">jglWaitSecs</a></li><li><a href="global.html#keyResponse">keyResponse</a></li><li><a href="global.html#lessThan">lessThan</a></li><li><a href="global.html#mean">mean</a></li><li><a href="global.html#mouseResponse">mouseResponse</a></li><li><a href="global.html#multiply">multiply</a></li><li><a href="global.html#nan">nan</a></li><li><a href="global.html#nextPhase">nextPhase</a></li><li><a href="global.html#not">not</a></li><li><a href="global.html#numel">numel</a></li><li><a href="global.html#numToHex">numToHex</a></li><li><a href="global.html#ones">ones</a></li><li><a href="global.html#or">or</a></li><li><a href="global.html#privateClearContext">privateClearContext</a></li><li><a href="global.html#prod">prod</a></li><li><a href="global.html#rand">rand</a></li><li><a href="global.html#randInt">randInt</a></li><li><a href="global.html#randomResize">randomResize</a></li><li><a href="global.html#randPerm">randPerm</a></li><li><a href="global.html#saveAllData">saveAllData</a></li><li><a href="global.html#screenSwapPrivate">screenSwapPrivate</a></li><li><a href="global.html#sin">sin</a></li><li><a href="global.html#size">size</a></li><li><a href="global.html#startBlock">startBlock</a></li><li><a href="global.html#startPhase">startPhase</a></li><li><a href="global.html#startSeg">startSeg</a></li><li><a href="global.html#startTrial">startTrial</a></li><li><a href="global.html#strcmp">strcmp</a></li><li><a href="global.html#subtract">subtract</a></li><li><a href="global.html#sum">sum</a></li><li><a href="global.html#tickScreen">tickScreen</a></li><li><a href="global.html#unique">unique</a></li><li><a href="global.html#upper">upper</a></li><li><a href="global.html#xor">xor</a></li><li><a href="global.html#zeros">zeros</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Mon Aug 11 2014 15:31:55 GMT-0400 (EDT)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
