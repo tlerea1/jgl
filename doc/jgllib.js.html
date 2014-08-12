@@ -42,17 +42,45 @@
 
 //--------------------------Setup and Globals----------------------
 // Screen object, holds a bunch of info about the screen and state of the canvas
+/**
+ * The canvas object
+ * @type Object
+ */
 var canvas;
 // mouse object, tracks mouse state
+/**
+ * The mouse object, which is always updated to the current state of the mouse
+ * @type Mouse
+ */
 var mouse;
 // The main off-screen canvas/context. 
 //var backCtx;
 //var backCanvas;
 // The off-screen canvas/context that is used to combine the stencil and backCanvas
+/**
+ * The canvas for the stencil to be drawn on
+ * @type Object
+ * @private
+ */
 var stencilCanvas;
+/**
+ * The context of the stencilCanvas.
+ * @type Object
+ * @private
+ */
 var stencilCtx;
 
+/**
+ * The canvas to draw textures on.
+ * @type Object
+ * @private
+ */
 var texCanvas;
+/**
+ * The context of the texCanvas.
+ * @type Object
+ * @private
+ */
 var texCtx;
 
 
@@ -120,6 +148,7 @@ function Mouse() {
  * Sets up the mouse tracker. 
  * Binds the mouse move, down, and up events to keep track of the mouse movements.
  * @param {Ojbect} mouse the mouse object to keep track of the location of the mouse.
+ * @private
  */
 function mouseSetup(mouse) {
 	$(window).mousemove(function(event){
@@ -142,7 +171,7 @@ function mouseSetup(mouse) {
  * Sets up the jgl screen. This function adds both canvases to the
  * end of the class="jgl" element. The two canvases are the two buffers, 
  * one is on screen one is off, more about this in the jglFlush doc.
- * @param resolution The ppi of the screen.
+ * @param {Number} resolution The ppi of the screen.
  */
 function jglOpen(resolution) {
 	var stencils = [];
@@ -297,6 +326,7 @@ function jglNoFlushWait() {
  * This is done by toggling both canvases (if hidden, shows, if shown, hides),
  * then the values of canvas and backCanvas are swapped, as well as the values
  * of context and backCtx.
+ * @private
  */
 function screenSwapPrivate() {
 	$("#canvas").toggle();
@@ -311,7 +341,8 @@ function screenSwapPrivate() {
 
 /**
  * Private function for clearing a context, written to shorten code.
- * @param context the context to clear.
+ * @param {Object} context the context to clear.
+ * @private
  */
 function privateClearContext(context) {
 	if (canvas.usingVisualAngles) {
@@ -323,7 +354,7 @@ function privateClearContext(context) {
 
 /**
  * Function to clear the front buffer, as well as set the background color.
- * @param background the color to set the background to. param can be given
+ * @param {Number} background the color to set the background to. param can be given
  * as a number on the grayscale, 0-255 or an array of three numbers [r,g,b].
  */
 function jglClearScreen(background) {
@@ -347,7 +378,7 @@ function jglClearScreen(background) {
 /**
  * Function to convert a number between 0-255 to hex.
  * Includes zero padding so result.length always == 2
- * @param number the number to convert
+ * @param {Number} number the number to convert
  * @returns {String} the hex value of the number given
  */
 function numToHex(number) {
@@ -363,10 +394,10 @@ function numToHex(number) {
 
 /**
  * Function for drawing 2D points.
- * @param x array of x coordinates
- * @param y array of y coordinates
- * @param size Size of point in pixels(diameter)
- * @param color Color of points in #hex format
+ * @param {Array} x array of x coordinates
+ * @param {Array} y array of y coordinates
+ * @param {Number} size Size of point in pixels(diameter)
+ * @param {String} color Color of points in #hex format
  */
 function jglPoints2(x, y, size, color) {
 	if (x.length != y.length) {
@@ -385,12 +416,12 @@ function jglPoints2(x, y, size, color) {
 
 /**
  * Function for drawing 2D Lines
- * @param x0 array of starting x coordinates
- * @param y0 array of starting y coordinates
- * @param x1 array of ending x coordinates
- * @param y1 array of ending y coordinates
- * @param size width of line in pixels
- * @param color in hex format "#000000"
+ * @param {Array} x0 array of starting x coordinates
+ * @param {Array} y0 array of starting y coordinates
+ * @param {Array} x1 array of ending x coordinates
+ * @param {Array} y1 array of ending y coordinates
+ * @param {Number} size width of line in pixels
+ * @param {String} color in hex format "#000000"
  */
 function jglLines2(x0, y0, x1, y1, size, color) {
 	if (x0.length != y0.length || x1.length != y1.length || x0.length != x1.length) {
@@ -407,24 +438,24 @@ function jglLines2(x0, y0, x1, y1, size, color) {
 	}
 }
 
-function jglFillOval(x, y, size, color) {
-	if (x.length != y.length || size.length != 2) {
-		//Error
-		throw "Fill Oval: Lengths dont match";
-	}
-	var radius = Math.min(size[0], size[1]);
-	canvas.backCtx.save();
-	canvas.backCtx.transform(0, size[0], size[1],0,0,0);
-	jglPoints2(x, y, radius, color);
-	canvas.backCtx.restore();
-}
+//function jglFillOval(x, y, size, color) {
+//	if (x.length != y.length || size.length != 2) {
+//		//Error
+//		throw "Fill Oval: Lengths dont match";
+//	}
+//	var radius = Math.min(size[0], size[1]);
+//	canvas.backCtx.save();
+//	canvas.backCtx.transform(0, size[0], size[1],0,0,0);
+//	jglPoints2(x, y, radius, color);
+//	canvas.backCtx.restore();
+//}
 
 /**
  * Makes Filled Rectangles
- * @param x an array of x coordinates of the centers
- * @param y an array of y coordinates of the centers
- * @param size [width,height] array
- * @param color color in hex format #000000
+ * @param {Array} x an array of x coordinates of the centers
+ * @param {Array} y an array of y coordinates of the centers
+ * @param {Array} size [width,height] array
+ * @param {String} color color in hex format #000000
  */
 function jglFillRect(x, y, size, color) {
 	if (x.length != y.length || size.length != 2) {
@@ -447,10 +478,10 @@ function jglFillRect(x, y, size, color) {
  * Draws a fixation cross onto the screen. 
  * If no params are given, cross defaults to center,
  * with lineWidth = 1, width = 10, and black.
- * @param width the width of the cross
- * @param lineWidth the width of the lines of the cross
- * @param color the color in hex format
- * @param origin the center point in [x,y]
+ * @param {Number} width the width of the cross
+ * @param {Number} lineWidth the width of the lines of the cross
+ * @param {String} color the color in hex format
+ * @param {Array} origin the center point in [x,y]
  */
 function jglFixationCross(width, lineWidth, color, origin) {
 	
@@ -483,9 +514,9 @@ function jglFixationCross(width, lineWidth, color, origin) {
 /**
  * Function for drawing a polygon.
  * The x and y params lay out a set of points.
- * @param x the x coordinates
- * @param y the y coordinates
- * @param color the color, in hex format #000000
+ * @param {Array} x the x coordinates
+ * @param {Array} y the y coordinates
+ * @param {String} color the color, in hex format #000000
  */
 function jglPolygon(x, y, color) {
 	if (x.length != y.length || x.length &lt; 3) {
@@ -523,8 +554,8 @@ function jglGetSecs(t0) {
 }
 
 /**
- * Waits the given number of seconds.
- * @param secs the number of seconds to wait.
+ * Waits the given number of seconds. WARNING may not work!!
+ * @param {Number} secs the number of seconds to wait.
  */
 function jglWaitSecs(secs) {
 	var first, second;
@@ -541,11 +572,11 @@ function jglWaitSecs(secs) {
 
 /**
  * Function to set the text params. Needs to be called right before jglTextDraw
- * @param fontName the name of the font to use
- * @param fontSize the size of the font to use
- * @param fontColor the color of the font to use
- * @param fontBold 1 for bold, 0 for not
- * @param fontItalic 1 for italic, 0 for not
+ * @param {String} fontName the name of the font to use
+ * @param {Number} fontSize the size of the font to use
+ * @param {String} fontColor the color of the font to use
+ * @param {Number} fontBold 1 for bold, 0 for not
+ * @param {Number} fontItalic 1 for italic, 0 for not
  */
 function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
 	// fontString needs to be in a specific format, this function builds it.
@@ -565,9 +596,9 @@ function jglTextSet(fontName, fontSize, fontColor, fontBold, fontItalic) {
 
 /**
  * Draws the given text starting at (x, y)
- * @param text the text to be drawn
- * @param x the x coordinate of the beginning of the text
- * @param y the y coordinate of the beginning of the text
+ * @param {String} text the text to be drawn
+ * @param {Number} x the x coordinate of the beginning of the text
+ * @param {Number} y the y coordinate of the beginning of the text
  */
 function jglTextDraw(text, x, y) {
 	canvas.backCtx.fillText(text, x, y);
@@ -588,8 +619,9 @@ var jglGetMouse = function jglGetMouse() {
 
 /**
  * Function to gain access to the mouse event listener.
- * @param mouseEventCallback the mouse down callback function. 
+ * @param {Object} mouseEventCallback the mouse down callback function. 
  * This function must take an event object as a parameter.
+ * @private
  */
 function jglOnMouseClick(mouseEventCallback) {
 	$(window).mouseDown(function(event) {
@@ -599,8 +631,9 @@ function jglOnMouseClick(mouseEventCallback) {
 
 /**
  * Function to gain access to the key down event listener.
- * @param keyDownEventCallback the key down callback Function.
+ * @param {Ojbect} keyDownEventCallback the key down callback Function.
  * This function must take an event object as a parameter.
+ * @private
  */
 function jglOnKeyDown(keyDownEventCallback) {
 	$(window).keyDown(function(event) {
@@ -608,6 +641,10 @@ function jglOnKeyDown(keyDownEventCallback) {
 	});
 }
 
+/**
+ * Function to get all active keys.
+ * @returns {Array} an array of all active keys
+ */
 var jglGetKeys = function jglGetKeys() {
 	return KeyboardJS.activeKeys();
 }
@@ -641,7 +678,7 @@ var jglGetKeys = function jglGetKeys() {
 
 /**
  * Starts the creation of a stencil with the given number.
- * @param stencilNumber the number of the stencil about to be created.
+ * @param {Number} stencilNumber the number of the stencil about to be created.
  */
 function jglStencilCreateBegin(stencilNumber) {
 	var newCanvas = document.createElement('canvas');
@@ -669,7 +706,7 @@ function jglStencilCreateEnd() {
 
 /**
  * Selects the stencil with the given number.
- * @param stencilNumber the number of the stencil to select.
+ * @param {Number} stencilNumber the number of the stencil to select.
  * @throw Number too large if the number given is greater than the number of stencils.
  * @throw No stencil if the number does not correspond to a stencil.
  */
@@ -753,9 +790,9 @@ function jglScreenCoordinates() {
 /**
  * Function to make array starting at low,
  * going to high, stepping by step.
- * @param low The low bound of the array
- * @param step the step between two elements of the array
- * @param high the high bound of the array
+ * @param {Number} low The low bound of the array
+ * @param {Number} step the step between two elements of the array
+ * @param {Number} high the high bound of the array
  */
 function jglMakeArray(low, step, high) {
 	if (step === undefined) {
@@ -791,7 +828,7 @@ function jglMakeArray(low, step, high) {
  * If a 2D array is passed, a greyscale texture is created and returned.
  * If a 3D array is passed, if it is NxMx3 an RGB texture is returned,
  * and if it is NxMx4 and RGB and Alpha texture is returned.
- * @param array the array to pass in.
+ * @param {Array} array the array to pass in.
  * @returns the texture
  */
 function jglCreateTexture(array) {
@@ -888,11 +925,11 @@ function jglCreateTexture(array) {
 /**
  * Function for drawing the given texture to screen. All params except texture
  * are optional, defaults to center with 0 rotation.
- * @param texture the texture to draw, should only pass something
+ * @param {Object} texture the texture to draw, should only pass something
  * given by jglCreateTexture.
- * @param xpos the x-coordinate to place the center of the texture.
- * @param ypos the y-coordinate to place the center of the texture.
- * @param rotation the rotation of the texture in degrees.
+ * @param {Number} xpos the x-coordinate to place the center of the texture.
+ * @param {Number} ypos the y-coordinate to place the center of the texture.
+ * @param {Number} rotation the rotation of the texture in degrees.
  */
 function jglBltTexture(texture, xpos, ypos, rotation) {
 	
@@ -1017,7 +1054,7 @@ function jglSetParam(param, val) {
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Mon Aug 11 2014 23:48:08 GMT-0400 (EDT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-dev</a> on Tue Aug 12 2014 00:09:29 GMT-0400 (EDT)
 </footer>
 
 <script> prettyPrint(); </script>
