@@ -103,7 +103,7 @@ var startBlock = function(task) {
 		return;
 	}
 	if (task[tnum].callback.hasOwnProperty("startBlock")) {
-		var temp = task.callback.startBlock(task[tnum], myscreen);
+		var temp = task[tnum].callback.startBlock(task[tnum], myscreen);
 		task[tnum] = temp[0];
 		myscreen = temp[1];
 	}
@@ -129,7 +129,7 @@ var startTrial = function(task) {
 		return;
 	}
 	if (task[tnum].callback.hasOwnProperty("startTrial")) {
-		var temp = task.callback.startTrial(task[tnum], myscreen);
+		var temp = task[tnum].callback.startTrial(task[tnum], myscreen);
 		task[tnum] = temp[0];
 		myscreen = temp[1];
 	}
