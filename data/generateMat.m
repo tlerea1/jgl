@@ -1,5 +1,5 @@
-function generateMat()
-    xDoc = xmlread('data.xml');
+function generateMat(filename)
+    xDoc = xmlread(strcat('./xmls/', filename));
     xRoot = xDoc.getDocumentElement;
     xData = parseXML(xRoot);
     clear xDoc xRoot;
@@ -13,3 +13,4 @@ function generateMat()
     save(fileName);
 
 end
+

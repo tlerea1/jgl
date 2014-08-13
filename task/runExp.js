@@ -102,6 +102,11 @@ var startBlock = function(task) {
 		nextPhase();
 		return;
 	}
+	if (task.callback.hasOwnProperty("startBlock")) {
+		var temp = task.callback.startBlock(task, myscreen);
+		task = temp[0];
+		myscreen = temp[1];
+	}
 	initTrial(task[tnum]);
 	startTrial(task);
 }
@@ -123,7 +128,11 @@ var startTrial = function(task) {
 		nextPhase();
 		return;
 	}
-	
+	if (task.callback.hasOwnProperty("startTrial")) {
+		var temp = task.callback.startTrial(task, myscreen);
+		task = temp[0];
+		myscreen = temp[1];
+	}
 	startSeg(task);
 }
 
@@ -217,11 +226,7 @@ function initBlock(task) {
 	
 	task.blockTrialnum = 0;
 	
-	if (task.callback.hasOwnProperty("startBlock")) {
-		var temp = task.callback.startBlock(task, myscreen);
-		task = temp[0];
-		myscreen = temp[1];
-	}
+
 }
 
 /**
@@ -274,11 +279,7 @@ function initTrial(task) {
 
 	//TODO: randvars line 507
 
-	if (task.callback.hasOwnProperty("startTrial")) {
-		var temp = task.callback.startTrial(task, myscreen);
-		task = temp[0];
-		myscreen = temp[1];
-	}
+
 
 	task.thistrial.waitingToInit = 0;
 }
