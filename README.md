@@ -1,4 +1,4 @@
-jgl - README
+jgl - README  
 ===
 
 jgl is a JavaScript graphics library for running psychophysical experiments online.
@@ -17,3 +17,11 @@ jsDoc. This tool can be downloaded for free. Then the following command was used
 
 Note a few things, first my path to the jgl repo may be different than yours, secondly, 
 this command must be done from within the jsDoc directory. 
+
+<b>Note:</b> the jgl distribution comes with all the files except jglTask.js, this 
+must be made by hand it is simply the combination of all the files in the task
+folder. To do this via the command line navigate inside the task folder and then
+type the command cat * > jglTask.js this will create a new file called jglTask.js
+which can then be included in your experiments. Also dont worry about deleting the
+file before pushing to update the repository, git has be set to ignore any file called
+jglTask.js. 

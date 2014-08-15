@@ -9,8 +9,11 @@ public class extract {
 			line = line.substring(line.indexOf(',') + 1);
 			line = line.substring(line.indexOf(',') + 1);
 
-
-			System.out.println(line);
+			if (line.charAt(0) == '\"') {
+				System.out.println(line.substring(1, line.length() - 1));
+			} else {
+				System.out.println(line);
+			}
 		}
 	}
 

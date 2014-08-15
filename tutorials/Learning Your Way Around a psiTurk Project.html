@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Learning Your Way Around a psiTurk Project</title>
+<link href="styles/prettify.css" type="text/css" rel="stylesheet" />
+<script type="text/javascript" src="scripts/prettify.js"></script>
+</head>
+<body>
+
+	<div>
+		<p>
+			The jgl distribution comes with a sample psiTurk project called gorilla-experiment. This tutorial
+			will show you around the project, and make sure that you know what all the folders are and how
+			to organize your project when using jgl.
+		</p>
+	</div>
+	
+	<div>
+		<p>
+			Inside the project folder there are three main files/folders to pay attention to. config.txt, static, and
+			templates. Below I will go over each one of these:
+		</p>
+	</div>
+	
+	<div>
+		<p>
+			First there is the config.txt file. Most of the information inside this file will never change,
+			since it has been setup to work with the Heeger lab information. There are two main lines however
+			that may, the database information. These two lines are database_url and table_name. The database_url
+			is in the form of mysql://&lt;username>:&lt;password>@&lt;address>:&lt;port>/&lt;databasename>. The username
+			and password are the login information for the mysql database. The address is almost always going to be 127.0.0.1 
+			which means local host. The port is also almost always 3306 which is the standard mysql port number. The
+			database however can be changed to your liking. By default it is psiturk, but you can name it whatever you want.
+			The table_name is the name of the table to use inside the database. This should be specific to each experiment 
+			you run.
+		</p>
+	</div>
+	
+	<div>
+		<p>
+			The next thing to talk about is the static folder. This folder is where everything that is used by your website
+			is stored except for the html pages themselves. By default there are four folders inside static, css, images, js, and
+			lib. css is where all of your stylesheets should go, images is where all the images should go, for example an NYU logo image.
+			js is where task.js is found by default, and where your custom jgl experiment javascript file will go. And lib is where
+			the three jgl files need to live, jgllib.js, KeyboardJS.js, and jglTask.js. 
+		</p>
+	</div>
+	
+	<div>
+		<p>
+			The last folder is templates. This is where all of the html files should go. There are several already there by
+			default such as error.html, consent.html, ad.html, exp.html, complete.html as well as others. All of your experiments
+			html files should go in here. There is also a sub-folder of templates called instructions. This is where your instruction
+			pages for your experiment should go. 
+		</p>
+	</div>
+	
+	<div>
+		<p>
+			It is very important to maintain a clean and organized project folder so that as the project grows all of the files will
+			be easy to find. 
+		</p>
+	</div>
+
+</body>
+</html>

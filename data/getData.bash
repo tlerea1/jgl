@@ -14,4 +14,3 @@ do
 	sed 's/&quot;/"/g' <<< $line > $filename;
 done
 cd ..
-\rm temp.txt
