@@ -53,7 +53,7 @@ function genXML(object, xml) {
 /**
  * Function to save all of the data to the database.
  * This function creates a large object xml string containing
- * the psiData object, the task array, the myscreen object, and
+ * the jglData object, the task array, the myscreen object, and
  * all stimulus objects that have been registered with initStimulus.
  * The xml is then saved in the database using psiTurk with the key
  * experimentXML.
@@ -61,16 +61,16 @@ function genXML(object, xml) {
  */
 function saveAllData() {
 	/*
-	 * xml will represent an xml object with psiData, task, myscreen, and all
+	 * xml will represent an xml object with jglData, task, myscreen, and all
 	 * the stimuli as fields. The generateMat function in matlab can then use
 	 * the xml to make a mat file
 	 */
 	
 	var xml = "<object>";
 	
-	xml += "<psiData>";
-	xml += genXML(psiData);
-	xml += "</psiData>";
+	xml += "<jglData>";
+	xml += genXML(jglData);
+	xml += "</jglData>";
 	
 	xml += "<task>";
 	xml += genXML(task);

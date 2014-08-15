@@ -85,16 +85,16 @@
 				var inHeight = $("#screenSize").val() * Math.sin(angle);
 				myscreen.ppi = height / inHeight;
 				
-				psiData.demographics = {};
+				jglData.demographics = {};
 				if ($("#age").val()) {
-					psiData.demographics.age = $("#age").val();
+					jglData.demographics.age = $("#age").val();
 				} else {
-					psiData.demographics.age = -1;
+					jglData.demographics.age = -1;
 				}
 				if ($("#gender").val()) {
-					psiData.demographics.gender = $("#gender").val();
+					jglData.demographics.gender = $("#gender").val();
 				} else {
-					psiData.demographics.gender = "";
+					jglData.demographics.gender = "";
 				}
 				
 				nextPhase();

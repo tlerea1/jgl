@@ -42,9 +42,9 @@
         $("#crossings").css("background-color", "red");
 				return;
 			}
-      psiData.postSample = {};
+      jglData.postSample = {};
       $(":input").not("#next").each(function() {
-        eval("psiData.postSample." + $(this).attr("id") + " = " + $(this).val());  
+        eval("jglData.postSample." + $(this).attr("id") + " = " + $(this).val());  
 			});
 			nextPhase();
 		}

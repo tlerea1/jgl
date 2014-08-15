@@ -129,10 +129,10 @@
 					full = false;
 				  return;
 				}
-				var assignment = "psiData.postSurvey." + $(this).attr('id') + '="' + $(this).val() + '"';
+				var assignment = "jglData.postSurvey." + $(this).attr('id') + '="' + $(this).val() + '"';
         eval(assignment);
 			});
-			var assignment = "psiData.postSurvey.comments = " + '"' + $("#comments").val().replace(/\n/g, ' ') + '"';
+			var assignment = "jglData.postSurvey.comments = " + '"' + $("#comments").val().replace(/\n/g, ' ') + '"';
 			eval(assignment);
 			if (full) {
 			  nextPhase();

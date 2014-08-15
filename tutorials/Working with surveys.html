@@ -54,16 +54,16 @@ $("#but_done").click(function() {
 		var inHeight = $("#screenSize").val() * Math.sin(angle);
 		myscreen.ppi = height / inHeight;
 
-		psiData.demographics = {};
+		jglData.demographics = {};
 		if ($("age").val()) {
-			psiData.demographics.age = $("#age").val();
+			jglData.demographics.age = $("#age").val();
 		} else {
-			psiData.demographics.age = -1;
+			jglData.demographics.age = -1;
 		}
 		if ($("#gender").val()) {
-			psiData.demographics.gender = $("#gender").val();
+			jglData.demographics.gender = $("#gender").val();
 		} else {
-			psiData.demographics.gender = "";
+			jglData.demographics.gender = "";
 		}
 
 		nextPhase();
@@ -116,16 +116,16 @@ $(":input").not("#but_done").click(function() {
 		var inHeight = $("#screenSize").val() * Math.sin(angle);
 		myscreen.ppi = height / inHeight;
 
-		psiData.demographics = {};
+		jglData.demographics = {};
 		if ($("age").val()) {
-			psiData.demographics.age = $("#age").val();
+			jglData.demographics.age = $("#age").val();
 		} else {
-			psiData.demographics.age = -1;
+			jglData.demographics.age = -1;
 		}
 		if ($("#gender").val()) {
-			psiData.demographics.gender = $("#gender").val();
+			jglData.demographics.gender = $("#gender").val();
 		} else {
-			psiData.demographics.gender = "";
+			jglData.demographics.gender = "";
 		}
 
 		nextPhase();
@@ -135,7 +135,7 @@ $(":input").not("#but_done").click(function() {
 		<p>
 			This is only run if full, aka if both screenSize and ratio were filled when but_done was pressed. 
 			Here several different things happen, myscreen.ppi gets set to the appropriate value, and the demographic data gets saved
-			in the psiData object. Then after all of that, the phase is advanced. Lets take a look at the first part, the setting of
+			in the jglData object. Then after all of that, the phase is advanced. Lets take a look at the first part, the setting of
 			myscreen.ppi. Here the ratio is used to determine the angle between the diagonal and the side which can then be used in conjunction
 			with the length of the diagonal in inches and the length of the side in pixels to determine the ppi of the screen. The results
 			of this calculation is then saved in myscreen.ppi and used by jgl when calling jglOpen. It is esential that myscreen.ppi is set
